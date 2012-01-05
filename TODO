@@ -1,0 +1,22 @@
+What we have to do
+What is planned for next versions of this plugin
+
+-	Add the possibility to sort the list by the fields itself
+-	Add a html README and INSTALL too
+-	Überschneidungen bei ein und demselben Nutzer unterbinden, z.b: Reise 1: 1.3. - 30.3.08, Reise 2: 15.3. - 15.4.08
+
+For the version 2.0.x the following features are planned
+-	Add some informations into the user profil, such as when he will be on a journey
+-	The possibility to set the displayed information of the list in the ACP
+-	Add language support
+
+BUGS
+-	Es sind jetzt mehr als 20 Leute eingetragen. Seitenwechsel nicht möglich.
+
+DONE
+-	Add a CHANGELOG file
+-	previous and next page displaying makes sql errors
+-	check for problems with id and data_id
+-	Wenn ein User editieren oder löschen will, dann kommt diese Meldung: "Dieser Datensatz gehört nicht zu dir. Du darfst ihn nicht löschen "
+-	Add the possibility to show which members are at the place at a special date
+-	Complete the README and INSTALL file

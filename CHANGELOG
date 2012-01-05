@@ -1,0 +1,31 @@
+This changelog starts with version 1.4.5
+
+Version 1.6.0 (January 5, 2012)
+    * Moved to MyBB 1.6
+
+Version 1.0.0 (March 14, 2008)
+	* Changed the version system. Now this is the 1.x.y series.
+	  Final release will be named 1.x.y, 2.x.y
+	  Bugfixes will increase the y
+	  Some bigger changes will increase the x
+	* Add the possibility to show which members are at the place at a special date
+	* Removed the page split
+	* User can set how many inserts should be shown, limit is saved in a cookie
+	* Added some images whichs shows the staus of the user
+	* Some HTML changes
+	* changed the place of the toplink image to the lists image folder
+	* Complete the README and INSTALL file
+	* Added some more explaining comments to the source code
+	* Cleaned the source code
+	* Added some more user checks to avoid disallowed editing of inserts
+
+Version 1.4.7 (February 24, 2008):
+	* Fixed a bug with edit and delete permissions
+
+Version 1.4.6 (February 24, 2008):
+	* Fixed a bug with previous and next page displaying
+	* Fixed a bug $id and $data_id; $data_id replaces $id everywhere
+	
+Version 1.4.5 (February 23, 2008):
+	* Fixed a bug with previous and next page displaying
+	* Added the changelog file
