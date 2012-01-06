@@ -34,7 +34,7 @@ if (array_key_exists('liste', $pluginsCache['active']) &&
     if ($mybb->settings['showListOnlyForMembers']=='1' && $mybb->user['uid'] == 0) {
         error_no_permission();
     } else {
-        plugin_show_list();
+        showList();
     }
     
 } else {

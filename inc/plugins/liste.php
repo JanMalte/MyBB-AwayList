@@ -12,174 +12,114 @@ if (!defined("IN_MYBB")) {
     die("Direct initialization of this file is not allowed.<br /><br />Please make sure IN_MYBB is defined.");
 }
 
-class ShowDates {
-/**
- * shows the days and select the given day
- * @param $P_name the name of the select
- * @param $P_day the selected day
- * @return the HTML of the select part of the form
- */
-public static function show_days($P_name, $P_day = false)
+class ShowDates
 {
-    // if the selected day isn't given set it to the actual day
-    if ($P_day == false)
-        $P_day = date("d");
-    // set the start HTML of the select form
-    $html_select_form = "<select name=\"{$P_name}\">";
-    // do this 31 times, one for every day
-    for ($i = 01; $i <= 31; $i++) {
-        // if the actual day is the same as the given day
-        // set this day as selected
-        if ($i == $P_day) {
+
+    public static function showDaySelect($fieldName, $selectedDay = null)
+    {
+        // if the selected day isn't given set it to the actual day
+        if ($selectedDay == null)
+            $selectedDay = date("d");
+
+        // set the start HTML of the select form
+        $htmlSelectForm = '<select name="' . $fieldName . '">';
+        // do this 31 times, one for every day
+        for ($i = 01; $i <= 31; $i++) {
             // convert this to a string with two numbers, e.g.: 04 instade of 4
             if ($i < 10) {
                 $day = (string) "0" . $i;
             } else {
                 $day = (string) $i;
             }
-            // add the option the the HTML select form
-            $html_select_form .= "<option selected value=\"{$day}\">{$day}";
-        } else {
-            // convert this to a string with two numbers, e.g.: 04 instade of 4
-            if ($i < 10) {
-                $day = (string) "0" . $i;
-            } else {
-                $day = (string) $i;
+            // if the actual day is the same as the given day
+            // set this day as selected
+            $selected = '';
+            if ($i == $selectedDay) {
+                $selected .= 'selected="selected" ';
             }
             // add the option the the HTML select form
-            $html_select_form .= "<option value=\"{$day}\">{$day}";
+            $htmlSelectForm .= '<option ' . $selected . 'value="' . $day . '">' . $day;
         }
+        // close the select form
+        $htmlSelectForm .= "</select>";
+        // returns the HTML of the select form
+        return $htmlSelectForm;
     }
-    // close the select form
-    $html_select_form .= "</select>";
-    // returns the HTML of the select form
-    return $html_select_form;
-}
 
-/**
- * shows the months and select the given month
- * @param $P_name the name of the select
- * @param $P_month the selected month
- * @return the HTML of the select part of the form
- */
-public static function show_months($P_name, $P_month = false)
-{
-    // if the selected month isn't given set it to the actual month
-    if ($P_month == false)
-        $P_month = date("m");
-    // set the start HTML of the select form
-    $html_select_form = "<select name=\"{$P_name}\">";
-    // do this 12 times, one for every month
-    for ($i = 01; $i <= 12; $i++) {
-        // if the actual month is the same as the given month
-        // set this month as selected
-        if ($i == $P_month) {
+    public static function showMonthSelect($fieldName, $selectedMonth = null)
+    {
+        // if the selected month isn't given set it to the actual month
+        if ($selectedMonth == null)
+            $selectedMonth = date("m");
+
+        // set the start HTML of the select form
+        $htmlSelectForm = '<select name="' . $fieldName . '">';
+        // do this 12 times, one for every month
+        for ($i = 01; $i <= 12; $i++) {
             // convert this to a string with two numbers, e.g.: 04 instade of 4
             if ($i < 10) {
                 $month = (string) "0" . $i;
             } else {
                 $month = (string) $i;
             }
-            // add the option the the HTML select form
-            $html_select_form .= "<option selected value=\"{$month}\">{$month}";
-        } else {
-            // convert this to a string with two numbers, e.g.: 04 instade of 4
-            if ($i < 10) {
-                $month = (string) "0" . $i;
-            } else {
-                $month = (string) $i;
+            // if the actual month is the same as the given month
+            // set this month as selected
+            $selected = '';
+            if ($i == $selectedMonth) {
+                $selected .= 'selected="selected" ';
             }
             // add the option the the HTML select form
-            $html_select_form .= "<option value=\"{$month}\">{$month}";
+            $htmlSelectForm .= '<option ' . $selected . 'value="' . $month . '">' . $month;
         }
+        // close the select form
+        $htmlSelectForm .= "</select>";
+        // returns the HTML of the select form
+        return $htmlSelectForm;
     }
-    // close the select form
-    $html_select_form .= "</select>";
-    // returns the HTML of the select form
-    return $html_select_form;
-}
 
-/**
- * shows the years and select the given year
- * @param $P_name the name of the select
- * @param $P_year the selected year
- * @return the select part of the form
- */
-public static function show_years($P_name, $P_year = false)
-{
-    // if the selected year isn't given set it to the actual year
-    if ($P_year == false)
-        $P_year = date("Y");
-    // set the start HTML of the select form
-    $html_select_form = "<select name=\"{$P_name}\">";
-    // do this 20 times, for the next 20 years
-    for ($i = date("Y"); $i <= date("Y") + 20; $i++) {
-        // if the actual year is the same as the given year
-        // set this year as selected
-        if ($i == $P_year) {
-            // convert this to a string
-            $year = (string) $i;
+    public static function showYearSelect($fieldName, $selectedYear = null, $offset = -1, $countItems = 10)
+    {
+        // if the selected year isn't given set it to the actual year
+        if ($selectedYear == null)
+            $selectedYear = date("Y");
+
+        $startYear = date("Y") + $offset;
+        $endYear = date("Y") + $countItems;
+
+        // set the start HTML of the select form
+        $htmlSelectForm = '<select name="' . $fieldName . '">';
+        // do this $countItems times
+        for ($year = $startYear; $year <= $endYear; $year++) {
+            // if the actual year is the same as the given year
+            // set this year as selected
+            $selected = '';
+            if ($year == $selectedYear) {
+                $selected .= 'selected="selected" ';
+            }
             // add the option the the HTML select form
-            $html_select_form .= "<option selected value=\"{$year}\">{$year}";
-        } else {
-            // convert this to a string
-            $year = (string) $i;
-            // add the option the the HTML select form
-            $html_select_form .= "<option value=\"{$year}\">{$year}";
+            $htmlSelectForm .= '<option ' . $selected . 'value="' . $year . '">' . $year;
         }
+        // close the select form
+        $htmlSelectForm .= "</select>";
+        // returns the HTML of the select form
+        return $htmlSelectForm;
     }
-    // close the select form
-    $html_select_form .= "</select>";
-    // returns the HTML of the select form
-    return $html_select_form;
-}
 
-// check the dates
-/**
- * checks if the given date is in the future
- * OLD version, is still used, but should be replaced with the new one
- * @param $PARAM_date the date in the following format (dd.mm.yyyy)
- * @param $PARAM_former_date the date after which the date can be given in the following format (dd.mm.yyyy)
- * @return boolean if date is in the future
- */
-public static function check_future_date_old_old($P_date_day, $P_date_month, $P_date_year, $P_former_date_day=false, $P_former_date_month=false, $P_former_date_year=false)
-{
-    if ($PARAM_former_date_day == false)
-        $PARAM_former_date_day = date("d");
-    if ($PARAM_former_date_month == false)
-        $PARAM_former_date_month = date("m");
-    if ($PARAM_former_date_year == false)
-        $PARAM_former_date_year = date("y");
-    $date = mktime(0, 0, 0, $PARAM_date_month, $PARAM_date_day, $PARAM_date_year);
-    $former_date = mktime(0, 0, 0, $PARAM_former_date_month, $PARAM_former_date_day, $PARAM_former_date_year);
-    if ($date >= $former_date) {
-        return true;
-    } else {
+    public static function checkFutureDate($firstTimestamp, $secondTimestamp = null)
+    {
+        // if the second date isn't set, set it to the current unix timestamp
+        if ($secondTimestamp == null)
+            $secondTimestamp = time();
+
+        // check if the first date is after the second
+        if ($firstTimestamp >= $secondTimestamp) {
+            return true;
+        }
         return false;
     }
-}
-
-/**
- * checks if the given date is in the future
- * @param $P_first_date the date as a unixtimestamp
- * @param $P_second_date the date, after which the date can be given, as a unixtimestamp
- * @return boolean if date is in the future
- */
-public static function check_future_date($P_first_date, $P_second_date=false)
-{
-    // if the second date isn't set, set it to the actual unixtimestamp
-    if ($P_second_date == false)
-        $P_second_date = time();
-    // check if the first date is after the second
-    if ($P_first_date >= $P_second_date) {
-        return true;
-    } else {
-        return false;
-    }
-}
 
 }
-// check the user rights
+
 /**
  * checks if the user is in one of the allowed usergroups
  * @param $P_allowed the allowed usergroups; seperated with ","(COMMA) e.g.: "4,10,2"
@@ -222,20 +162,6 @@ function check_user($P_allowed = false)
     return $access;
 }
 
-// escape of mysql inserts
-/**
- * Escape a string according to the MySQL escape format.
- *
- * @param string The string to be escaped.
- * @return string The escaped string.
- */
-function escape_string($string)
-{
-    global $db;
-    
-    return $db->escape_string($string);
-}
-
 /* * ********************************************************************
  *
  * main functions for this plugin
@@ -246,63 +172,61 @@ function escape_string($string)
  * shows the insert form for a new item
  * @return the html content
  */
-function showNewDataForm()
+function showNewItemForm()
 {
     global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
 
     $content = '
-	<form action="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'" method="post">
+	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
             <input type="hidden" name="action" value="addItem" />
             <input type="hidden" name="step2" value="true" />
             <table border="0" cellspacing="1" cellpadding="4" class="tborder">
                 <thead>
                     <tr>
                         <td class="thead" colspan="2">
-                            <div><strong>'.$lang->addToList.'</strong><br /><div class="smalltext"></div></div>
+                            <div><strong>' . $lang->addToList . '</strong><br /><div class="smalltext"></div></div>
                         </td>
                     </tr>
                 </thead>
                 <tbody style="" id="cat_1_e">
                     <tr>
-                        <td class="trow1"><b>'.$lang->arrival.':</b>*</td>
+                        <td class="trow1"><b>' . $lang->arrival . ':</b>*</td>
                         <td class="trow1">';
-    // Ankunft (Hinflug)
-    $content .= ShowDates::show_days("ankunft_tag");
-    $content .= ShowDates::show_months("ankunft_monat");
-    $content .= ShowDates::show_years("ankunft_jahr");
+    $content .= ShowDates::showDaySelect("ankunft_tag");
+    $content .= ShowDates::showMonthSelect("ankunft_monat");
+    $content .= ShowDates::showYearSelect("ankunft_jahr");
     $content .= '
 		  </td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>'.$lang->departure.':</b>*</td>
+		  <td class="trow2"><b>' . $lang->departure . ':</b>*</td>
 		  <td class="trow2">';
-    // Abflug (Rückflug)
-    $content .= ShowDates::show_days("abflug_tag");
-    $content .= ShowDates::show_months("abflug_monat");
-    $content .= ShowDates::show_years("abflug_jahr");
+    $content .= ShowDates::showDaySelect("abflug_tag");
+    $content .= ShowDates::showMonthSelect("abflug_monat");
+    $content .= ShowDates::showYearSelect("abflug_jahr");
     $content .= '
 		  </td>
 		</tr>
 		<tr>
-		  <td class="trow1"><b>'.$lang->airline.':</b>*</td>
+		  <td class="trow1"><b>' . $lang->airline . ':</b>*</td>
 		  <td class="trow1"><input type="text" name="airline" size="40" maxlength="20" /></td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>'.$lang->place.':</b>*</td>
+		  <td class="trow2"><b>' . $lang->place . ':</b>*</td>
 		  <td class="trow2"><input type="text" name="place" size="40" maxlength="20" /></td>
 		</tr>
 		<tr>
-		  <td class="trow1"><b>'.$lang->hotel.':</b>*</td>
+		  <td class="trow1"><b>' . $lang->hotel . ':</b>*</td>
 		  <td class="trow1"><input type="text" name="hotel" size="40" maxlength="20" /></td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>'.$lang->phoneAt.' '.$mybb->settings["list_country"].':</b></td>
+		  <td class="trow2"><b>' . $lang->phoneAt . ' ' . $mybb->settings["list_country"] . ':</b></td>
 		  <td class="trow2"><input type="text" name="phone" size="25" maxlength="15" /></td>
 		</tr>
 		<tr>
-		  <td class="trow1">* = '.$lang->requiredFields.'</td>
-		  <td class="trow1"><input type="submit" name="addItem" value="'.$lang->addToList.'"></td>
+		  <td class="trow1">* = ' . $lang->requiredFields . '</td>
+		  <td class="trow1"><input type="submit" name="addItem" value="' . $lang->addToList . '"></td>
 		</tr>
             </tbody>
 	  </table>
@@ -314,7 +238,7 @@ function showNewDataForm()
  * show the edit form
  * @return the html content
  */
-function showEditForm()
+function showEditItemForm()
 {
     global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
@@ -322,14 +246,13 @@ function showEditForm()
     $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
     $item = $db->fetch_array($query);
 
-    
     if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
-        $errors[] = "Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten";
+        $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['data_id'] == '') {
-        $errors[] = "Es wurde kein Datensatz zum Bearbeiten ausgewählt.";
+        $errors[] = $lang->errorNoItemSelected;
     }
-    
+
     // if any error occurred
     if (isset($errors)) {
         add_breadcrumb($lang->editItem);
@@ -340,63 +263,147 @@ function showEditForm()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        output_page($showListe);
+        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        output_page($showList);
         exit;
     }
     $content = '
-	<form action="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'" method="post">
+	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
             <input type="hidden" name="action" value="editItem" />
             <input type="hidden" name="step2" value="true" />
-            <input type="hidden" name="data_id" value="'.$item['data_id'].'" />
+            <input type="hidden" name="data_id" value="' . $item['data_id'] . '" />
             <table border="0" cellspacing="1" cellpadding="4" class="tborder">
                 <thead>
                     <tr>
                         <td class="thead" colspan="2">
-                            <div><strong>'.$lang->editItem.'</strong><br /><div class="smalltext"></div></div>
+                            <div><strong>' . $lang->editItem . '</strong><br /><div class="smalltext"></div></div>
                         </td>
                     </tr>
                 </thead>
                 <tbody style="" id="cat_1_e">
                     <tr>
-                        <td class="trow1"><b>'.$lang->arrival.':</b>*</td>
+                        <td class="trow1"><b>' . $lang->arrival . ':</b>*</td>
                         <td class="trow1">';
-    // Ankunft (Hinflug)
-    $content .= ShowDates::show_days("ankunft_tag",date('d',$item['ankunft']));
-    $content .= ShowDates::show_months("ankunft_monat",date('m',$item['ankunft']));
-    $content .= ShowDates::show_years("ankunft_jahr",date('Y',$item['ankunft']));
+    $content .= ShowDates::showDaySelect("ankunft_tag", date('d', $item['ankunft']));
+    $content .= ShowDates::showMonthSelect("ankunft_monat", date('m', $item['ankunft']));
+    $content .= ShowDates::showYearSelect("ankunft_jahr", date('Y', $item['ankunft']));
     $content .= '
 		  </td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>'.$lang->departure.':</b>*</td>
+		  <td class="trow2"><b>' . $lang->departure . ':</b>*</td>
 		  <td class="trow2">';
-    // Abflug (Rückflug)
-    $content .= ShowDates::show_days("abflug_tag",date('d',$item['abflug']));
-    $content .= ShowDates::show_months("abflug_monat",date('m',$item['abflug']));
-    $content .= ShowDates::show_years("abflug_jahr",date('Y',$item['abflug']));
+    $content .= ShowDates::showDaySelect("abflug_tag", date('d', $item['abflug']));
+    $content .= ShowDates::showMonthSelect("abflug_monat", date('m', $item['abflug']));
+    $content .= ShowDates::showYearSelect("abflug_jahr", date('Y', $item['abflug']));
     $content .= '
 		  </td>
 		</tr>
 		<tr>
-		  <td class="trow1"><b>'.$lang->airline.':</b>*</td>
-		  <td class="trow1"><input type="text" name="airline" size="40" maxlength="20" value="'.$item['airline'].'" /></td>
+		  <td class="trow1"><b>' . $lang->airline . ':</b>*</td>
+		  <td class="trow1"><input type="text" name="airline" size="40" maxlength="20" value="' . $item['airline'] . '" /></td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>'.$lang->place.':</b>*</td>
-		  <td class="trow2"><input type="text" name="place" size="40" maxlength="20" value="'.$item['ort'].'" /></td>
+		  <td class="trow2"><b>' . $lang->place . ':</b>*</td>
+		  <td class="trow2"><input type="text" name="place" size="40" maxlength="20" value="' . $item['ort'] . '" /></td>
 		</tr>
 		<tr>
-		  <td class="trow1"><b>'.$lang->hotel.':</b>*</td>
-		  <td class="trow1"><input type="text" name="hotel" size="40" maxlength="20" value="'.$item['hotel'].'" /></td>
+		  <td class="trow1"><b>' . $lang->hotel . ':</b>*</td>
+		  <td class="trow1"><input type="text" name="hotel" size="40" maxlength="20" value="' . $item['hotel'] . '" /></td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>'.$lang->phoneAt.' '.$mybb->settings["list_country"].':</b></td>
-		  <td class="trow2"><input type="text" name="phone" size="25" maxlength="15" value="'.$item['telefon'].'" /></td>
+		  <td class="trow2"><b>' . $lang->phoneAt . ' ' . $mybb->settings["list_country"] . ':</b></td>
+		  <td class="trow2"><input type="text" name="phone" size="25" maxlength="15" value="' . $item['telefon'] . '" /></td>
 		</tr>
 		<tr>
-		  <td class="trow1">* = '.$lang->requiredFields.'</td>
-		  <td class="trow1"><input type="submit" name="editItem" value="'.$lang->editItem.'"></td>
+		  <td class="trow1">* = ' . $lang->requiredFields . '</td>
+		  <td class="trow1"><input type="submit" name="editItem" value="' . $lang->editItem . '"></td>
+		</tr>
+            </tbody>
+	  </table>
+	</form>';
+    return $content;
+}
+
+/**
+ * @return the html message
+ */
+function showDeleteConfirmDialog()
+{
+    global $db, $mybb, $lang, $templates;
+    $lang->load("liste", false, true);
+
+    $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
+    $item = $db->fetch_array($query);
+
+    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
+        $errors[] = $lang->errorNoPermission;
+    }
+    if ($mybb->input['data_id'] == '') {
+        $errors[] = $lang->errorNoItemSelected;
+    }
+
+    // if any error occurred
+    if (isset($errors)) {
+        add_breadcrumb($lang->deleteItem);
+        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content .= '<p><ul>';
+        foreach ($errors as $error) {
+            $content .= '<li>' . $error . '</li>';
+        }
+        $content .= '</ul></p>';
+        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
+        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        output_page($showList);
+        exit;
+    }
+    $content = '
+	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
+            <input type="hidden" name="action" value="deleteItem" />
+            <input type="hidden" name="step2" value="true" />
+            <input type="hidden" name="data_id" value="' . $item['data_id'] . '" />
+            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
+                <thead>
+                    <tr>
+                        <td class="thead" colspan="2">
+                            <div><strong>' . $lang->deleteItem . '</strong><br /><div class="smalltext"></div></div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody style="" id="cat_1_e">
+                    <tr>
+                        <td class="trow1"><b>' . $lang->arrival . ':</b></td>
+                        <td class="trow1">';
+    $content .= date('d.m.Y', $item['ankunft']);
+    $content .= '
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>' . $lang->departure . ':</b></td>
+		  <td class="trow2">';
+    $content .= date('d.m.Y', $item['abflug']);
+    $content .= '
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>' . $lang->airline . ':</b></td>
+		  <td class="trow1">' . $item['airline'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>' . $lang->place . ':</b></td>
+		  <td class="trow2">' . $item['ort'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>' . $lang->hotel . ':</b></td>
+		  <td class="trow1">' . $item['hotel'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>' . $lang->phoneAt . ' ' . $mybb->settings["list_country"] . ':</b></td>
+		  <td class="trow2">' . $item['telefon'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow1"></td>
+		  <td class="trow1"><input type="submit" name="deleteItem" value="' . $lang->deleteItem . '"></td>
 		</tr>
             </tbody>
 	  </table>
@@ -406,45 +413,45 @@ function showEditForm()
 
 /**
  * insert the new item
+ * @return boolean if successful
  */
-function insertNewData()
+function insertNewItem()
 {
     global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
     $lang->load("liste", false, true);
 
-    // TODO add language support
     if ($mybb->input['airline'] == "")
-        $errors[] = "Bitte geben Sie eine Airline ein.";
+        $errors[] = $lang->errorAirlineMissing;
     if ($mybb->input['place'] == "")
-        $errors[] = "Bitte geben Sie einen Urlaubsort ein.";
+        $errors[] = $lang->errorMissingPlace;
     if ($mybb->input['hotel'] == "")
-        $errors[] = "Bitte geben Sie einen Hotelnamen ein.";
+        $errors[] = $lang->errorMissingHotel;
     if (preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'], $number)) {
         unset($number);
     } else {
-        $errors[] = 'Bitte geben Sie im Feld "Telefonnummer" nur Zahlen ein. Die Angabe der Telefonnummer ist freiwillig.';
+        $errors[] = $lang->errorInvalidPhoneNumber;
     }
     $arrival = mktime(0, 0, 0, $mybb->input['ankunft_monat'], $mybb->input['ankunft_tag'], $mybb->input['ankunft_jahr']);
     $departure = mktime(0, 0, 0, $mybb->input['abflug_monat'], $mybb->input['abflug_tag'], $mybb->input['abflug_jahr']);
-    
+
     $check = true;
     $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$arrival' AND '$departure' ) OR ( abflug  BETWEEN '$arrival' AND '$departure' ) OR (ankunft >= $arrival AND abflug <= $departure) )");
     while ($result = $db->fetch_array($query)) {
         $check = false;
     }
     if ($check == false)
-        $errors[] = "Sie sind zu diesem Zeitpunkt schon unterwegs";
+        $errors[] = $lang->errorAlreadyAway;
 
-    if (!ShowDates::check_future_date($arrival))
-        $errors[] = "Das Ankunftsdatum liegt nicht in der Zukunft.";
-    if (!ShowDates::check_future_date($departure))
-        $errors[] = "Das Abflugsdatum liegt nicht in der Zukunft.";
-    if (!ShowDates::check_future_date($departure, $arrival))
-        $errors[] = "Das Abflugsdatum liegt vor dem Ankunftsdatum";
+    if (!ShowDates::checkFutureDate($arrival))
+        $errors[] = $lang->errorArrivalNotInFuture;
+    if (!ShowDates::checkFutureDate($departure))
+        $errors[] = $lang->errorDepartureNotInFuture;
+    if (!ShowDates::checkFutureDate($departure, $arrival))
+        $errors[] = $lang->errorArrivalNotBeforeDeparture;
 
     // if any error occurred
     if (isset($errors)) {
-        add_breadcrumb("Neuer Eintrag");
+        add_breadcrumb($lang->newItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
         foreach ($errors as $error) {
@@ -452,21 +459,21 @@ function insertNewData()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        output_page($showListe);
+        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        output_page($showList);
         exit;
     }
-    
+
     $insertData = array(
         'id' => '',
         'uid' => $mybb->user['uid'],
         'username' => $mybb->user['username'],
-        'ankunft' => escape_string($arrival),
-        'abflug' => escape_string($departure),
-        'airline' => escape_string($mybb->input['airline']),
-        'ort' => escape_string($mybb->input['place']),
-        'hotel' => escape_string($mybb->input['hotel']),
-        'telefon' => escape_string($mybb->input['phone']),
+        'ankunft' => $db->escape_string($arrival),
+        'abflug' => $db->escape_string($departure),
+        'airline' => $db->escape_string($mybb->input['airline']),
+        'ort' => $db->escape_string($mybb->input['place']),
+        'hotel' => $db->escape_string($mybb->input['hotel']),
+        'telefon' => $db->escape_string($mybb->input['phone']),
         'data_id' => '',
         'sort_id' => ''
     );
@@ -482,42 +489,41 @@ function insertNewData()
 function editItem()
 {
     global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    $lang->load("liste", false, true);
 
-
-    // TODO add language support
     if ($mybb->input['airline'] == "")
-        $errors[] = "Bitte geben Sie eine Airline ein.";
+        $errors[] = $lang->errorAirlineMissing;
     if ($mybb->input['place'] == "")
-        $errors[] = "Bitte geben Sie einen Urlaubsort ein.";
+        $errors[] = $lang->errorMissingPlace;
     if ($mybb->input['hotel'] == "")
-        $errors[] = "Bitte geben Sie einen Hotelnamen ein.";
+        $errors[] = $lang->errorMissingHotel;
     if (preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'], $number)) {
         unset($number);
     } else {
-        $errors[] = 'Bitte geben Sie im Feld "Telefonnummer" nur Zahlen ein. Die Angabe der Telefonnummer ist freiwillig.';
+        $errors[] = $lang->errorInvalidPhoneNumber;
     }
     $arrival = mktime(0, 0, 0, $mybb->input['ankunft_monat'], $mybb->input['ankunft_tag'], $mybb->input['ankunft_jahr']);
     $departure = mktime(0, 0, 0, $mybb->input['abflug_monat'], $mybb->input['abflug_tag'], $mybb->input['abflug_jahr']);
-    
+
     $check = true;
     $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$arrival' AND '$departure' ) OR ( abflug  BETWEEN '$arrival' AND '$departure' ) OR (ankunft >= $arrival AND abflug <= $departure) )");
     while ($result = $db->fetch_array($query)) {
-        if($result['data_id']!=$mybb->input['data_id'])
+        if ($result['data_id'] != $mybb->input['data_id'])
             $check = false;
     }
     if ($check == false)
-        $errors[] = "Sie sind zu diesem Zeitpunkt schon unterwegs";
+        $errors[] = $lang->errorAlreadyAway;
 
-    #if (!ShowDates::check_future_date($arrival))
-    #    $errors[] = "Das Ankunftsdatum liegt nicht in der Zukunft.";
-    if (!ShowDates::check_future_date($departure))
-        $errors[] = "Das Abflugsdatum liegt nicht in der Zukunft.";
-    if (!ShowDates::check_future_date($departure, $arrival))
-        $errors[] = "Das Abflugsdatum liegt vor dem Ankunftsdatum";
+    #if (!ShowDates::checkFutureDate($arrival))
+    #    $errors[] = $lang->errorArrivalNotInFuture;
+    if (!ShowDates::checkFutureDate($departure))
+        $errors[] = $lang->errorDepartureNotInFuture;
+    if (!ShowDates::checkFutureDate($departure, $arrival))
+        $errors[] = $lang->errorArrivalNotBeforeDeparture;
 
     // if any error occurred
     if (isset($errors)) {
-        add_breadcrumb("Neuer Eintrag");
+        add_breadcrumb($lang->editItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
         foreach ($errors as $error) {
@@ -525,18 +531,18 @@ function editItem()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        output_page($showListe);
+        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        output_page($showList);
         exit;
     }
-    
+
     $insertData = array(
-        'ankunft' => escape_string($arrival),
-        'abflug' => escape_string($departure),
-        'airline' => escape_string($mybb->input['airline']),
-        'ort' => escape_string($mybb->input['place']),
-        'hotel' => escape_string($mybb->input['hotel']),
-        'telefon' => escape_string($mybb->input['phone']),
+        'ankunft' => $db->escape_string($arrival),
+        'abflug' => $db->escape_string($departure),
+        'airline' => $db->escape_string($mybb->input['airline']),
+        'ort' => $db->escape_string($mybb->input['place']),
+        'hotel' => $db->escape_string($mybb->input['hotel']),
+        'telefon' => $db->escape_string($mybb->input['phone']),
     );
     $db->update_query('liste', $insertData, "data_id = '{$mybb->input['data_id']}'");
 
@@ -544,112 +550,24 @@ function editItem()
 }
 
 /**
- * @return the html message
- */
-function showDeleteConfirmDialog()
-{
-    global $db, $mybb, $lang, $templates;
-    $lang->load("liste", false, true);
-
-    $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
-    $item = $db->fetch_array($query);
-    
-    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
-        $errors[] = "Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten";
-    }
-    if ($mybb->input['data_id'] == '') {
-        $errors[] = "Es wurde kein Datensatz zum Löschen ausgewählt.";
-    }
-    
-    // if any error occurred
-    if (isset($errors)) {
-        add_breadcrumb($lang->deleteItem);
-        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
-        $content .= '<p><ul>';
-        foreach ($errors as $error) {
-            $content .= '<li>' . $error . '</li>';
-        }
-        $content .= '</ul></p>';
-        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        output_page($showListe);
-        exit;
-    }
-    $content = '
-	<form action="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'" method="post">
-            <input type="hidden" name="action" value="deleteItem" />
-            <input type="hidden" name="step2" value="true" />
-            <input type="hidden" name="data_id" value="'.$item['data_id'].'" />
-            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
-                <thead>
-                    <tr>
-                        <td class="thead" colspan="2">
-                            <div><strong>'.$lang->deleteItem.'</strong><br /><div class="smalltext"></div></div>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody style="" id="cat_1_e">
-                    <tr>
-                        <td class="trow1"><b>'.$lang->arrival.':</b></td>
-                        <td class="trow1">';
-    // Ankunft (Hinflug)
-    $content .= date('d.m.Y',$item['ankunft']);
-    $content .= '
-		  </td>
-		</tr>
-		<tr>
-		  <td class="trow2"><b>'.$lang->departure.':</b></td>
-		  <td class="trow2">';
-    // Abflug (Rückflug)
-    $content .= date('d.m.Y',$item['abflug']);
-    $content .= '
-		  </td>
-		</tr>
-		<tr>
-		  <td class="trow1"><b>'.$lang->airline.':</b></td>
-		  <td class="trow1">'.$item['airline'].'</td>
-		</tr>
-		<tr>
-		  <td class="trow2"><b>'.$lang->place.':</b></td>
-		  <td class="trow2">'.$item['ort'].'</td>
-		</tr>
-		<tr>
-		  <td class="trow1"><b>'.$lang->hotel.':</b></td>
-		  <td class="trow1">'.$item['hotel'].'</td>
-		</tr>
-		<tr>
-		  <td class="trow2"><b>'.$lang->phoneAt.' '.$mybb->settings["list_country"].':</b></td>
-		  <td class="trow2">'.$item['telefon'].'</td>
-		</tr>
-		<tr>
-		  <td class="trow1"></td>
-		  <td class="trow1"><input type="submit" name="deleteItem" value="'.$lang->deleteItem.'"></td>
-		</tr>
-            </tbody>
-	  </table>
-	</form>';
-    return $content;
-}
-
-/**
  * delete the item
  * @return boolean if successful
  */
-function deleteData()
+function deleteItem()
 {
     global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
     $lang->load("liste", false, true);
 
     $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
     $item = $db->fetch_array($query);
-    
+
     if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
-        $errors[] = "Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten";
+        $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['data_id'] == '') {
-        $errors[] = "Es wurde kein Datensatz zum Löschen ausgewählt.";
+        $errors[] = $lang->errorNoItemSelected;
     }
-    
+
     // if any error occurred
     if (isset($errors)) {
         add_breadcrumb($lang->deleteItem);
@@ -660,8 +578,8 @@ function deleteData()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        output_page($showListe);
+        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        output_page($showList);
         exit;
     }
 
@@ -672,7 +590,7 @@ function deleteData()
 /**
  * delete the items of the user which is being deleted
  */
-function plugin_list_delete_user()
+function ListDeleteUserHook()
 {
     global $db, $mybb;
 
@@ -697,129 +615,65 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
         $timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
     }
 
-    $queryItems = $db->simple_select('liste', '*', '', array('order_by' => 'ankunft'));
-    $countTotalUsers =$db->num_rows($queryItems);
-    if ($countTotalUsers == 0) {
-        $countTotalUsers = 'keine';
-    } elseif ($countTotalUsers == 1) {
-        $countTotalUsers = 'eine';
-    }
-    
-    if($useTimestamp == true) {
-        $queryItems = $db->simple_select('liste', '*', $timestamp.' BETWEEN ankunft AND abflug', array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
-        $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>'.$lang->personsCurrentlyThere.
-            date(" d.m.Y ", $timestamp).$lang->in.' '.$mybb->settings["list_country"].'</strong></td></tr>';
+    if ($useTimestamp == true) {
+        $queryItems = $db->simple_select('liste', '*', $timestamp . ' BETWEEN ankunft AND abflug', array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
+        $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>' . $lang->personsCurrentlyThere .
+            date(" d.m.Y ", $timestamp) . $lang->in . ' ' . $mybb->settings["list_country"] . '</strong></td></tr>';
     } else {
-        $queryItems = $db->simple_select('liste', '*', 'abflug > '.$timestamp, array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
+        $queryItems = $db->simple_select('liste', '*', 'abflug > ' . $timestamp, array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
         $timeStampNotice = '';
     }
-    $countUsers =$db->num_rows($queryItems);
+
+    $countUsers = $db->num_rows($queryItems);
     $arrayItems = array();
     while ($item = $db->fetch_array($queryItems)) {
         $arrayItems[$item['data_id']] = $item;
     }
 
-    // TODO move to a list_bit template
-    $content = '
-<table border="0" cellspacing="1" cellpadding="4" class="tborder">
-    <thead>
-        <tr>
-            <td class="thead" colspan="9">
-                <form action="'.THIS_SCRIPT.'" method="post" style="vertical-align:center; text-align:left; float:left; width:35%;">
-                    <strong>
-                            <input type="hidden" name="action" value="setLimit" />
-                            '.$lang->showOnly.' <input type="text" name="limit" value="'.$limit.'" /> '.$lang->entries.'
-                            <input type="submit" name="setLimit" value="'.$lang->show.'" style="display:inline;"/>
-                    </strong>
-                </form>
-                <span style="vertical-align:center; text-align:center; float:left; width:30%;">
-                    <strong>Es sind zur Zeit '.$countTotalUsers.' Benutzer eingetragen</strong>
-                </span>
-                <form action="'.THIS_SCRIPT.'" method="post" style="vertical-align:center; text-align:right; float:left; width:35%;">
-                    <strong>'.$lang->whoIsAt.'
-                            <input type="hidden" name="action" value="setTimestamp" />';
-$content .= ShowDates::show_days("time_tag", date("d", $timestamp));
-$content .= ShowDates::show_months("time_monat", date("m", $timestamp));
-$content .= ShowDates::show_years("time_jahr", date("Y", $timestamp));
-$content .= <<<INHALT
-                            {$lang->in} {$mybb->settings["list_country"]}? <input type="submit" name="setTimestamp" value="Anzeigen" />
-                    </strong>
-                </form>
-            </td>
-        </tr>
-    </thead>
-</table>
-<table border="0" cellspacing="1" cellpadding="4" class="tborder">
-    <thead>
-        <tr>
-            <td class="thead" colspan="9">
-                <div class="expcolimage"><img src="{$mybb->settings['bburl']}/{$theme['imgdir']}/collapse.gif" id="liste_1_img" class="expander" alt="[-]" /></div>
-                <span style="vertical-align:center; text-align:right; float:left;">
-                    <strong>
-                        <a href="{$mybb->settings["bburl"]}/show_list.php?action=addItem" style="vertical-align: top;">
-                                <img src="{$mybb->settings['bburl']}/images/liste/viewmag+.png" border="0" valign="center"> {$lang->addToList}
-                        </a>
-                    </strong>
-                </span>
-            </td>
-        </tr>
-    </thead>
-    <tbody style="" id="liste_1_e">
-INHALT;
-    
-    $content .= $timeStampNotice.'<tr>
-            <td class="tcat" width="15%"align="center"><strong>'.$lang->name.'</strong></td>
-            <td class="tcat" width="5%" align="center"><strong>'.$lang->status.'</strong></td>
-            <td class="tcat" width="5%" align="center"><strong>'.$lang->arrival.'</strong></td>
-            <td class="tcat" width="5%" align="center"><strong>'.$lang->departure.'</strong></td>
-            <td class="tcat" width="15%" align="center"><strong>'.$lang->airline.'</strong></td>
-            <td class="tcat" width="15%" align="center"><strong>'.$lang->place.'</strong></td>
-            <td class="tcat" width="15%" align="center"><strong>'.$lang->hotel.'</strong></td>
-            <td class="tcat" width="15%" align="center"><strong>'.$lang->phoneAt.' '.$mybb->settings["list_country"].'</strong></td>
-            <td class="tcat" width="2%" align="center"><strong>'.$lang->action.'</strong></td>
-        </tr>';
+    $currentUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT;
+    $selectDateForm = ShowDates::showDaySelect("time_tag", date("d", $timestamp));
+    $selectDateForm .= ShowDates::showMonthSelect("time_monat", date("m", $timestamp));
+    $selectDateForm .= ShowDates::showYearSelect("time_jahr", date("Y", $timestamp));
+    $addItemUrl = $mybb->settings['bburl'] . '/show_list.php?action=addItem';
 
-    foreach($arrayItems as $item) {
+    foreach ($arrayItems as $item) {
         $count++;
-        $content .= '<tr>';
-        $content .= '<td class="trow1"><a href="'.get_profile_link($item['uid']).'">'.$item['username'].'</a></td>';
+        $userlink = '<a href="' . get_profile_link($item['uid']) . '">' . $item['username'] . '</a>';
 
-        $jetzt = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-        if (($item['ankunft'] < $jetzt) && ($item['abflug'] > $jetzt)) {
-            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/vor_ort.png\" border=\"0\"></td>\n";
-        } elseif ($item['abflug'] == $jetzt) {
-            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/rueckflug.png\" border=\"0\"></td>\n";
-        } elseif ($item['ankunft'] == $jetzt) {
-            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/hinflug.png\" border=\"0\"></td>\n";
+        $currentDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        if (($item['ankunft'] < $currentDate) && ($item['abflug'] > $currentDate)) {
+            $status = '<img src="' . $mybb->settings['bburl'] . '/images/liste/vor_ort.png" border="0">';
+        } elseif ($item['abflug'] == $currentDate) {
+            $status = '<img src="' . $mybb->settings['bburl'] . '/images/liste/rueckflug.png" border="0">';
+        } elseif ($item['ankunft'] == $currentDate) {
+            $status = '<img src="' . $mybb->settings['bburl'] . '/images/liste/hinflug.png" border="0">';
         } else {
-            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/daheim.png\" border=\"0\"></td>\n";
+            $status = '<img src="' . $mybb->settings['bburl'] . '/images/liste/daheim.png" border="0">';
         }
-        
-        $content .= "<td class=\"trow2\" style=\"white-space: nowrap;\">" . date("d.m.Y", $item['ankunft']) . "</td>\n";
-        $content .= '<td class="trow1" style="white-space: nowrap;">' . date("d.m.Y", $item['abflug']) . '</td>';
-        $content .= '<td class="trow2">'.$item['airline'].'</td>';
-        $content .= '<td class="trow1">'.$item['ort'].'</td>';
-        $content .= '<td class="trow2">'.$item['hotel'].'</td>';
-        $content .= '<td class="trow1">'.$item['telefon'].'</td>';
+
+        $arrival = date("d.m.Y", $item['ankunft']);
+        $departure = date("d.m.Y", $item['abflug']);
+        $airline = $item['airline'];
+        $place = $item['ort'];
+        $hotel = $item['hotel'];
+        $phone = $item['telefon'];
         if ((check_user(4)) OR ($item['uid'] == $mybb->user['uid'])) {
-            $content .= '<td class="trow2">
-                <a class="icon" href="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'?action=editItem&data_id='.$item['data_id'].'">
-                    <img src="'.$mybb->settings['bburl'].'/images/liste/pencil.png" border="0">
+            $actions = '
+                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=editItem&data_id=' . $item['data_id'] . '">
+                    <img src="' . $mybb->settings['bburl'] . '/images/liste/pencil.png" border="0">
                 </a>
-                <a class="icon" href="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'?action=deleteItem&data_id='.$item['data_id'].'">
-                    <img src="'.$mybb->settings['bburl'].'/images/liste/no.png" border="0">
-                </a></td>';
+                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=deleteItem&data_id=' . $item['data_id'] . '">
+                    <img src="' . $mybb->settings['bburl'] . '/images/liste/no.png" border="0">
+                </a>';
         } else {
-            $content .= '<td class="trow2"></td>';
+            $actions = '';
         }
-        $content .= '</tr>';
+
+        eval("\$tableItems .= \"" . $templates->get("show_list_table_bit") . "\";");
     }
-            
-    $content .= '<tr><td class="tcat" colspan="9">';
-    $content .= '<span style="vertical-align:center; text-align:left; float:right;">
-        <img src="'.$mybb->settings['bburl'].'/images/liste/pencil.png" border="0"> = '.$lang->edit.' 
-        <img src="'.$mybb->settings['bburl'].'/images/liste/no.png" border="0"> = '.$lang->delete.'
-        </span></td></tr></tbody></table>';
+
+    eval("\$content .= \"" . $templates->get("show_list_table") . "\";");
+
     return $content;
 }
 
@@ -829,9 +683,9 @@ INHALT;
  *
  */
 
-function plugin_show_list_index()
+function showListOnIndex()
 {
-    global $db, $mybb, $templates, $headerinclude, $header, $footer, $index, $liste;
+    global $db, $mybb, $lang, $templates, $headerinclude, $header, $footer, $index, $liste;
     $lang->load("liste", false, true);
 
     $liste = '';
@@ -842,17 +696,17 @@ function plugin_show_list_index()
     }
 }
 
-function plugin_show_list()
+function showList()
 {
     global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
     $lang->load("liste", false, true);
-    
-    if ($mybb->settings['showListOnlyForMembers']=='1' && $mybb->user['uid'] == 0) {
+
+    if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
         error_no_permission();
     }
-    
+
     $content = getContent();
-        
+
     eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
     output_page($showList);
 }
@@ -861,73 +715,68 @@ function getContent()
 {
     global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
     $lang->load("liste", false, true);
-    
-    if ($mybb->settings['showListOnlyForMembers']=='1' && $mybb->user['uid'] == 0) {
+
+    if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
         error_no_permission();
     }
-    
+
     if ($mybb->settings['show_list'] == '1') {
-        
+
         // get/set the limit
         if ($mybb->input['action'] == "setLimit") {
-            $cookieArray= unserialize($_COOKIE['mybbliste']);
+            $cookieArray = unserialize($_COOKIE['mybbliste']);
             $limit = $cookieArray['displayLimit'] = $mybb->input['limit'];
             $time = 60 * 60 * 24 * 2;
             my_setcookie('mybb[liste]', serialize($cookieArray), $time, true);
         } else {
-            $cookieArray= unserialize($_COOKIE['mybb[liste]']);
+            $cookieArray = unserialize($_COOKIE['mybb[liste]']);
             $limit = $cookieArray['displayLimit'];
         }
 
         // decide what to do
         if ($mybb->input['action'] == 'editItem') {
-            add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
-            if($mybb->input['step2']=='true' && editItem()==true) {
-                $message = '<p class="validation_success">'.$lang->editItemSuccessful.'</p>';
-                $content = showFullTable(null,false,$limit);
+            add_breadcrumb("{$mybb->settings["list_title"]}", THIS_SCRIPT);
+            if ($mybb->input['step2'] == 'true' && editItem() == true) {
+                $message = '<p class="validation_success">' . $lang->editItemSuccessful . '</p>';
+                $content = showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->editItem);
-                $content = showEditForm();
+                $content = showEditItemForm();
             }
-            
         } elseif ($mybb->input['action'] == 'deleteItem') {
-            add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
-            if($mybb->input['step2']=='true' && deleteData()==true) {
-                $message = '<p class="validation_success">'.$lang->deleteItemSuccessful.'</p>';
-                $content = showFullTable(null,false,$limit);
+            add_breadcrumb("{$mybb->settings["list_title"]}", THIS_SCRIPT);
+            if ($mybb->input['step2'] == 'true' && deleteItem() == true) {
+                $message = '<p class="validation_success">' . $lang->deleteItemSuccessful . '</p>';
+                $content = showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->deleteItem);
                 $content = showDeleteConfirmDialog();
             }
-            
         } elseif ($mybb->input['action'] == 'addItem') {
-            add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
-            if($mybb->input['step2']=='true' && insertNewData()==true) {
-                $message = '<p class="validation_success">'.$lang->addItemSuccessful.'</p>';
-                $content = showFullTable(null,false,$limit);
+            add_breadcrumb("{$mybb->settings["list_title"]}", THIS_SCRIPT);
+            if ($mybb->input['step2'] == 'true' && insertNewItem() == true) {
+                $message = '<p class="validation_success">' . $lang->addItemSuccessful . '</p>';
+                $content = showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->newItem);
-                $content = showNewDataForm();
+                $content = showNewItemForm();
             }
-            
-        }  elseif ($mybb->input['action'] == "setTimestamp") {
+        } elseif ($mybb->input['action'] == "setTimestamp") {
             add_breadcrumb("{$mybb->settings["list_title"]}");
             $timestamp = mktime(0, 0, 0, $mybb->input['time_monat'], $mybb->input['time_tag'], $mybb->input['time_jahr']);
-            $content = showFullTable($timestamp,true,$limit);
-            
+            $content = showFullTable($timestamp, true, $limit);
         } else {
             add_breadcrumb("{$mybb->settings["list_title"]}");
-            $content = showFullTable(null,false,$limit);
+            $content = showFullTable(null, false, $limit);
         }
-        
     } else {
         $content = '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
         $content .= '<li>' . $lang->errorNoDisplay . '</li>';
         $content .= '</ul></p></div>';
     }
-        
-    return $message.$content;
+
+    return $message . $content . '<br />';
 }
 
 /* * ********************************************************************
@@ -935,9 +784,8 @@ function getContent()
  * un/install functions of the plugin
  *
  */
-$plugins->add_hook("index_start", "plugin_show_list_index");
-$plugins->add_hook("liste_start", "plugin_show_list");
-$plugins->add_hook("admin_users_do_delete", "plugin_list_delete_user");
+$plugins->add_hook("index_start", "showListOnIndex");
+$plugins->add_hook("admin_users_do_delete", "ListDeleteUserHook");
 
 function liste_info()
 {
@@ -947,7 +795,7 @@ function liste_info()
         "website" => "http://www.malte-gerth.de/mybb.html",
         "author" => "Jan Malte Gerth",
         "authorsite" => "http://www.malte-gerth.de/",
-        "version" => "1.6.2",
+        "version" => "1.6.3",
         "compatibility" => "16*",
     );
 }
@@ -998,15 +846,89 @@ function liste_install()
         "sid" => "-1",
     );
     $db->insert_query("templates", $templateShowListe);
-/*
-    $templateShowListeBit = array(
+
+    $templateShowListTable = array(
         "tid" => "NULL",
-        "title" => "show_liste_bit",
-        "template" => "{\$content}\n",
+        "title" => "show_list_table",
+        "template" => $db->escape_string('<table border="0" cellspacing="1" cellpadding="4" class="tborder">
+    <thead>
+        <tr>
+            <td class="thead" colspan="9">
+                <form action="{$currentUrl}" method="post" style="vertical-align:center; text-align:left; float:left; width:50%;">
+                    <input type="hidden" name="action" value="setLimit" />
+                    <strong>{$lang->showOnly} <input type="text" name="limit" value="{$limit}" /> {$lang->entries}</strong>
+                    <input type="submit" name="setLimit" value="{$lang->show}" style="display:inline;"/>
+                </form>
+                <form action="{$currentUrl}" method="post" style="vertical-align:center; text-align:right; float:left; width:50%;">
+                    <input type="hidden" name="action" value="setTimestamp" />
+                    <strong>{$lang->whoIsAt} {$selectDateForm} {$lang->in} {$mybb->settings[\'list_country\']}?</strong>
+                    <input type="submit" name="setTimestamp" value="{$lang->show}" />
+                </form>
+            </td>
+        </tr>
+    </thead>
+</table>
+<table border="0" cellspacing="1" cellpadding="4" class="tborder">
+    <thead>
+        <tr>
+            <td class="thead" colspan="9">
+                <div class="expcolimage"><img src="{$mybb->settings[\'bburl\']}/{$theme[\'imgdir\']}/collapse.gif" id="liste_1_img" class="expander" alt="[-]" /></div>
+                <span style="vertical-align:center; text-align:right; float:left;">
+                    <strong>
+                        <a href="{$addItemUrl}" style="vertical-align: top;">
+                            <img src="{$mybb->settings[\'bburl\']}/images/liste/viewmag+.png" border="0" valign="center"> {$lang->addToList}
+                        </a>
+                    </strong>
+                </span>
+            </td>
+        </tr>
+    </thead>
+    <tbody style="" id="liste_1_e">
+    {$timeStampNotice}
+    <tr>
+        <td class="tcat" width="15%" align="center"><strong>{$lang->name}</strong></td>
+        <td class="tcat" width="5%" align="center"><strong>{$lang->status}</strong></td>
+        <td class="tcat" width="5%" align="center"><strong>{$lang->arrival}</strong></td>
+        <td class="tcat" width="5%" align="center"><strong>{$lang->departure}</strong></td>
+        <td class="tcat" width="15%" align="center"><strong>{$lang->airline}</strong></td>
+        <td class="tcat" width="15%" align="center"><strong>{$lang->place}</strong></td>
+        <td class="tcat" width="15%" align="center"><strong>{$lang->hotel}</strong></td>
+        <td class="tcat" width="15%" align="center"><strong>{$lang->phoneAt} {$mybb->settings[\'list_country\']}</strong></td>
+        <td class="tcat" width="2%" align="center"><strong>{$lang->action}</strong></td>
+    </tr>
+    {$tableItems}
+    <tr>
+        <td class="tcat" colspan="9">
+            <span style="vertical-align:center; text-align:left; float:right;">
+                <img src="{$mybb->settings[\'bburl\']}/images/liste/pencil.png" border="0"> = {$lang->edit}
+                <img src="{$mybb->settings[\'bburl\']}/images/liste/no.png" border="0"> = {$lang->delete}
+            </span>
+        </td>
+    </tr>
+</tbody>
+</table>'),
         "sid" => "-1",
     );
-    $db->insert_query("templates", $templateShowListeBit);
-*/
+    $db->insert_query("templates", $templateShowListTable);
+
+    $templateShowListTableBit = array(
+        "tid" => "NULL",
+        "title" => "show_list_table_bit",
+        "template" => $db->escape_string('<tr>
+    <td class="trow1">{$userlink}</td>
+    <td class="trow1">{$status}</td>
+    <td class="trow1" style="white-space: nowrap;">{$arrival}</td>
+    <td class="trow1" style="white-space: nowrap;">{$departure}</td>
+    <td class="trow1">{$airline}</td>
+    <td class="trow1">{$place}</td>
+    <td class="trow1">{$hotel}</td>
+    <td class="trow1">{$phone}</td>
+    <td class="trow1">{$actions}</td>
+</tr>'),
+        "sid" => "-1",
+    );
+    $db->insert_query("templates", $templateShowListTableBit);
+
     $dbversion = $db->get_version();
     if ($dbversion > 5) {
         $createTableQuery = "CREATE TABLE IF NOT EXISTS `" . $db->table_prefix . "liste` (
@@ -1040,7 +962,7 @@ function liste_install()
                     ) TYPE=MyISAM ;";
     }
     $db->write_query($createTableQuery);
-    
+
     /*
      * add plugin settings
      */
@@ -1061,48 +983,48 @@ function liste_install()
         "title" => "Anzeige der Liste",
         "description" => "Soll die Liste angezeigt werden?",
         "optionscode" => "yesno",
-        "value" => "yes",
+        "value" => "1",
         "disporder" => "10",
         "gid" => intval($gid)
     );
     $db->insert_query("settings", $list_1);
-    
+
     $list_2 = array(
         "sid" => "NULL",
         "name" => "keep_list",
         "title" => "Informationen behalten",
         "description" => "Sollen die gespeicherten Informationen der Aufenthalte beim Deaktivieren des Plugins erhalten bleiben?",
         "optionscode" => "yesno",
-        "value" => "yes",
+        "value" => "1",
         "disporder" => "20",
         "gid" => intval($gid)
     );
     $db->insert_query("settings", $list_2);
-    
+
     $settingOnlyVisibleForMembers = array(
         "sid" => "NULL",
         "name" => "showListOnlyForMembers",
         "title" => "Liste nur für Mitglieder anzeigen",
         "description" => "Soll die Liste nur für Mitglieder sichtbar sein?",
         "optionscode" => "yesno",
-        "value" => "yes",
+        "value" => "1",
         "disporder" => "30",
         "gid" => intval($gid)
     );
     $db->insert_query("settings", $settingOnlyVisibleForMembers);
-    
+
     $list_3 = array(
         "sid" => "NULL",
         "name" => "show_list_on_index",
         "title" => "Auf der Startseite anzeigen",
         "description" => "Soll die Liste auf der Startseite angezeigt werden?",
         "optionscode" => "yesno",
-        "value" => "no",
+        "value" => "0",
         "disporder" => "40",
         "gid" => intval($gid)
     );
     $db->insert_query("settings", $list_3);
-    
+
     $list_4 = array(
         "sid" => "NULL",
         "name" => "list_country",
@@ -1114,7 +1036,7 @@ function liste_install()
         "gid" => intval($gid)
     );
     $db->insert_query("settings", $list_4);
-    
+
     $list_5 = array(
         "sid" => "NULL",
         "name" => "list_title",
@@ -1126,7 +1048,7 @@ function liste_install()
         "gid" => intval($gid)
     );
     $db->insert_query("settings", $list_5);
-    
+
     rebuild_settings();
 }
 
@@ -1138,19 +1060,19 @@ function liste_uninstall()
     if ($mybb->settings['keep_list'] == 'no') {
         $db->drop_table('liste');
     }
-    
+
     /*
      * remove plugin settings
      */
     $db->delete_query("settings", "name IN('list_title','list_country','show_list_on_index','keep_list','show_list');");
     $db->delete_query("settinggroups", "name='liste'");
-    
+
     rebuild_settings();
-    
+
     /*
      * remove plugin templates
      */
-    $db->delete_query("templates", "title IN('show_liste','show_liste_bit')");
+    $db->delete_query("templates", "title IN('show_liste','show_liste_bit','show_list_table_bit','show_list_table')");
 }
 
 function liste_activate()
@@ -1161,6 +1083,8 @@ function liste_activate()
     find_replace_templatesets("index", '#{\$header}(\r?)(\n?)#', "{\$header}\r\n{\$liste}\r\n");
 
     find_replace_templatesets("header", '#toplinks_help}</a></li>#', "$0\n<li class=\"list_link\"><a href=\"{\$mybb->settings['bburl']}/show_list.php\"><img src=\"{\$mybb->settings[bburl]}/images/liste/list.png\" border=\"0\" alt=\"\" />Aufenthaltsliste</a></li>");
+
+    rebuild_settings();
 }
 
 function liste_deactivate()
@@ -1171,4 +1095,6 @@ function liste_deactivate()
     find_replace_templatesets("index", '#(\r?)(\n?){\$liste}(\r?)(\n?)#', "\r\n", 0);
 
     find_replace_templatesets("header", '#(\n?)<li class="list_link">(.*)</li>#', '', 0);
+
+    rebuild_settings();
 }

@@ -1,4 +1,3 @@
- 
 <?php
 
 /**
@@ -9,10 +8,19 @@
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 $l['followingErrors'] = 'The following errors occurred:';
 $l['errorNotActive'] = 'The plugin is not activated. Please activate the plugin.';
 $l['errorNoDisplay'] = 'Displaying the list ist disabled';
+$l['errorAirlineMissing'] = 'Bitte geben Sie eine Airline ein.';
+$l['errorMissingPlace'] = 'Bitte geben Sie einen Urlaubsort ein.';
+$l['errorMissingHotel'] = 'Bitte geben Sie einen Hotelnamen ein.';
+$l['errorInvalidPhoneNumber'] = 'Bitte geben Sie im Feld "Telefonnummer" nur Zahlen ein. Die Angabe der Telefonnummer ist freiwillig.';
+$l['errorAlreadyAway'] = 'Sie sind zu diesem Zeitpunkt schon unterwegs';
+$l['errorArrivalNotInFuture'] = 'Das Ankunftsdatum liegt nicht in der Zukunft.';
+$l['errorDepartureNotInFuture'] = 'Das Abflugsdatum liegt nicht in der Zukunft.';
+$l['errorArrivalNotBeforeDeparture'] = 'Das Abflugsdatum liegt vor dem Ankunftsdatum.';
+$l['errorNoPermission'] = 'Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten';
+$l['errorNoItemSelected'] = 'Es wurde kein Eintrag ausgewählt';
 
 $l['addItemSuccessful'] = 'Entry successfully added';
 $l['editItemSuccessful'] = 'Entry successfully edited';
