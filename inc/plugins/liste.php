@@ -947,7 +947,7 @@ function liste_info()
         "website" => "http://www.malte-gerth.de/mybb.html",
         "author" => "Jan Malte Gerth",
         "authorsite" => "http://www.malte-gerth.de/",
-        "version" => "1.6.1",
+        "version" => "1.6.2",
         "compatibility" => "16*",
     );
 }
