@@ -1,5 +1,12 @@
 This changelog starts with version 1.4.5
 
+Version 1.6.3 (January 6, 2012)
+    * added full language support
+    * removed unnecessary images
+    * moved HTML code to templates
+    * cleaned up the code
+    * renamed some functions
+
 Version 1.6.2 (January 6, 2012)
     * fixed display on index
     * added informal german translation
