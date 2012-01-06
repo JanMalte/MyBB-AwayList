@@ -314,7 +314,7 @@ function showNewDataForm()
  * show the edit form
  * @return the html content
  */
-function showEditDataForm()
+function showEditForm()
 {
     global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
@@ -803,7 +803,7 @@ INHALT;
         $content .= '<td class="trow1">'.$item['telefon'].'</td>';
         if ((check_user(4)) OR ($item['uid'] == $mybb->user['uid'])) {
             $content .= '<td class="trow2">
-                <a class="icon" href="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'?action=edit&data_id='.$item['data_id'].'">
+                <a class="icon" href="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'?action=editItem&data_id='.$item['data_id'].'">
                     <img src="'.$mybb->settings['bburl'].'/images/liste/pencil.png" border="0">
                 </a>
                 <a class="icon" href="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'?action=deleteItem&data_id='.$item['data_id'].'">
@@ -832,42 +832,32 @@ INHALT;
 function plugin_show_list_index()
 {
     global $db, $mybb, $templates, $headerinclude, $header, $footer, $index, $liste;
-    // show only if user is logged in
+    $lang->load("liste", false, true);
+
+    $liste = '';
     if ($mybb->user['uid'] != 0) {
-
-        if ($mybb->settings['show_list_on_index'] == 'yes') {
-            if ($mybb->settings['show_list'] == 'yes') {
-                // get the limitation
-                if ($_COOKIE['liste']) {
-                    $limit = $_COOKIE['liste'];
-                } else {
-                    $limit = 5;
-                }
-
-                // decide what to do
-                if ($_POST['action'] == 'edit_data') {
-                    $message = edit_data();
-                    $content = show_dates($message, 'default', $limit);
-                } elseif ($_GET['action'] == 'edit') {
-                    $content = show_form_edit_data();
-                } elseif ($_GET['action'] == 'delete') {
-                    $message = delete_data();
-                    $content = show_dates($message, 'default', $limit);
-                } elseif ($_GET['action'] == 'new_data') {
-                    $content = show_form_new_data();
-                } elseif ($_POST['action'] == 'insert_new_data') {
-                    $message = insert_new_data();
-                    $content = show_dates($message, 'default', $limit);
-                } else {
-                    $content = show_dates($message, 'default', $limit);
-                }
-                eval("\$liste .= \"" . $templates->get("show_liste_bit") . "\";"); // Hier wird das erstellte Template geladen
-            }
+        if ($mybb->settings['show_list_on_index'] == '1') {
+            $liste = getContent();
         }
     }
 }
 
 function plugin_show_list()
+{
+    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    $lang->load("liste", false, true);
+    
+    if ($mybb->settings['showListOnlyForMembers']=='1' && $mybb->user['uid'] == 0) {
+        error_no_permission();
+    }
+    
+    $content = getContent();
+        
+    eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+    output_page($showList);
+}
+
+function getContent()
 {
     global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
     $lang->load("liste", false, true);
@@ -890,15 +880,15 @@ function plugin_show_list()
         }
 
         // decide what to do
-        if ($mybb->input['action'] == 'editItem' && editItem()==true) {
-            add_breadcrumb("{$mybb->settings["list_title"]}");
-            $message = '<p class="validation_success">'.$lang->editItemSuccessful.'</p>';
-            $content = showFullTable(null,false,$limit);
-            
-        } elseif ($mybb->input['action'] == 'edit') {
+        if ($mybb->input['action'] == 'editItem') {
             add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
-            add_breadcrumb($lang->editItem);
-            $content = showEditDataForm();
+            if($mybb->input['step2']=='true' && editItem()==true) {
+                $message = '<p class="validation_success">'.$lang->editItemSuccessful.'</p>';
+                $content = showFullTable(null,false,$limit);
+            } else {
+                add_breadcrumb($lang->editItem);
+                $content = showEditForm();
+            }
             
         } elseif ($mybb->input['action'] == 'deleteItem') {
             add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
@@ -937,8 +927,7 @@ function plugin_show_list()
         $content .= '</ul></p></div>';
     }
         
-    eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
-    output_page($showList);
+    return $message.$content;
 }
 
 /* * ********************************************************************
@@ -1002,7 +991,6 @@ function liste_install()
 	</head>
 	<body>
 		{\$header}
-		{\$message}<br />
 		{\$content}
 		{\$footer}
 	</body>
@@ -1010,15 +998,15 @@ function liste_install()
         "sid" => "-1",
     );
     $db->insert_query("templates", $templateShowListe);
-
+/*
     $templateShowListeBit = array(
         "tid" => "NULL",
         "title" => "show_liste_bit",
-        "template" => "{\$message}<br />\n{\$content}<br />\n",
+        "template" => "{\$content}\n",
         "sid" => "-1",
     );
     $db->insert_query("templates", $templateShowListeBit);
-
+*/
     $dbversion = $db->get_version();
     if ($dbversion > 5) {
         $createTableQuery = "CREATE TABLE IF NOT EXISTS `" . $db->table_prefix . "liste` (
