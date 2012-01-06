@@ -31,7 +31,7 @@ if (!$pluginsCache) {
 if (array_key_exists('liste', $pluginsCache['active']) &&
     $pluginsCache['active']['liste'] == 'liste') {
 
-    if ($mybb->settings['showListOnlyForMembers']=='yes' && $mybb->user['uid'] == 0) {
+    if ($mybb->settings['showListOnlyForMembers']=='1' && $mybb->user['uid'] == 0) {
         error_no_permission();
     } else {
         plugin_show_list();
@@ -46,7 +46,6 @@ if (array_key_exists('liste', $pluginsCache['active']) &&
     $content .= '<li>' . $lang->errorNotActive . '</li>';
     $content .= '</ul></p>';
     $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-    eval("\$content .= \"" . $templates->get("footer") . "\";");
 
     eval("\$showList = \"" . $templates->get("show_liste") . "\";");
     output_page($showList);

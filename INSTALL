@@ -1,13 +1,17 @@
 INSTALL
 
 To install the plugin do the following steps:
-
-1.	unpack the *.tar.gz
-2.	copy the included files and folders to the ROOT of your MyBB
-3.	go to the ACP and activate the plugin
-4.	set the correct settings for you in the ACP in the settingsgroup called "Aufenthaltsliste"
-5.	you're done
+    1. unpack the *.zip
+    2. copy the included files and folders to the ROOT of your MyBB
+    3. go to the ACP and install/activate the plugin
+    4. adjust the settings in the settings group called "Aufenthaltsliste"
+    5. you're done
+    
+    
+UNINSTALL
 
 To uninstall the plugin do the following steps:
-
-1. deactivate the plugin, that should be all
+    1. uninstall the plugin, that should be all
+    OR
+    1. if you want to clear the user data, set "Informationen behalten" to no in the settings
+    2. uninstall the plugin, that should be all

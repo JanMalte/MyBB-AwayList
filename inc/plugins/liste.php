@@ -12,14 +12,14 @@ if (!defined("IN_MYBB")) {
     die("Direct initialization of this file is not allowed.<br /><br />Please make sure IN_MYBB is defined.");
 }
 
-// functions for the date forms
+class ShowDates {
 /**
  * shows the days and select the given day
  * @param $P_name the name of the select
  * @param $P_day the selected day
  * @return the HTML of the select part of the form
  */
-function show_days($P_name, $P_day = false)
+public static function show_days($P_name, $P_day = false)
 {
     // if the selected day isn't given set it to the actual day
     if ($P_day == false)
@@ -62,7 +62,7 @@ function show_days($P_name, $P_day = false)
  * @param $P_month the selected month
  * @return the HTML of the select part of the form
  */
-function show_months($P_name, $P_month = false)
+public static function show_months($P_name, $P_month = false)
 {
     // if the selected month isn't given set it to the actual month
     if ($P_month == false)
@@ -105,7 +105,7 @@ function show_months($P_name, $P_month = false)
  * @param $P_year the selected year
  * @return the select part of the form
  */
-function show_years($P_name, $P_year = false)
+public static function show_years($P_name, $P_year = false)
 {
     // if the selected year isn't given set it to the actual year
     if ($P_year == false)
@@ -142,7 +142,7 @@ function show_years($P_name, $P_year = false)
  * @param $PARAM_former_date the date after which the date can be given in the following format (dd.mm.yyyy)
  * @return boolean if date is in the future
  */
-function check_future_date_old_old($P_date_day, $P_date_month, $P_date_year, $P_former_date_day=false, $P_former_date_month=false, $P_former_date_year=false)
+public static function check_future_date_old_old($P_date_day, $P_date_month, $P_date_year, $P_former_date_day=false, $P_former_date_month=false, $P_former_date_year=false)
 {
     if ($PARAM_former_date_day == false)
         $PARAM_former_date_day = date("d");
@@ -165,7 +165,7 @@ function check_future_date_old_old($P_date_day, $P_date_month, $P_date_year, $P_
  * @param $P_second_date the date, after which the date can be given, as a unixtimestamp
  * @return boolean if date is in the future
  */
-function check_future_date($P_first_date, $P_second_date=false)
+public static function check_future_date($P_first_date, $P_second_date=false)
 {
     // if the second date isn't set, set it to the actual unixtimestamp
     if ($P_second_date == false)
@@ -178,6 +178,7 @@ function check_future_date($P_first_date, $P_second_date=false)
     }
 }
 
+}
 // check the user rights
 /**
  * checks if the user is in one of the allowed usergroups
@@ -230,12 +231,9 @@ function check_user($P_allowed = false)
  */
 function escape_string($string)
 {
-    if (function_exists("mysql_real_escape_string")) {
-        $string = mysql_real_escape_string($string);
-    } else {
-        $string = addslashes($string);
-    }
-    return $string;
+    global $db;
+    
+    return $db->escape_string($string);
 }
 
 /* * ********************************************************************
@@ -245,849 +243,583 @@ function escape_string($string)
  */
 
 /**
- * shows the insert form for a new date
+ * shows the insert form for a new item
  * @return the html content
  */
-function show_form_new_data()
+function showNewDataForm()
 {
-    // get and set the global content
-    global $db, $mybb, $templates;
+    global $db, $mybb, $lang, $templates;
+    $lang->load("liste", false, true);
 
-    // get the information of the plugin
-    $info = liste_info();
-
-    // check the userrights
-    if ($mybb->user['uid'] == 0)
-        $errors[] = "Sie sind nicht angemeldet. Bitt melden Sie sich an bevor Sie sich in die Liste eintragen.";
-
-    // if any error occurred
-    if (isset($errors)) {
-        $content = '		<center>
-			<img src="' . $mybb->settings['bburl'] . '/images/liste/file_broken.png" border="0">
-			<p class="active">
-				Folgende Fehler sind aufgetreten:
-			</p>
-			<ul style="list-style-image:url(' . $mybb->settings['bburl'] . '/images/liste/messagebox_warning.png); align:center; list-style-position:outside;">';
-        // add every error to the displayed list
-        foreach ($errors as $error) {
-            $content .= '			<li style="align:center;">' . $error . '</li>';
-        }
-        $content .= '			</ul><br />
-			<a href="javascript:history.back()">
-				<img src="' . $mybb->settings['bburl'] . '/images/liste/undo.png" border="0">
-			</a>
-		</center>
-	<!-- end: show_list -->';
-        // render the output
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        // output the page
-        output_page($show_liste);
-        exit;
-    }
-
-    $content = <<<INHALT
-	<form action="{$mybb->settings["bburl"]}/show_list.php" method="post">
-		<input type="hidden" name="action" value="insert_new_data" />
-		<table border="0" cellspacing="1" cellpadding="4" class="tborder">
-			<thead>
-				<tr>
-					<td class="thead" colspan="2">
-						<div><strong>In die Liste eintragen</strong><br /><div class="smalltext"></div></div>
-					</td>
-				</tr>
-			</thead>
-			<tbody style="" id="cat_1_e">
-				<td class="tcat"><b>Ankunft:</b>*</td>
-				<td class="tcat">
-INHALT
-    ;
+    $content = '
+	<form action="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'" method="post">
+            <input type="hidden" name="action" value="addItem" />
+            <input type="hidden" name="step2" value="true" />
+            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
+                <thead>
+                    <tr>
+                        <td class="thead" colspan="2">
+                            <div><strong>'.$lang->addToList.'</strong><br /><div class="smalltext"></div></div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody style="" id="cat_1_e">
+                    <tr>
+                        <td class="trow1"><b>'.$lang->arrival.':</b>*</td>
+                        <td class="trow1">';
     // Ankunft (Hinflug)
-    $content .= show_days("ankunft_tag");
-    $content .= show_months("ankunft_monat");
-    $content .= show_years("ankunft_jahr");
+    $content .= ShowDates::show_days("ankunft_tag");
+    $content .= ShowDates::show_months("ankunft_monat");
+    $content .= ShowDates::show_years("ankunft_jahr");
     $content .= '
 		  </td>
 		</tr>
 		<tr>
-		  <td class="tcat"><b>Abflug:</b>*</td>
-		  <td class="tcat">';
+		  <td class="trow2"><b>'.$lang->departure.':</b>*</td>
+		  <td class="trow2">';
     // Abflug (Rückflug)
-    $content .= show_days("abflug_tag");
-    $content .= show_months("abflug_monat");
-    $content .= show_years("abflug_jahr");
-    $content .= <<<INHALT
+    $content .= ShowDates::show_days("abflug_tag");
+    $content .= ShowDates::show_months("abflug_monat");
+    $content .= ShowDates::show_years("abflug_jahr");
+    $content .= '
 		  </td>
 		</tr>
 		<tr>
-		  <td class="tcat"><b>Airline:</b>*</td>
-		  <td class="tcat"><input type="text" name="airline" size="40" maxlength="20" /></td>
+		  <td class="trow1"><b>'.$lang->airline.':</b>*</td>
+		  <td class="trow1"><input type="text" name="airline" size="40" maxlength="20" /></td>
 		</tr>
 		<tr>
-		  <td class="tcat"><b>Urlaubsort:</b>*</td>
-		  <td class="tcat"><input type="text" name="ort" size="40" maxlength="20" /></td>
+		  <td class="trow2"><b>'.$lang->place.':</b>*</td>
+		  <td class="trow2"><input type="text" name="place" size="40" maxlength="20" /></td>
 		</tr>
 		<tr>
-		  <td class="tcat"><b>Hotel:</b>*</td>
-		  <td class="tcat"><input type="text" name="hotel" size="40" maxlength="20" /></td>
+		  <td class="trow1"><b>'.$lang->hotel.':</b>*</td>
+		  <td class="trow1"><input type="text" name="hotel" size="40" maxlength="20" /></td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>Telefon:</b></td>
-		  <td class="trow2"><input type="text" name="telefon" size="25" maxlength="15" /></td>
+		  <td class="trow2"><b>'.$lang->phoneAt.' '.$mybb->settings["list_country"].':</b></td>
+		  <td class="trow2"><input type="text" name="phone" size="25" maxlength="15" /></td>
 		</tr>
 		<tr>
-		  <td class="tcat" colspan="2">* = Pflichtfelder</td>
+		  <td class="trow1">* = '.$lang->requiredFields.'</td>
+		  <td class="trow1"><input type="submit" name="addItem" value="'.$lang->addToList.'"></td>
 		</tr>
-		<tr>
-		  <td class="trow1" colspan="2"><input type="submit" value="Daten in die Liste eintragen"></td>
-		</tr>
-
-			<tr>
-                <td class="tcat" colspan="1"><span><strong>Aufenthaltsliste (Version {$info['version']}) by <i><a href="http://www.malte-gerth.de/mybb.html" target="_blank">Jan Malte Gerth</a></i></strong></span></td>
-                <td class="tcat" colspan="1"></td>
-            </tr>
-		</tbody>
+            </tbody>
 	  </table>
-	</form>
-INHALT
-    ;
+	</form>';
     return $content;
 }
 
 /**
- * shows the editing form for the existing date
+ * show the edit form
  * @return the html content
  */
-function show_form_edit_data()
+function showEditDataForm()
 {
-    // get and set the global content
-    global $db, $mybb, $templates;
+    global $db, $mybb, $lang, $templates;
+    $lang->load("liste", false, true);
 
-    // get the data of the insert
-    $result = $db->simple_select("liste", '*', "data_id = '" . $_GET['data_id'] . "'");
-    $insertdata = $db->fetch_array($result);
+    $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
+    $item = $db->fetch_array($query);
 
-    // get the information of the plugin
-    $info = liste_info();
-
-    // check the userrights
-    if ($mybb->user['uid'] == 0)
-        $errors[] = "Sie sind nicht angemeldet. Bitt melden Sie sich an bevor Sie Einträge ändern.";
-    if ($insertdata['uid'] != $mybb->user['uid']) {
-        if ((!check_user(4))) {
-            $errors[] = "Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten";
-        }
+    
+    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
+        $errors[] = "Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten";
     }
-    if ($_GET['data_id'] == '')
+    if ($mybb->input['data_id'] == '') {
         $errors[] = "Es wurde kein Datensatz zum Bearbeiten ausgewählt.";
-
+    }
+    
     // if any error occurred
     if (isset($errors)) {
-        $content = '		<center>
-			<img src="' . $mybb->settings['bburl'] . '/images/liste/file_broken.png" border="0">
-			<p class="active">
-				Folgende Fehler sind aufgetreten:
-			</p>
-			<ul style="list-style-image:url(' . $mybb->settings['bburl'] . '/images/liste/messagebox_warning.png); align:center; list-style-position:outside;">';
-        // add every error to the displayed list
+        add_breadcrumb($lang->editItem);
+        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content .= '<p><ul>';
         foreach ($errors as $error) {
-            $content .= '			<li style="align:center;">' . $error . '</li>';
+            $content .= '<li>' . $error . '</li>';
         }
-        $content .= '			</ul><br />
-			<a href="javascript:history.back()">
-				<img src="' . $mybb->settings['bburl'] . '/images/liste/undo.png" border="0">
-			</a>
-		</center>
-	<!-- end: show_list -->';
-        // render the output
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        // output the page
-        output_page($show_liste);
+        $content .= '</ul></p>';
+        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
+        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
+        output_page($showListe);
         exit;
     }
-    $content = <<<INHALT
-<form action="{$mybb->settings["bburl"]}/show_list.php" method="post">
-	<input type="hidden" name="action" value="edit_data" />
-	<input type="hidden" name="data_id" value="{$insertdata['data_id']}" />
-	<table border="0" cellspacing="1" cellpadding="4" class="tborder">
-		<thead>
-			<tr>
-				<td class="thead" colspan="2">
-					<div><strong>Eintrag editieren</strong><br /><div class="smalltext"></div></div>
-				</td>
-			</tr>
-		</thead>
-		<tbody style="" id="cat_1_e">
-			<tr>
-			<td class="tcat"><b>Ankunft:</b>*</td>
-			<td class="tcat">
-INHALT
-    ;
+    $content = '
+	<form action="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'" method="post">
+            <input type="hidden" name="action" value="editItem" />
+            <input type="hidden" name="step2" value="true" />
+            <input type="hidden" name="data_id" value="'.$item['data_id'].'" />
+            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
+                <thead>
+                    <tr>
+                        <td class="thead" colspan="2">
+                            <div><strong>'.$lang->editItem.'</strong><br /><div class="smalltext"></div></div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody style="" id="cat_1_e">
+                    <tr>
+                        <td class="trow1"><b>'.$lang->arrival.':</b>*</td>
+                        <td class="trow1">';
     // Ankunft (Hinflug)
-    $content .= show_days("ankunft_tag", date("d", $insertdata['ankunft']));
-    $content .= show_months("ankunft_monat", date("m", $insertdata['ankunft']));
-    $content .= show_years("ankunft_jahr", date("Y", $insertdata['ankunft']));
+    $content .= ShowDates::show_days("ankunft_tag",date('d',$item['ankunft']));
+    $content .= ShowDates::show_months("ankunft_monat",date('m',$item['ankunft']));
+    $content .= ShowDates::show_years("ankunft_jahr",date('Y',$item['ankunft']));
     $content .= '
-			</td>
-			</tr>
-			<tr>
-			<td class="tcat"><b>Abflug:</b>*</td>
-			<td class="tcat">';
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>'.$lang->departure.':</b>*</td>
+		  <td class="trow2">';
     // Abflug (Rückflug)
-    $content .= show_days("abflug_tag", date("d", $insertdata['abflug']));
-    $content .= show_months("abflug_monat", date("m", $insertdata['abflug']));
-    $content .= show_years("abflug_jahr", date("Y", $insertdata['abflug']));
-    $content .= <<<INHALT
-			</td>
-			</tr>
-			<tr>
-			<td class="tcat"><b>Airline:</b>*</td>
-			<td class="tcat"><input type="text" name="airline" value="{$insertdata['airline']}" size="40" maxlenght="2" /></td>
-			</tr>
-			<tr>
-			<td class="tcat"><b>Urlaubsort:</b>*</td>
-			<td class="tcat"><input type="text" name="ort" value="{$insertdata['ort']}" size="40" maxlength="20" /></td>
-			</tr>
-			<tr>
-			<td class="tcat"><b>Hotel:</b>*</td>
-			<td class="tcat"><input type="text" name="hotel" value="{$insertdata['hotel']}" size="40" maxlength="20" /></td>
-			</tr>
-			<tr>
-			<td class="trow2"><b>Telefon:</b></td>
-			<td class="trow2"><input type="text" name="telefon" value="{$insertdata['telefon']}" size="25" maxlength="15" /></td>
-			</tr>
-			<tr>
-			<td class="tcat" colspan="2">* = Pflichtfelder</td>
-			</tr>
-			<tr>
-			<td class="trow1" colspan="2"><input type="submit" value="Eintrag editieren"></td>
-			</tr>
-			<tr>
-                <td class="tcat" colspan="1"><span><strong>Aufenthaltsliste (Version {$info['version']}) by <i><a href="http://www.malte-gerth.de/mybb.html" target="_blank">Jan Malte Gerth</a></i></strong></span></td>
-                <td class="tcat" colspan="1"></td>
-            </tr>
-		</tbody>
-	</table>
-</form>
-INHALT
-    ;
+    $content .= ShowDates::show_days("abflug_tag",date('d',$item['abflug']));
+    $content .= ShowDates::show_months("abflug_monat",date('m',$item['abflug']));
+    $content .= ShowDates::show_years("abflug_jahr",date('Y',$item['abflug']));
+    $content .= '
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>'.$lang->airline.':</b>*</td>
+		  <td class="trow1"><input type="text" name="airline" size="40" maxlength="20" value="'.$item['airline'].'" /></td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>'.$lang->place.':</b>*</td>
+		  <td class="trow2"><input type="text" name="place" size="40" maxlength="20" value="'.$item['ort'].'" /></td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>'.$lang->hotel.':</b>*</td>
+		  <td class="trow1"><input type="text" name="hotel" size="40" maxlength="20" value="'.$item['hotel'].'" /></td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>'.$lang->phoneAt.' '.$mybb->settings["list_country"].':</b></td>
+		  <td class="trow2"><input type="text" name="phone" size="25" maxlength="15" value="'.$item['telefon'].'" /></td>
+		</tr>
+		<tr>
+		  <td class="trow1">* = '.$lang->requiredFields.'</td>
+		  <td class="trow1"><input type="submit" name="editItem" value="'.$lang->editItem.'"></td>
+		</tr>
+            </tbody>
+	  </table>
+	</form>';
     return $content;
 }
 
 /**
- * insert the new date
- * @return boolean if successful
+ * insert the new item
  */
-function insert_new_data()
+function insertNewData()
 {
-    // get and set the global content
-    global $db, $mybb, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    $lang->load("liste", false, true);
 
-    // get the information of the plugin
-    $info = liste_info();
-
-    // check the userrights
-    if ($mybb->user['uid'] == 0)
-        $errors[] = "Sie sind nicht angemeldet. Bitt melden Sie sich an bevor Sie sich in die Liste eintragen.";
-
-    // get any other errors
-    if ($_POST['airline'] == "")
+    // TODO add language support
+    if ($mybb->input['airline'] == "")
         $errors[] = "Bitte geben Sie eine Airline ein.";
-    if ($_POST['ort'] == "")
+    if ($mybb->input['place'] == "")
         $errors[] = "Bitte geben Sie einen Urlaubsort ein.";
-    if ($_POST['hotel'] == "")
-        $errosr[] = "Bitte geben Sie einen Hotelnamen ein.";
-    if (preg_match("/^[0-9[:space:]]*$/", $_POST['telefon'], $number)) {
+    if ($mybb->input['hotel'] == "")
+        $errors[] = "Bitte geben Sie einen Hotelnamen ein.";
+    if (preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'], $number)) {
         unset($number);
     } else {
         $errors[] = 'Bitte geben Sie im Feld "Telefonnummer" nur Zahlen ein. Die Angabe der Telefonnummer ist freiwillig.';
     }
-    // Ankunft (Hinflug)
-    $ankunft = mktime(0, 0, 0, $_POST['ankunft_monat'], $_POST['ankunft_tag'], $_POST['ankunft_jahr']);
-    // Abflug (Rückflug)
-    $abflug = mktime(0, 0, 0, $_POST['abflug_monat'], $_POST['abflug_tag'], $_POST['abflug_jahr']);
+    $arrival = mktime(0, 0, 0, $mybb->input['ankunft_monat'], $mybb->input['ankunft_tag'], $mybb->input['ankunft_jahr']);
+    $departure = mktime(0, 0, 0, $mybb->input['abflug_monat'], $mybb->input['abflug_tag'], $mybb->input['abflug_jahr']);
+    
     $check = true;
-    // Plausibilitätsprüfung
-    $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$ankunft' AND '$abflug' ) OR ( abflug  BETWEEN '$ankunft' AND '$abflug' ) OR (ankunft >= $ankunft AND abflug <= $abflug) )");
+    $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$arrival' AND '$departure' ) OR ( abflug  BETWEEN '$arrival' AND '$departure' ) OR (ankunft >= $arrival AND abflug <= $departure) )");
     while ($result = $db->fetch_array($query)) {
         $check = false;
     }
     if ($check == false)
         $errors[] = "Sie sind zu diesem Zeitpunkt schon unterwegs";
-    // Ankunft (Hinflug)
-    if (!check_future_date($ankunft))
+
+    if (!ShowDates::check_future_date($arrival))
         $errors[] = "Das Ankunftsdatum liegt nicht in der Zukunft.";
-    // Abflug (Rückflug)
-    if (!check_future_date($abflug))
+    if (!ShowDates::check_future_date($departure))
         $errors[] = "Das Abflugsdatum liegt nicht in der Zukunft.";
-    if (!check_future_date($abflug, $ankunft))
+    if (!ShowDates::check_future_date($departure, $arrival))
         $errors[] = "Das Abflugsdatum liegt vor dem Ankunftsdatum";
 
     // if any error occurred
     if (isset($errors)) {
-        $content = '		<center>
-			<img src="' . $mybb->settings['bburl'] . '/images/liste/file_broken.png" border="0">
-			<p class="active">
-				Folgende Fehler sind aufgetreten:
-			</p>
-			<ul style="list-style-image:url(' . $mybb->settings['bburl'] . '/images/liste/messagebox_warning.png); align:center; list-style-position:outside;">';
-        // add every error to the displayed list
+        add_breadcrumb("Neuer Eintrag");
+        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content .= '<p><ul>';
         foreach ($errors as $error) {
-            $content .= '			<li style="align:center;">' . $error . '</li>';
+            $content .= '<li>' . $error . '</li>';
         }
-        $content .= '			</ul><br />
-			<a href="javascript:history.back()">
-				<img src="' . $mybb->settings['bburl'] . '/images/liste/undo.png" border="0">
-			</a>
-		</center>
-	<!-- end: show_list -->';
-        // render the output
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        // output the page
-        output_page($show_liste);
+        $content .= '</ul></p>';
+        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
+        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
+        output_page($showListe);
         exit;
     }
-
-    // if no errors occurred we can insert the new data
-    foreach ($_POST as $data => $value) {
-        $$data = escape_string($value);
-    }
-    // Ankunft (Hinflug)
-    // Abflug (Rückflug)
+    
     $insertData = array(
         'id' => '',
         'uid' => $mybb->user['uid'],
         'username' => $mybb->user['username'],
-        'ankunft' => $ankunft,
-        'abflug' => $abflug,
-        'airline' => $airline,
-        'ort' => $ort,
-        'hotel' => $hotel,
-        'telefon' => $telefon,
+        'ankunft' => escape_string($arrival),
+        'abflug' => escape_string($departure),
+        'airline' => escape_string($mybb->input['airline']),
+        'ort' => escape_string($mybb->input['place']),
+        'hotel' => escape_string($mybb->input['hotel']),
+        'telefon' => escape_string($mybb->input['phone']),
         'data_id' => '',
         'sort_id' => ''
     );
     $db->insert_query('liste', $insertData);
-    // set a message which should be displayed
-    $message = '<div class="bottommenu">
-					<img src="' . $mybb->settings['bburl'] . '/images/liste/button_ok.png" border="0"><strong>Daten wurden erfolgreich eingetragen</strong><br />
-					<b>Hinweis:</b> Der Eintrag wird 1 Tag nach Ihrem Abflug automatisch aus der Liste entfernt.
-				</div>';
-    return $message;
+
+    return true;
 }
 
 /**
- * update the date
+ * update the item
  * @return boolean if successful
  */
-function edit_data()
+function editItem()
 {
-    // get and set the global content
-    global $db, $mybb, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
 
-    // get the information of the plugin
-    $info = liste_info();
 
-    // escape the posted data
-    foreach ($_POST as $data => $value) {
-        $$data = escape_string($value);
-    }
-
-    // check the userrights
-    if ($mybb->user['uid'] == 0)
-        $errors[] = "Sie sind nicht angemeldet. Bitt melden Sie sich an bevor Sie Einträge ändern.";
-
-    $query_user = $db->simple_select("liste", "*", "data_id='{$data_id}'");
-    $old_data = $db->fetch_array($query_user);
-
-    if ($old_data['uid'] != $mybb->user['uid']) {
-        if (!check_user(4)) {
-            $errors[] = "Dieser Datensatz gehört nicht zu dir. Du darfst ihn nicht editieren";
-        }
-    }
-
-    // get any other errors
-    if ($_POST['data_id'] == "")
-        $errors[] = "Es wurde kein Datensatz gewählt.";
-    if ($_POST['airline'] == "")
+    // TODO add language support
+    if ($mybb->input['airline'] == "")
         $errors[] = "Bitte geben Sie eine Airline ein.";
-    if ($_POST['ort'] == "")
+    if ($mybb->input['place'] == "")
         $errors[] = "Bitte geben Sie einen Urlaubsort ein.";
-    if ($_POST['hotel'] == "")
-        $errosr[] = "Bitte geben Sie einen Hotelnamen ein.";
-    if (preg_match("/^[0-9[:space:]]*$/", $_POST['telefon'], $number)) {
+    if ($mybb->input['hotel'] == "")
+        $errors[] = "Bitte geben Sie einen Hotelnamen ein.";
+    if (preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'], $number)) {
         unset($number);
     } else {
         $errors[] = 'Bitte geben Sie im Feld "Telefonnummer" nur Zahlen ein. Die Angabe der Telefonnummer ist freiwillig.';
     }
-    // Plausibilitätsprüfung
-    // Ankunft (Hinflug)
-    $ankunft = mktime(0, 0, 0, $_POST['ankunft_monat'], $_POST['ankunft_tag'], $_POST['ankunft_jahr']);
-    // Abflug (Rückflug)
-    $abflug = mktime(0, 0, 0, $_POST['abflug_monat'], $_POST['abflug_tag'], $_POST['abflug_jahr']);
-    // Ankunft (Hinflug)
-    if ($old_data['ankunft'] != $ankunft) {
-        if (!check_future_date($ankunft))
-            $errors[] = "Das Ankunftsdatum liegt nicht in der Zukunft.";
+    $arrival = mktime(0, 0, 0, $mybb->input['ankunft_monat'], $mybb->input['ankunft_tag'], $mybb->input['ankunft_jahr']);
+    $departure = mktime(0, 0, 0, $mybb->input['abflug_monat'], $mybb->input['abflug_tag'], $mybb->input['abflug_jahr']);
+    
+    $check = true;
+    $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$arrival' AND '$departure' ) OR ( abflug  BETWEEN '$arrival' AND '$departure' ) OR (ankunft >= $arrival AND abflug <= $departure) )");
+    while ($result = $db->fetch_array($query)) {
+        if($result['data_id']!=$mybb->input['data_id'])
+            $check = false;
     }
-    // Abflug (Rückflug)
-    if ($old_data['abflug'] != $abflug) {
-        if (!check_future_date($abflug))
-            $errors[] = "Das Abflugsdatum liegt nicht in der Zukunft.";
-        if (!check_future_date($abflug, $ankunft))
-            $errors[] = "Das Abflugsdatum liegt vor dem Ankunftsdatum";
-    }
+    if ($check == false)
+        $errors[] = "Sie sind zu diesem Zeitpunkt schon unterwegs";
+
+    #if (!ShowDates::check_future_date($arrival))
+    #    $errors[] = "Das Ankunftsdatum liegt nicht in der Zukunft.";
+    if (!ShowDates::check_future_date($departure))
+        $errors[] = "Das Abflugsdatum liegt nicht in der Zukunft.";
+    if (!ShowDates::check_future_date($departure, $arrival))
+        $errors[] = "Das Abflugsdatum liegt vor dem Ankunftsdatum";
 
     // if any error occurred
     if (isset($errors)) {
-        $content = '		<center>
-			<img src="' . $mybb->settings['bburl'] . '/images/liste/file_broken.png" border="0">
-			<p class="active">
-				Folgende Fehler sind aufgetreten:
-			</p>
-			<ul style="list-style-image:url(' . $mybb->settings['bburl'] . '/images/liste/messagebox_warning.png); align:center; list-style-position:outside;">';
-        // add every error to the displayed list
+        add_breadcrumb("Neuer Eintrag");
+        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content .= '<p><ul>';
         foreach ($errors as $error) {
-            $content .= '			<li style="align:center;">' . $error . '</li>';
+            $content .= '<li>' . $error . '</li>';
         }
-        $content .= '			</ul><br />
-			<a href="javascript:history.back()">
-				<img src="' . $mybb->settings['bburl'] . '/images/liste/undo.png" border="0">
-			</a>
-		</center>
-	<!-- end: show_list -->';
-        // render the output
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        // output the page
-        output_page($show_liste);
+        $content .= '</ul></p>';
+        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
+        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
+        output_page($showListe);
         exit;
     }
-    foreach ($_POST as $data => $value) {
-        $$data = escape_string($value);
-    }
-    // Ankunft (Hinflug)
-    // Abflug (Rückflug)
-
+    
     $insertData = array(
-        'ankunft' => $ankunft,
-        'abflug' => $abflug,
-        'airline' => $airline,
-        'ort' => $ort,
-        'hotel' => $hotel,
-        'telefon' => $telefon
+        'ankunft' => escape_string($arrival),
+        'abflug' => escape_string($departure),
+        'airline' => escape_string($mybb->input['airline']),
+        'ort' => escape_string($mybb->input['place']),
+        'hotel' => escape_string($mybb->input['hotel']),
+        'telefon' => escape_string($mybb->input['phone']),
     );
-    $db->update_query('liste', $insertData, "data_id = '{$data_id}'");
+    $db->update_query('liste', $insertData, "data_id = '{$mybb->input['data_id']}'");
 
-    // set a message which should be displayed
-    $message = '<div class="bottommenu"><img src="' . $mybb->settings['bburl'] . '/images/liste/button_ok.png" border="0"><strong>Daten wurden erfolgreich geändert</strong></div>';
-    return $message;
+    return true;
 }
 
 /**
- * shows which insert should be deleted
  * @return the html message
  */
-function delete_data_notification()
+function showDeleteConfirmDialog()
 {
-    // get and set the global content
-    global $db, $mybb, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $templates;
+    $lang->load("liste", false, true);
 
-    // get the information of the plugin
-    $info = liste_info();
-
-    // escape the posted data
-    foreach ($_GET as $data => $value) {
-        $$data = escape_string($value);
+    $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
+    $item = $db->fetch_array($query);
+    
+    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
+        $errors[] = "Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten";
     }
-
-    // check the userrights
-    if ($mybb->user['uid'] == 0)
-        $errors[] = "Sie sind nicht angemeldet. Bitt melden Sie sich an bevor Sie Einträge löschen.";
-    $query_data = $db->simple_select("liste", "*", "data_id='{$data_id}'");
-    $insert_data = $db->fetch_array($query_data);
-
-    if ($insert_data['uid'] != $mybb->user['uid']) {
-        if (!check_user(4)) {
-            $errors[] = "Dieser Datensatz gehört nicht zu Ihnen. Sie dürfen ihn nicht löschen";
-        }
+    if ($mybb->input['data_id'] == '') {
+        $errors[] = "Es wurde kein Datensatz zum Löschen ausgewählt.";
     }
-
-    // get any other errors
-    if ($_GET['data_id'] == "")
-        $errors[] = "Es wurde kein Datensatz gewählt.";
-
+    
     // if any error occurred
     if (isset($errors)) {
-        $content = '		<center>
-			<img src="' . $mybb->settings['bburl'] . '/images/liste/file_broken.png" border="0">
-			<p class="active">
-				Folgende Fehler sind aufgetreten:
-			</p>
-			<ul style="list-style-image:url(' . $mybb->settings['bburl'] . '/images/liste/messagebox_warning.png); align:center; list-style-position:outside;">';
-        // add every error to the displayed list
+        add_breadcrumb($lang->deleteItem);
+        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content .= '<p><ul>';
         foreach ($errors as $error) {
-            $content .= '			<li style="align:center;">' . $error . '</li>';
+            $content .= '<li>' . $error . '</li>';
         }
-        $content .= '			</ul><br />
-			<a href="javascript:history.back()">
-				<img src="' . $mybb->settings['bburl'] . '/images/liste/undo.png" border="0">
-			</a>
-		</center>
-	<!-- end: show_list -->';
-        // render the output
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        // output the page
-        output_page($show_liste);
+        $content .= '</ul></p>';
+        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
+        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
+        output_page($showListe);
         exit;
     }
-
-    $content = <<<INHALT
-<form action="{$mybb->settings["list_path"]}" method="post">
-	<input type="hidden" name="action" value="delete" />
-	<input type="hidden" name="data_id" value="{$insert_data['data_id']}" />
-	<input type="hidden" name="uid" value="{$insert_data['uid']}" />
-	<table border="0" cellspacing="1" cellpadding="4" class="tborder">
-		<thead>
-			<tr>
-				<td class="thead" colspan="6">
-					<div><strong>Soll dieser Eintrag gelöscht werden?</strong><br /><div class="smalltext"></div></div>
-				</td>
-			</tr>
-		</thead>
-		<tbody style="" id="cat_1_e">
-			<tr>
-				<td class="tcat" width="5%" align="center"><strong>Ankunft</strong></td>
-				<td class="tcat" width="5%" align="center"><strong>Abflug</strong></td>
-				<td class="tcat" width="15%" align="center"><strong>Airline</strong></td>
-				<td class="tcat" width="15%" align="center"><strong>Urlaubsort</strong></td>
-				<td class="tcat" width="15%" align="center"><strong>Hotel</strong></td>
-				<td class="tcat" width="15%" align="center"><strong>Telefon</strong></td>
-			</tr>
-	<!-- start: liste -->
-			<tr>
-INHALT
-    ;
+    $content = '
+	<form action="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'" method="post">
+            <input type="hidden" name="action" value="deleteItem" />
+            <input type="hidden" name="step2" value="true" />
+            <input type="hidden" name="data_id" value="'.$item['data_id'].'" />
+            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
+                <thead>
+                    <tr>
+                        <td class="thead" colspan="2">
+                            <div><strong>'.$lang->deleteItem.'</strong><br /><div class="smalltext"></div></div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody style="" id="cat_1_e">
+                    <tr>
+                        <td class="trow1"><b>'.$lang->arrival.':</b></td>
+                        <td class="trow1">';
     // Ankunft (Hinflug)
-    $content .= "<td class=\"trow1\">" . date("d.m.Y", $insert_data['ankunft']) . "</td>\n";
+    $content .= date('d.m.Y',$item['ankunft']);
+    $content .= '
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>'.$lang->departure.':</b></td>
+		  <td class="trow2">';
     // Abflug (Rückflug)
-    $content .= "<td class=\"trow1\">" . date("d.m.Y", $insert_data['abflug']) . "</td>\n";
-    $content .= <<<INHALT
-				<td class="trow1">{$insert_data['airline']}</td>
-				<td class="trow1">{$insert_data['ort']}</td>
-				<td class="trow1">{$insert_data['hotel']}</td>
-				<td class="trow1">{$insert_data['telefon']}</td>
-			</tr>
-			<tr>
-				<td class="trow2" colspan="6"><input type="submit" value="Löschen bestätigen"></td>
-			</tr>
-			<tr>
-                <td class="tcat" colspan="5"><span><strong>Aufenthaltsliste (Version {$info['version']}) by <i><a href="http://www.malte-gerth.de/mybb.html" target="_blank">Jan Malte Gerth</a></i></strong></span></td>
-                <td class="tcat" colspan="4"></td>
-            </tr>
-		</tbody>
-	</table>
-</form>
-INHALT
-    ;
+    $content .= date('d.m.Y',$item['abflug']);
+    $content .= '
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>'.$lang->airline.':</b></td>
+		  <td class="trow1">'.$item['airline'].'</td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>'.$lang->place.':</b></td>
+		  <td class="trow2">'.$item['ort'].'</td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>'.$lang->hotel.':</b></td>
+		  <td class="trow1">'.$item['hotel'].'</td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>'.$lang->phoneAt.' '.$mybb->settings["list_country"].':</b></td>
+		  <td class="trow2">'.$item['telefon'].'</td>
+		</tr>
+		<tr>
+		  <td class="trow1"></td>
+		  <td class="trow1"><input type="submit" name="deleteItem" value="'.$lang->deleteItem.'"></td>
+		</tr>
+            </tbody>
+	  </table>
+	</form>';
     return $content;
 }
 
 /**
- * update the date
+ * delete the item
  * @return boolean if successful
  */
-function delete_data()
+function deleteData()
 {
-    // get and set the global content
-    global $db, $mybb, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    $lang->load("liste", false, true);
 
-    // get the information of the plugin
-    $info = liste_info();
-
-    // escape the posted data
-    foreach ($_POST as $data => $value) {
-        $$data = escape_string($value);
+    $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
+    $item = $db->fetch_array($query);
+    
+    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
+        $errors[] = "Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten";
     }
-
-    // check the userrights
-    if ($mybb->user['uid'] == 0)
-        $errors[] = "Sie sind nicht angemeldet. Bitt melden Sie sich an bevor Sie Einträge löschen.";
-    $query_data = $db->simple_select("liste", "*", "data_id='{$data_id}'");
-    $insert_data = $db->fetch_array($query_data);
-
-    if ($_POST['uid'] != $mybb->user['uid']) {
-        if (!check_user(4)) {
-            $errors[] = "Dieser Datensatz gehört nicht zu Ihnen. Sie dürfen ihn nicht löschen";
-        }
+    if ($mybb->input['data_id'] == '') {
+        $errors[] = "Es wurde kein Datensatz zum Löschen ausgewählt.";
     }
-
-    // get any other errors
-    if ($_POST['data_id'] == "")
-        $errors[] = "Es wurde kein Datensatz gewählt.";
-
+    
     // if any error occurred
     if (isset($errors)) {
-        $content = '		<center>
-			<img src="' . $mybb->settings['bburl'] . '/images/liste/file_broken.png" border="0">
-			<p class="active">
-				Folgende Fehler sind aufgetreten:
-			</p>
-			<ul style="list-style-image:url(' . $mybb->settings['bburl'] . '/images/liste/messagebox_warning.png); align:center; list-style-position:outside;">';
-        // add every error to the displayed list
+        add_breadcrumb($lang->deleteItem);
+        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content .= '<p><ul>';
         foreach ($errors as $error) {
-            $content .= '			<li style="align:center;">' . $error . '</li>';
+            $content .= '<li>' . $error . '</li>';
         }
-        $content .= '			</ul><br />
-			<a href="javascript:history.back()">
-				<img src="' . $mybb->settings['bburl'] . '/images/liste/undo.png" border="0">
-			</a>
-		</center>';
-        // render the output
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        // output the page
-        output_page($show_liste);
+        $content .= '</ul></p>';
+        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
+        eval("\$showListe .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
+        output_page($showListe);
         exit;
     }
 
-    $db->delete_query("liste", "data_id='{$data_id}'");
-    // set a message which should be displayed
-    $message = '<div class="bottommenu"><img src="' . $mybb->settings['bburl'] . '/images/liste/button_ok.png" border="0"><strong>Daten wurden erfolgreich gelöscht.</strong></div>';
-    return $message;
+    $db->delete_query("liste", "data_id='{$mybb->input['data_id']}'");
+    return true;
 }
 
 /**
- * delete the datas of the user which is being deleted
- * @return boolean if successful
+ * delete the items of the user which is being deleted
  */
 function plugin_list_delete_user()
 {
-    global $url;
-    global $db, $mybb, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb;
 
     $uid = intval($mybb->input['uid']);
     $db->delete_query("liste", "uid='$uid'");
 }
 
 /**
- * shows the existing dates
- * @return the html output
+ * show the table with all items
  */
-function show_dates($message = '', $action = false, $limit = 20, $moment = 0, $offset = 0)
+function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $startLimit = 0)
 {
-    // get and set the global content
-    global $db, $mybb, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    $lang->load("liste", false, true);
 
-    // Das Anzeigelimit einstellen
+    // limit of displayed items
     if ($limit < 1) {
-        $limit = 5;
+        $limit = 20;
     }
 
-    // get the information of the plugin
-    $info = liste_info();
-
-    if ($moment == 0) {
-        $moment = time();
+    if ($timestamp == null) {
+        $timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
     }
 
-    // Clean the table; delete journeys in the past
-    // Ankunft (Hinflug)
-    $get_delete_query = $db->simple_select("liste", '*', '', array('order_by' => 'ankunft'));
-    if ($get_delete_query) {
-        $users = array();
-        $yesterday = mktime(0, 0, 0, date("m"), date("d") - 1, date("Y"));
-        while ($result = $db->fetch_array($get_delete_query)) {
-            // Zähle die verschiedenen Benutzer in der Liste
-            if ((!in_array($result['uid'], $users)) AND ($result['uid'] != '')) {
-                $users[] = $result['uid'];
-                $count_users++;
-            }
-            // Abflug (Rückflug)
-            if ($result['abflug'] <= $yesterday) {
-                $db->delete_query("liste", "data_id='{$result['data_id']}'");
-            }
-        }
-        if ($count_users == 0)
-            $count_users = 'keine';
+    $queryItems = $db->simple_select('liste', '*', '', array('order_by' => 'ankunft'));
+    $countTotalUsers =$db->num_rows($queryItems);
+    if ($countTotalUsers == 0) {
+        $countTotalUsers = 'keine';
+    } elseif ($countTotalUsers == 1) {
+        $countTotalUsers = 'eine';
+    }
+    
+    if($useTimestamp == true) {
+        $queryItems = $db->simple_select('liste', '*', $timestamp.' BETWEEN ankunft AND abflug', array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
+        $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>'.$lang->personsCurrentlyThere.
+            date(" d.m.Y ", $timestamp).$lang->in.' '.$mybb->settings["list_country"].'</strong></td></tr>';
+    } else {
+        $queryItems = $db->simple_select('liste', '*', 'abflug > '.$timestamp, array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
+        $timeStampNotice = '';
+    }
+    $countUsers =$db->num_rows($queryItems);
+    $arrayItems = array();
+    while ($item = $db->fetch_array($queryItems)) {
+        $arrayItems[$item['data_id']] = $item;
     }
 
-    $content = <<<INHALT
+    // TODO move to a list_bit template
+    $content = '
 <table border="0" cellspacing="1" cellpadding="4" class="tborder">
-	<thead>
-		<tr>
-			<td class="thead" colspan="9">
-				<span style="vertical-align:center; text-align:left; float:left; width:760px;">
-					<form action="{$mybb->settings["list_path"]}" method="post" style="display:inline;">
-						<strong>
-							<input type="hidden" name="action" value="custom" />
-							Zeige nur <input type="text" name="limit" value="{$limit}" /> Einträge
-							<input type="submit" name="show_limit" value="Anzeigen" style="display:inline;"/>
-						</strong>
-					</form>
-					<span style="margin-left:50px; width:280px;">
-					<!--<span style="text-align:center;">-->
-						<strong>Es sind zur Zeit {$count_users} Benutzer eingetragen</strong>
-					</span>
-				</span>
-				<form action="{$mybb->settings["list_path"]}" method="post" style="">
-					<span style="vertical-align:center; text-align:left; float:right; width:450px;">
-						<strong>Wer ist am
-							<input type="hidden" name="action" value="at_this_moment" />
-INHALT
-    ;
-    $content .= show_days("time_tag", date("d", $moment));
-    $content .= show_months("time_monat", date("m", $moment));
-    $content .= show_years("time_jahr", date("Y", $moment));
-    $content .=
-        <<<INHALT
-							in {$mybb->settings["list_country"]}? <input type="submit" name="show_limit" value="Anzeigen" />
-						</strong>
-					</span>
-				</form>
-			</td>
-		</tr>
-	</thead>
+    <thead>
+        <tr>
+            <td class="thead" colspan="9">
+                <form action="'.THIS_SCRIPT.'" method="post" style="vertical-align:center; text-align:left; float:left; width:35%;">
+                    <strong>
+                            <input type="hidden" name="action" value="setLimit" />
+                            '.$lang->showOnly.' <input type="text" name="limit" value="'.$limit.'" /> '.$lang->entries.'
+                            <input type="submit" name="setLimit" value="'.$lang->show.'" style="display:inline;"/>
+                    </strong>
+                </form>
+                <span style="vertical-align:center; text-align:center; float:left; width:30%;">
+                    <strong>Es sind zur Zeit '.$countTotalUsers.' Benutzer eingetragen</strong>
+                </span>
+                <form action="'.THIS_SCRIPT.'" method="post" style="vertical-align:center; text-align:right; float:left; width:35%;">
+                    <strong>'.$lang->whoIsAt.'
+                            <input type="hidden" name="action" value="setTimestamp" />';
+$content .= ShowDates::show_days("time_tag", date("d", $timestamp));
+$content .= ShowDates::show_months("time_monat", date("m", $timestamp));
+$content .= ShowDates::show_years("time_jahr", date("Y", $timestamp));
+$content .= <<<INHALT
+                            {$lang->in} {$mybb->settings["list_country"]}? <input type="submit" name="setTimestamp" value="Anzeigen" />
+                    </strong>
+                </form>
+            </td>
+        </tr>
+    </thead>
 </table>
 <table border="0" cellspacing="1" cellpadding="4" class="tborder">
-	<thead>
-		<tr>
-			<td class="thead" colspan="9">
-				<div class="expcolimage"><img src="{$mybb->settings['bburl']}/{$theme['imgdir']}/collapse.gif" id="liste_1_img" class="expander" alt="[-]" /></div>
-				<span style="vertical-align:center; text-align:right; float:left;">
-					<strong>
-						<a href="{$mybb->settings["bburl"]}/show_list.php?action=new_data" style="vertical-align: top;">
-							<img src="{$mybb->settings['bburl']}/images/liste/viewmag+.png" border="0" valign="center"> In die Liste eintragen
-						</a>
-					</strong>
-				</span>
-			</td>
-		</tr>
-	</thead>
-	<tbody style="" id="liste_1_e">
-INHALT
-    ;
-    if ($action == "moment") {
-        $content .= <<<INHALT
-		<tr>
-			<td class="tcat" colspan="9"><strong>Folgende Personen sind am
-INHALT
-        ;
-        $content .= date("d.m.Y", $moment);
-        $content .= <<<INHALT
-				in {$mybb->settings["list_country"]}
-			</strong></td>
-		</tr>
-INHALT
-        ;
-    }
-    $content .= <<<INHALT
-		<tr>
-			<td class="tcat" width="15%"align="center"><strong>Name</strong></td>
-			<td class="tcat" width="5%" align="center"><strong>Status</strong></td>
-			<td class="tcat" width="5%" align="center"><strong>Ankunft</strong></td>
-			<td class="tcat" width="5%" align="center"><strong>Abflug</strong></td>
-			<td class="tcat" width="15%" align="center"><strong>Airline</strong></td>
-			<td class="tcat" width="15%" align="center"><strong>Urlaubsort</strong></td>
-			<td class="tcat" width="15%" align="center"><strong>Hotel</strong></td>
-			<td class="tcat" width="15%" align="center"><strong>Telefon in {$mybb->settings["list_country"]}</strong></td>
-			<td class="tcat" width="2%" align="center"><strong>Aktion</strong></td>
-		</tr>
-<!-- start: liste -->
-INHALT
-    ;
+    <thead>
+        <tr>
+            <td class="thead" colspan="9">
+                <div class="expcolimage"><img src="{$mybb->settings['bburl']}/{$theme['imgdir']}/collapse.gif" id="liste_1_img" class="expander" alt="[-]" /></div>
+                <span style="vertical-align:center; text-align:right; float:left;">
+                    <strong>
+                        <a href="{$mybb->settings["bburl"]}/show_list.php?action=addItem" style="vertical-align: top;">
+                                <img src="{$mybb->settings['bburl']}/images/liste/viewmag+.png" border="0" valign="center"> {$lang->addToList}
+                        </a>
+                    </strong>
+                </span>
+            </td>
+        </tr>
+    </thead>
+    <tbody style="" id="liste_1_e">
+INHALT;
+    
+    $content .= $timeStampNotice.'<tr>
+            <td class="tcat" width="15%"align="center"><strong>'.$lang->name.'</strong></td>
+            <td class="tcat" width="5%" align="center"><strong>'.$lang->status.'</strong></td>
+            <td class="tcat" width="5%" align="center"><strong>'.$lang->arrival.'</strong></td>
+            <td class="tcat" width="5%" align="center"><strong>'.$lang->departure.'</strong></td>
+            <td class="tcat" width="15%" align="center"><strong>'.$lang->airline.'</strong></td>
+            <td class="tcat" width="15%" align="center"><strong>'.$lang->place.'</strong></td>
+            <td class="tcat" width="15%" align="center"><strong>'.$lang->hotel.'</strong></td>
+            <td class="tcat" width="15%" align="center"><strong>'.$lang->phoneAt.' '.$mybb->settings["list_country"].'</strong></td>
+            <td class="tcat" width="2%" align="center"><strong>'.$lang->action.'</strong></td>
+        </tr>';
 
-    // Ankunft (Hinflug)
-    $start_select = $offset * $limit;
-    $offset++;
-    $query = $db->simple_select("liste", "*", "", array('order_by' => 'ankunft', 'limit_start' => $start_select, 'limit' => $limit));
-    if ($action == "moment") {
-        // Ankunft (Hinflug)
-        $query = $db->simple_select("liste", "*", "{$moment} BETWEEN ankunft AND abflug", array('order_by' => 'ankunft', 'limit_start' => $start_select, 'limit' => $limit));
-    }
-    if ($query) {
-        $x = $db->num_rows($query);
-        if ($x != 0) {
-            while ($result = $db->fetch_array($query)) {
-                $results++;
-                $content .= "<tr>\n";
-                $content .= "<td class=\"trow1\" style=\"white-space: nowrap;\"><a href=\"{$mybb->settings["bburl"]}/private.php?action=send&uid={$result['uid']}\"><img src=\"{$mybb->settings['bburl']}/{$theme['imgdir']}/new_pm.gif\" border=\"0\">{$result['username']}</a></td>\n";
+    foreach($arrayItems as $item) {
+        $count++;
+        $content .= '<tr>';
+        $content .= '<td class="trow1"><a href="'.get_profile_link($item['uid']).'">'.$item['username'].'</a></td>';
 
-                // Status
-                // Ankunft (Hinflug)
-                // Abflug (Rückflug)
-                $jetzt = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-                if (($result['ankunft'] < $jetzt) && ($result['abflug'] > $jetzt)) {
-                    $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/vor_ort.png\" border=\"0\"></td>\n";
-                } elseif ($result['abflug'] == $jetzt) {
-                    $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/rueckflug.png\" border=\"0\"></td>\n";
-                } elseif ($result['ankunft'] == $jetzt) {
-                    $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/hinflug.png\" border=\"0\"></td>\n";
-                } else {
-                    $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/daheim.png\" border=\"0\"></td>\n";
-                }
-                // Ankunft (Hinflug)
-                $content .= "<td class=\"trow2\" style=\"white-space: nowrap;\">" . date("d.m.Y", $result['ankunft']) . "</td>\n";
-                // Abflug (Rückflug)
-                $content .= "<td class=\"trow1\" style=\"white-space: nowrap;\">" . date("d.m.Y", $result['abflug']) . "</td>\n";
-                $content .= "<td class=\"trow2\">{$result['airline']}</td>\n";
-                $content .= "<td class=\"trow1\">{$result['ort']}</td>\n";
-                $content .= "<td class=\"trow2\">{$result['hotel']}</td>\n";
-                $content .= "<td class=\"trow1\">{$result['telefon']}</td>\n";
-                if ((check_user(4)) OR ($result['uid'] == $mybb->user['uid']) OR ($mybb->user['uid'] == '1499')) {
-                    $content .= "	<td class=\"trow2\" style=\"white-space: nowrap;\">
-		<a href={$mybb->settings["bburl"]}/show_list.php?action=edit&data_id={$result['data_id']}>
-			<img src=\"{$mybb->settings['bburl']}/images/liste/pencil.png\" border=\"0\" style=\"margin:0px 0px 0px 0px;\">
-		</a>
-		<a href={$mybb->settings["bburl"]}/show_list.php?action=delete&data_id={$result['data_id']}>
-			<img src=\"{$mybb->settings['bburl']}/images/liste/no.png\" border=\"0\" border=\"0\" style=\"margin:0px 0px 0px 10px;\">
-		</a>
-	</td>\n";
-                } else {
-                    $content .= "<td class=\"trow2\"></td>\n";
-                }
-                $content .= "</tr>\n";
-            }
+        $jetzt = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        if (($item['ankunft'] < $jetzt) && ($item['abflug'] > $jetzt)) {
+            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/vor_ort.png\" border=\"0\"></td>\n";
+        } elseif ($item['abflug'] == $jetzt) {
+            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/rueckflug.png\" border=\"0\"></td>\n";
+        } elseif ($item['ankunft'] == $jetzt) {
+            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/hinflug.png\" border=\"0\"></td>\n";
+        } else {
+            $content .= "<td class=\"trow1\"><img src=\"{$mybb->settings['bburl']}/images/liste/daheim.png\" border=\"0\"></td>\n";
         }
+        
+        $content .= "<td class=\"trow2\" style=\"white-space: nowrap;\">" . date("d.m.Y", $item['ankunft']) . "</td>\n";
+        $content .= '<td class="trow1" style="white-space: nowrap;">' . date("d.m.Y", $item['abflug']) . '</td>';
+        $content .= '<td class="trow2">'.$item['airline'].'</td>';
+        $content .= '<td class="trow1">'.$item['ort'].'</td>';
+        $content .= '<td class="trow2">'.$item['hotel'].'</td>';
+        $content .= '<td class="trow1">'.$item['telefon'].'</td>';
+        if ((check_user(4)) OR ($item['uid'] == $mybb->user['uid'])) {
+            $content .= '<td class="trow2">
+                <a class="icon" href="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'?action=edit&data_id='.$item['data_id'].'">
+                    <img src="'.$mybb->settings['bburl'].'/images/liste/pencil.png" border="0">
+                </a>
+                <a class="icon" href="'.$mybb->settings["bburl"].'/'.THIS_SCRIPT.'?action=deleteItem&data_id='.$item['data_id'].'">
+                    <img src="'.$mybb->settings['bburl'].'/images/liste/no.png" border="0">
+                </a></td>';
+        } else {
+            $content .= '<td class="trow2"></td>';
+        }
+        $content .= '</tr>';
     }
-    $content .= <<<INHALT
-			<tr>
-				<td class="tcat" colspan="9">
-INHALT
-    ;/**
-     * Diese Funktion konnte noch nicht implementiert werden
-     */
-    /*
-      if($results == $limit)
-      {
-      $previous = $offset - 1;
-      if($previous >= 0)
-      {
-      $content .= '<a href="'.$mybb->settings["bburl"].'/show_list.php?offset='.$previous.'">Vorherige Seite</a>';
-      }
-      $content .= '<a href="'.$mybb->settings["bburl"].'/show_list.php?offset='.$offset.'">Nächste Seite</a>';
-      }
-      else
-      {
-      $previous = $offset - 1;
-      if($previous >= 0)
-      {
-      $content .= '<a href="'.$mybb->settings["bburl"].'/show_list.php?offset='.$previous.'">Vorherige Seite</a>';
-      }
-      }
-     */
-    $content .= <<<INHALT
-					<span style="vertical-align:center; text-align:left; float:right;">
-						<img src="{$mybb->settings['bburl']}/images/liste/pencil.png" border="0"> = Ändern <img src="{$mybb->settings['bburl']}/images/liste/no.png" border="0" style="margin:0px 0px 0px 10px;"> = Löschen
-					</span>
-				</td>
-			</tr>
-			<tr>
-				<td class="tcat" colspan="5"><span><strong>Aufenthaltsliste (Version {$info['version']}) by <i><a href="http://www.malte-gerth.de/mybb.html" target="_blank">Jan Malte Gerth</a></i></strong></span></td>
-				<td class="tcat" colspan="4"></td>
-			</tr>
-		</tbody>
-	</table>
-	<!-- end: show_list -->
-INHALT
-    ;
+            
+    $content .= '<tr><td class="tcat" colspan="9">';
+    $content .= '<span style="vertical-align:center; text-align:left; float:right;">
+        <img src="'.$mybb->settings['bburl'].'/images/liste/pencil.png" border="0"> = '.$lang->edit.' 
+        <img src="'.$mybb->settings['bburl'].'/images/liste/no.png" border="0"> = '.$lang->delete.'
+        </span></td></tr></tbody></table>';
     return $content;
 }
 
@@ -1137,64 +869,76 @@ function plugin_show_list_index()
 
 function plugin_show_list()
 {
-    global $db, $mybb, $theme, $templates, $headerinclude, $header, $footer;
-    if ($mybb->settings['show_list'] == 'yes') {
-        // get the limitation
-        if ($_COOKIE['liste']) {
-            $limit = $_COOKIE['liste'];
+    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    $lang->load("liste", false, true);
+    
+    if ($mybb->settings['showListOnlyForMembers']=='1' && $mybb->user['uid'] == 0) {
+        error_no_permission();
+    }
+    
+    if ($mybb->settings['show_list'] == '1') {
+        
+        // get/set the limit
+        if ($mybb->input['action'] == "setLimit") {
+            $cookieArray= unserialize($_COOKIE['mybbliste']);
+            $limit = $cookieArray['displayLimit'] = $mybb->input['limit'];
+            $time = 60 * 60 * 24 * 2;
+            my_setcookie('mybb[liste]', serialize($cookieArray), $time, true);
         } else {
-            $limit = 20;
+            $cookieArray= unserialize($_COOKIE['mybb[liste]']);
+            $limit = $cookieArray['displayLimit'];
         }
 
         // decide what to do
-        if ($_POST['action'] == 'edit_data') {
-            add_breadcrumb($mybb->settings["list_title"]);
-            $message = edit_data();
-            $content = show_dates($message, 'default', $limit);
-        } elseif ($_GET['action'] == 'edit') {
-            add_breadcrumb("{$mybb->settings["list_title"]} - Eintrag bearbeiten");
-            $content = show_form_edit_data();
-        } elseif ($_POST['action'] == 'delete') {
-            add_breadcrumb("{$mybb->settings["list_title"]} - Eintrag gelöscht");
-            $message = delete_data();
-            $content = show_dates($message, 'default', $limit);
-        } elseif ($_GET['action'] == 'delete') {
-            add_breadcrumb("{$mybb->settings["list_title"]} - Eintrag löschen");
-            $content = delete_data_notification();
-        } elseif ($_GET['action'] == 'new_data') {
-            add_breadcrumb("{$mybb->settings["list_title"]} - Neuer Eintrag");
-            $content = show_form_new_data();
-        } elseif ($_POST['action'] == 'insert_new_data') {
-            add_breadcrumb("{$mybb->settings["list_title"]} - Eintrag eingetragen");
-            $message = insert_new_data();
-            $content = show_dates($message, 'default', $limit);
-        } elseif ($_POST['action'] == "custom") {
-            $limit = $_POST['limit'];
-            $time = 60 * 60 * 24 * 2;
-            my_setcookie("liste", $limit, $time, true);
+        if ($mybb->input['action'] == 'editItem' && editItem()==true) {
             add_breadcrumb("{$mybb->settings["list_title"]}");
-            $content = show_dates($message, "custom", $limit);
-        } elseif ($_POST['action'] == "at_this_moment") {
+            $message = '<p class="validation_success">'.$lang->editItemSuccessful.'</p>';
+            $content = showFullTable(null,false,$limit);
+            
+        } elseif ($mybb->input['action'] == 'edit') {
+            add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
+            add_breadcrumb($lang->editItem);
+            $content = showEditDataForm();
+            
+        } elseif ($mybb->input['action'] == 'deleteItem') {
+            add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
+            if($mybb->input['step2']=='true' && deleteData()==true) {
+                $message = '<p class="validation_success">'.$lang->deleteItemSuccessful.'</p>';
+                $content = showFullTable(null,false,$limit);
+            } else {
+                add_breadcrumb($lang->deleteItem);
+                $content = showDeleteConfirmDialog();
+            }
+            
+        } elseif ($mybb->input['action'] == 'addItem') {
+            add_breadcrumb("{$mybb->settings["list_title"]}",THIS_SCRIPT);
+            if($mybb->input['step2']=='true' && insertNewData()==true) {
+                $message = '<p class="validation_success">'.$lang->addItemSuccessful.'</p>';
+                $content = showFullTable(null,false,$limit);
+            } else {
+                add_breadcrumb($lang->newItem);
+                $content = showNewDataForm();
+            }
+            
+        }  elseif ($mybb->input['action'] == "setTimestamp") {
             add_breadcrumb("{$mybb->settings["list_title"]}");
-            $moment = mktime(0, 0, 0, $_POST['time_monat'], $_POST['time_tag'], $_POST['time_jahr']);
-            $content = show_dates($message, "moment", $limit, $moment);
-        } elseif ($_GET['offset']) {
-            add_breadcrumb("{$mybb->settings["list_title"]}");
-            $moment = time();
-            $content = show_dates($message, "moment", $limit, $moment, $_GET['offset']);
+            $timestamp = mktime(0, 0, 0, $mybb->input['time_monat'], $mybb->input['time_tag'], $mybb->input['time_jahr']);
+            $content = showFullTable($timestamp,true,$limit);
+            
         } else {
             add_breadcrumb("{$mybb->settings["list_title"]}");
-            $content = show_dates($message, 'default', $limit);
+            $content = showFullTable(null,false,$limit);
         }
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        output_page($show_liste);
+        
     } else {
-        add_breadcrumb("{$mybb->settings["list_title"]}");
-        $message = '<h2 style="color:red;">Die Anzeige wurde deaktiviert.</h2>';
-        $content = '';
-        eval("\$show_liste .= \"" . $templates->get("show_liste") . "\";"); // Hier wird das erstellte Template geladen
-        output_page($show_liste);
+        $content = '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content .= '<p><ul>';
+        $content .= '<li>' . $lang->errorNoDisplay . '</li>';
+        $content .= '</ul></p></div>';
     }
+        
+    eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+    output_page($showList);
 }
 
 /* * ********************************************************************
@@ -1214,7 +958,7 @@ function liste_info()
         "website" => "http://www.malte-gerth.de/mybb.html",
         "author" => "Jan Malte Gerth",
         "authorsite" => "http://www.malte-gerth.de/",
-        "version" => "1.6.0",
+        "version" => "1.6.1",
         "compatibility" => "16*",
     );
 }
