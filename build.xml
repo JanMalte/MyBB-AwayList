@@ -127,19 +127,10 @@
             </exec>
         </target>
         
-        <!-- Selenium -->
-        <target name="startSelenium">
-            <exec executable="${basedir}/startSelenium.sh" />
-        </target>
-        
-        <target name="stopSelenium">
-            <exec executable="${basedir}/stopSelenium.sh" />
-        </target>
-        
         <target name="phpunit" description="Run unit tests with PHPUnit">
-            <antcall target="startSelenium"/>
+            <exec executable="${basedir}/startSelenium.sh" />
             <exec executable="phpunit" failonerror="true" />
-            <antcall target="stopSelenium"/>
+            <exec executable="${basedir}/stopSelenium.sh" />
         </target>
         
         <target name="phpcb"

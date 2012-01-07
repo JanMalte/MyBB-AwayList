@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @version     show_list.php 2012-01-06
- * @package     MyBB.Plugins
- * @subpackage  AwayList
+ * @version     show_list.php 2012-01-07
+ * @category    MyBB.Plugins
+ * @package     AwayList
+ * @subpackage  Plugin
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
@@ -14,11 +15,15 @@ define('THIS_SCRIPT', 'show_list.php');
 // default is "0"
 define("NO_ONLINE", 0);
 
+// include the global MyBB context
 require("./global.php");
+// TODO check if this can be replaced by the hook system
 require_once("./inc/plugins/liste.php");
 
+// load language for the plugin
 $lang->load("liste", false, true);
 
+// redirect to the index if the plugin isn't installed
 if (!liste_is_installed()) {
     header('Location: ' . $mybb->settings['bburl'], true, 307);
     die();
@@ -31,12 +36,11 @@ if (!$pluginsCache) {
 if (array_key_exists('liste', $pluginsCache['active']) &&
     $pluginsCache['active']['liste'] == 'liste') {
 
-    if ($mybb->settings['showListOnlyForMembers']=='1' && $mybb->user['uid'] == 0) {
+    if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
         error_no_permission();
     } else {
         showList();
     }
-    
 } else {
 
     add_breadcrumb($lang->liste);

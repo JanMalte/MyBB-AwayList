@@ -1,9 +1,10 @@
 <?php
 
 /**
- * @version     show_list.php 2012-01-06
- * @package     MyBB.Plugins
- * @subpackage  AwayList
+ * @version     liste.lang.php 2012-01-07
+ * @category    MyBB.Plugins
+ * @package     AwayList
+ * @subpackage  Language
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt

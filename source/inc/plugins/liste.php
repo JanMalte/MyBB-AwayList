@@ -1,20 +1,31 @@
 <?php
 
 /**
- * @version     show_list.php 2012-01-06
- * @package     MyBB.Plugins
- * @subpackage  AwayList
+ * @version     liste.php 2012-01-07
+ * @category    MyBB.Plugins
+ * @package     AwayList
+ * @subpackage  Plugin
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
+
+// Disallow direct access to this file for security reasons
 if (!defined("IN_MYBB")) {
     die("Direct initialization of this file is not allowed.<br /><br />Please make sure IN_MYBB is defined.");
 }
 
+/**
+ * Collection of usefull functions for using dates and timestamps
+ */
 class ShowDates
 {
-
+    /**
+     * show a SELECT element for days in a HTML form
+     * @param string $fieldName Name of the field
+     * @param string|integer $selectedDay (Optional) Set to the value of the day which should be selected
+     * @return string HTML code of the SELECT element
+     */
     public static function showDaySelect($fieldName, $selectedDay = null)
     {
         // if the selected day isn't given set it to the actual day
@@ -46,6 +57,12 @@ class ShowDates
         return $htmlSelectForm;
     }
 
+    /**
+     * show a SELECT element for months in a HTML form
+     * @param string $fieldName Name of the field
+     * @param string|integer $selectedMonth (Optional) Set to the value of the month which should be selected
+     * @return string HTML code of the SELECT element
+     */
     public static function showMonthSelect($fieldName, $selectedMonth = null)
     {
         // if the selected month isn't given set it to the actual month
@@ -77,13 +94,23 @@ class ShowDates
         return $htmlSelectForm;
     }
 
+    /**
+     * show a SELECT element for years in a HTML form
+     * @param string $fieldName Name of the field
+     * @param string|integer $selectedYear (Optional) Set to the value of the year which should be selected
+     * @param integer $offset (Optional) Offset for the list of years; negative values are allowed
+     * @param integer $countItems (Optional) Number of items which should be shown
+     * @return string HTML code of the SELECT element
+     */
     public static function showYearSelect($fieldName, $selectedYear = null, $offset = -1, $countItems = 10)
     {
         // if the selected year isn't given set it to the actual year
         if ($selectedYear == null)
             $selectedYear = date("Y");
 
+        // add the offset to the current year
         $startYear = date("Y") + $offset;
+        // set the end year to $countItems later then the current year
         $endYear = date("Y") + $countItems;
 
         // set the start HTML of the select form
@@ -105,6 +132,12 @@ class ShowDates
         return $htmlSelectForm;
     }
 
+    /**
+     *
+     * @param integer $firstTimestamp The timestamp which should be higher then the second one
+     * @param integer $secondTimestamp (Optional) The timestamp which should be compared to the first one
+     * @return boolean true if the first value is higher then the second one
+     */
     public static function checkFutureDate($firstTimestamp, $secondTimestamp = null)
     {
         // if the second date isn't set, set it to the current unix timestamp
@@ -162,7 +195,7 @@ function check_user($P_allowed = false)
     return $access;
 }
 
-/* * ********************************************************************
+/** ********************************************************************
  *
  * main functions for this plugin
  *
@@ -677,7 +710,7 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
     return $content;
 }
 
-/* * ********************************************************************
+/** ********************************************************************
  *
  * main functions for displaying
  *
@@ -779,10 +812,58 @@ function getContent()
     return $message . $content . '<br />';
 }
 
-/* * ********************************************************************
+/** ********************************************************************
+ * ADDITIONAL PLUGIN INSTALL/UNINSTALL ROUTINES
  *
- * un/install functions of the plugin
+ * _install():
+ *   Called whenever a plugin is installed by clicking the "Install" button in the plugin manager.
+ *   If no install routine exists, the install button is not shown and it assumed any work will be
+ *   performed in the _activate() routine.
  *
+ * function hello_install()
+ * {
+ * }
+ *
+ * _is_installed():
+ *   Called on the plugin management page to establish if a plugin is already installed or not.
+ *   This should return TRUE if the plugin is installed (by checking tables, fields etc) or FALSE
+ *   if the plugin is not installed.
+ *
+ * function hello_is_installed()
+ * {
+ *      global $db;
+ *      if($db->table_exists("hello_world"))
+ *      {
+ *          return true;
+ *      }
+ *      return false;
+ * }
+ *
+ * _uninstall():
+ *    Called whenever a plugin is to be uninstalled. This should remove ALL traces of the plugin
+ *    from the installation (tables etc). If it does not exist, uninstall button is not shown.
+ *
+ * function hello_uninstall()
+ * {
+ * }
+ *
+ * _activate():
+ *    Called whenever a plugin is activated via the Admin CP. This should essentially make a plugin
+ *    "visible" by adding templates/template changes, language changes etc.
+ *
+ * function hello_activate()
+ * {
+ * }
+ *
+ * _deactivate():
+ *    Called whenever a plugin is deactivated. This should essentially "hide" the plugin from view
+ *    by removing templates/template changes etc. It should not, however, remove any information
+ *    such as tables, fields etc - that should be handled by an _uninstall routine. When a plugin is
+ *    uninstalled, this routine will also be called before _uninstall() if the plugin is active.
+ *
+ * function hello_deactivate()
+ * {
+ * }
  */
 $plugins->add_hook("index_start", "showListOnIndex");
 $plugins->add_hook("admin_users_do_delete", "ListDeleteUserHook");
