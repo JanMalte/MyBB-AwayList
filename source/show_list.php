@@ -36,7 +36,8 @@ if (!$pluginsCache) {
 if (array_key_exists('liste', $pluginsCache['active']) &&
     $pluginsCache['active']['liste'] == 'liste') {
 
-    if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
+    if ($mybb->settings['showListOnlyForMembers'] == '1' &&
+        $mybb->user['uid'] == 0) {
         error_no_permission();
     } else {
         showList();
@@ -45,11 +46,13 @@ if (array_key_exists('liste', $pluginsCache['active']) &&
 
     add_breadcrumb($lang->liste);
 
-    $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+    $content .= '<div class="error low_warning">
+        <p><em>' . $lang->followingErrors . '</em></p>';
     $content .= '<p><ul>';
     $content .= '<li>' . $lang->errorNotActive . '</li>';
     $content .= '</ul></p>';
-    $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
+    $content .= '<a href="javascript:history.back()">' . $lang->back . '</a>
+        </div>';
 
     eval("\$showList = \"" . $templates->get("show_liste") . "\";");
     output_page($showList);

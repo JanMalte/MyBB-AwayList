@@ -927,7 +927,8 @@ function liste_install()
     $templateShowListTable = array(
         "tid" => "NULL",
         "title" => "show_list_table",
-        "template" => $db->escape_string('<table border="0" cellspacing="1" cellpadding="4" class="tborder">
+        "template" => $db->escape_string(
+            '<table border="0" cellspacing="1" cellpadding="4" class="tborder">
     <thead>
         <tr>
             <td class="thead" colspan="9">
@@ -983,7 +984,8 @@ function liste_install()
         </td>
     </tr>
 </tbody>
-</table>'),
+</table>'
+        ),
         "sid" => "-1",
     );
     $db->insert_query("templates", $templateShowListTable);
@@ -991,7 +993,8 @@ function liste_install()
     $templateShowListTableBit = array(
         "tid" => "NULL",
         "title" => "show_list_table_bit",
-        "template" => $db->escape_string('<tr>
+        "template" => $db->escape_string(
+            '<tr>
     <td class="trow1">{$userlink}</td>
     <td class="trow1">{$status}</td>
     <td class="trow1" style="white-space: nowrap;">{$arrival}</td>
@@ -1001,7 +1004,8 @@ function liste_install()
     <td class="trow1">{$hotel}</td>
     <td class="trow1">{$phone}</td>
     <td class="trow1">{$actions}</td>
-</tr>'),
+</tr>'
+        ),
         "sid" => "-1",
     );
     $db->insert_query("templates", $templateShowListTableBit);
