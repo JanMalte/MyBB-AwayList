@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
     <project name="MyBB Plugin Awaylist" default="build">
         <target name="build"
-            depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdoc,phpunit,phpcb,stopSelenium"/>
+            depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdoc,phpunit,phpcb"/>
             
         <target name="build-parallel"
-            depends="prepare,lint,tools-parallel,phpunit,phpcb,stopSelenium"/>
+            depends="prepare,lint,tools-parallel,phpunit,phpcb"/>
         
         <target name="tools-parallel"
             description="Run tools in parallel">
