@@ -9,10 +9,10 @@
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
-
 // Disallow direct access to this file for security reasons
 if (!defined("IN_MYBB")) {
-    die("Direct initialization of this file is not allowed.<br /><br />Please make sure IN_MYBB is defined.");
+    die("Direct initialization of this file is not allowed.<br />
+        <br />Please make sure IN_MYBB is defined.");
 }
 
 /**
@@ -20,6 +20,7 @@ if (!defined("IN_MYBB")) {
  */
 class ShowDates
 {
+
     /**
      * show a SELECT element for days in a HTML form
      * @param string $fieldName Name of the field
@@ -195,7 +196,7 @@ function check_user($P_allowed = false)
     return $access;
 }
 
-/** ********************************************************************
+/** * *******************************************************************
  *
  * main functions for this plugin
  *
@@ -207,7 +208,7 @@ function check_user($P_allowed = false)
  */
 function showNewItemForm()
 {
-    global $db, $mybb, $lang, $templates;
+    global $mybb, $lang;
     $lang->load("liste", false, true);
 
     $content = '
@@ -288,6 +289,7 @@ function showEditItemForm()
 
     // if any error occurred
     if (isset($errors)) {
+        $showList = '';
         add_breadcrumb($lang->editItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
@@ -296,7 +298,7 @@ function showEditItemForm()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        eval("\$showList = \"" . $templates->get("show_liste") . "\";");
         output_page($showList);
         exit;
     }
@@ -378,6 +380,7 @@ function showDeleteConfirmDialog()
 
     // if any error occurred
     if (isset($errors)) {
+        $showList = '';
         add_breadcrumb($lang->deleteItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
@@ -450,7 +453,7 @@ function showDeleteConfirmDialog()
  */
 function insertNewItem()
 {
-    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
 
     if ($mybb->input['airline'] == "")
@@ -469,7 +472,7 @@ function insertNewItem()
 
     $check = true;
     $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$arrival' AND '$departure' ) OR ( abflug  BETWEEN '$arrival' AND '$departure' ) OR (ankunft >= $arrival AND abflug <= $departure) )");
-    while ($result = $db->fetch_array($query)) {
+    while ($db->fetch_array($query)) {
         $check = false;
     }
     if ($check == false)
@@ -484,6 +487,7 @@ function insertNewItem()
 
     // if any error occurred
     if (isset($errors)) {
+        $showList = '';
         add_breadcrumb($lang->newItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
@@ -492,7 +496,7 @@ function insertNewItem()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        eval("\$showList = \"" . $templates->get("show_liste") . "\";");
         output_page($showList);
         exit;
     }
@@ -521,7 +525,7 @@ function insertNewItem()
  */
 function editItem()
 {
-    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
 
     if ($mybb->input['airline'] == "")
@@ -556,6 +560,7 @@ function editItem()
 
     // if any error occurred
     if (isset($errors)) {
+        $showList = '';
         add_breadcrumb($lang->editItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
@@ -564,7 +569,7 @@ function editItem()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        eval("\$showList = \"" . $templates->get("show_liste") . "\";");
         output_page($showList);
         exit;
     }
@@ -588,7 +593,7 @@ function editItem()
  */
 function deleteItem()
 {
-    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
 
     $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
@@ -603,6 +608,7 @@ function deleteItem()
 
     // if any error occurred
     if (isset($errors)) {
+        $showList = '';
         add_breadcrumb($lang->deleteItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
@@ -611,7 +617,7 @@ function deleteItem()
         }
         $content .= '</ul></p>';
         $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+        eval("\$showList = \"" . $templates->get("show_liste") . "\";");
         output_page($showList);
         exit;
     }
@@ -636,7 +642,7 @@ function ListDeleteUserHook()
  */
 function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $startLimit = 0)
 {
-    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
 
     // limit of displayed items
@@ -649,11 +655,13 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
     }
 
     if ($useTimestamp == true) {
-        $queryItems = $db->simple_select('liste', '*', $timestamp . ' BETWEEN ankunft AND abflug', array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
+        $queryItems = $db->simple_select('liste', '*', $timestamp . ' BETWEEN ankunft AND abflug', array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit)
+        );
         $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>' . $lang->personsCurrentlyThere .
             date(" d.m.Y ", $timestamp) . $lang->in . ' ' . $mybb->settings["list_country"] . '</strong></td></tr>';
     } else {
-        $queryItems = $db->simple_select('liste', '*', 'abflug > ' . $timestamp, array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit));
+        $queryItems = $db->simple_select('liste', '*', 'abflug > ' . $timestamp, array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit)
+        );
         $timeStampNotice = '';
     }
 
@@ -710,15 +718,14 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
     return $content;
 }
 
-/** ********************************************************************
+/** * *******************************************************************
  *
  * main functions for displaying
  *
  */
-
 function showListOnIndex()
 {
-    global $db, $mybb, $lang, $templates, $headerinclude, $header, $footer, $index, $liste;
+    global $db, $mybb, $lang, $templates, $liste;
     $lang->load("liste", false, true);
 
     $liste = '';
@@ -733,6 +740,7 @@ function showList()
 {
     global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
     $lang->load("liste", false, true);
+    $showList = '';
 
     if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
         error_no_permission();
@@ -740,13 +748,13 @@ function showList()
 
     $content = getContent();
 
-    eval("\$showList .= \"" . $templates->get("show_liste") . "\";");
+    eval("\$showList = \"" . $templates->get("show_liste") . "\";");
     output_page($showList);
 }
 
 function getContent()
 {
-    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
+    global $db, $mybb, $lang;
     $lang->load("liste", false, true);
 
     if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
@@ -812,7 +820,7 @@ function getContent()
     return $message . $content . '<br />';
 }
 
-/** ********************************************************************
+/** * *******************************************************************
  * ADDITIONAL PLUGIN INSTALL/UNINSTALL ROUTINES
  *
  * _install():
@@ -1013,41 +1021,41 @@ function liste_install()
     $dbversion = $db->get_version();
     if ($dbversion > 5) {
         $createTableQuery = "CREATE TABLE IF NOT EXISTS `" . $db->table_prefix . "liste` (
-                    `id` int(10) unsigned NOT NULL,
-                    `uid` int(10) unsigned default NULL,
-                    `username` text character set utf8 collate utf8_unicode_ci,
-                    `ankunft` int(11) default NULL,
-                    `abflug` int(11) default NULL,
-                    `airline` varchar(100) character set utf8 collate utf8_unicode_ci NOT NULL,
-                    `ort` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
-                    `hotel` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
-                    `telefon` varchar(255) character set utf8 collate utf8_unicode_ci default NULL,
-                    `data_id` bigint(20) NOT NULL auto_increment,
-                    `sort_id` bigint(20) default NULL,
-                    PRIMARY KEY  (`data_id`)
-                    ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
+            `id` int(10) unsigned NOT NULL,
+            `uid` int(10) unsigned default NULL,
+            `username` text character set utf8 collate utf8_unicode_ci,
+            `ankunft` int(11) default NULL,
+            `abflug` int(11) default NULL,
+            `airline` varchar(100) character set utf8 collate utf8_unicode_ci NOT NULL,
+            `ort` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
+            `hotel` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
+            `telefon` varchar(255) character set utf8 collate utf8_unicode_ci default NULL,
+            `data_id` bigint(20) NOT NULL auto_increment,
+            `sort_id` bigint(20) default NULL,
+            PRIMARY KEY  (`data_id`)
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
     } else {
         $createTableQuery = "CREATE TABLE IF NOT EXISTS `" . $db->table_prefix . "liste` (
-                    `id` int(10) unsigned NOT NULL,
-                    `uid` int(10) unsigned default NULL,
-                    `username` text,
-                    `ankunft` int(11) default NULL,
-                    `abflug` int(11) default NULL,
-                    `airline` varchar(100) NOT NULL,
-                    `ort` varchar(255) NOT NULL,
-                    `hotel` varchar(255) NOT NULL,
-                    `telefon` varchar(255) default NULL,
-                    `data_id` bigint(20) NOT NULL auto_increment,
-                    `sort_id` bigint(20) default NULL,
-                    PRIMARY KEY  (`data_id`)
-                    ) TYPE=MyISAM ;";
+            `id` int(10) unsigned NOT NULL,
+            `uid` int(10) unsigned default NULL,
+            `username` text,
+            `ankunft` int(11) default NULL,
+            `abflug` int(11) default NULL,
+            `airline` varchar(100) NOT NULL,
+            `ort` varchar(255) NOT NULL,
+            `hotel` varchar(255) NOT NULL,
+            `telefon` varchar(255) default NULL,
+            `data_id` bigint(20) NOT NULL auto_increment,
+            `sort_id` bigint(20) default NULL,
+            PRIMARY KEY  (`data_id`)
+            ) TYPE=MyISAM ;";
     }
     $db->write_query($createTableQuery);
 
     /*
      * add plugin settings
      */
-    $list_group = array(
+    $settingsGroup = array(
         "gid" => "NULL",
         "name" => "liste",
         "title" => "Aufenthaltsliste",
@@ -1055,10 +1063,10 @@ function liste_install()
         "disporder" => "1",
         "isdefault" => "no"
     );
-    $db->insert_query("settinggroups", $list_group);
+    $db->insert_query("settinggroups", $settingsGroup);
     $gid = $db->insert_id();
 
-    $list_1 = array(
+    $settingsData = array(
         "sid" => "NULL",
         "name" => "show_list",
         "title" => "Anzeige der Liste",
@@ -1068,19 +1076,20 @@ function liste_install()
         "disporder" => "10",
         "gid" => intval($gid)
     );
-    $db->insert_query("settings", $list_1);
+    $db->insert_query("settings", $settingsData);
 
-    $list_2 = array(
+    $settingsData = array(
         "sid" => "NULL",
         "name" => "keep_list",
         "title" => "Informationen behalten",
-        "description" => "Sollen die gespeicherten Informationen der Aufenthalte beim Deaktivieren des Plugins erhalten bleiben?",
+        "description" => "Sollen die gespeicherten Informationen der Aufenthalte
+            beim Deaktivieren des Plugins erhalten bleiben?",
         "optionscode" => "yesno",
         "value" => "1",
         "disporder" => "20",
         "gid" => intval($gid)
     );
-    $db->insert_query("settings", $list_2);
+    $db->insert_query("settings", $settingsData);
 
     $settingOnlyVisibleForMembers = array(
         "sid" => "NULL",
@@ -1094,7 +1103,7 @@ function liste_install()
     );
     $db->insert_query("settings", $settingOnlyVisibleForMembers);
 
-    $list_3 = array(
+    $settingsData = array(
         "sid" => "NULL",
         "name" => "show_list_on_index",
         "title" => "Auf der Startseite anzeigen",
@@ -1104,9 +1113,9 @@ function liste_install()
         "disporder" => "40",
         "gid" => intval($gid)
     );
-    $db->insert_query("settings", $list_3);
+    $db->insert_query("settings", $settingsData);
 
-    $list_4 = array(
+    $settingsData = array(
         "sid" => "NULL",
         "name" => "list_country",
         "title" => "Name des Landes",
@@ -1116,9 +1125,9 @@ function liste_install()
         "disporder" => "50",
         "gid" => intval($gid)
     );
-    $db->insert_query("settings", $list_4);
+    $db->insert_query("settings", $settingsData);
 
-    $list_5 = array(
+    $settingsData = array(
         "sid" => "NULL",
         "name" => "list_title",
         "title" => "Titel des Plugins",
@@ -1128,7 +1137,7 @@ function liste_install()
         "disporder" => "60",
         "gid" => intval($gid)
     );
-    $db->insert_query("settings", $list_5);
+    $db->insert_query("settings", $settingsData);
 
     rebuild_settings();
 }
@@ -1145,7 +1154,9 @@ function liste_uninstall()
     /*
      * remove plugin settings
      */
-    $db->delete_query("settings", "name IN('list_title','list_country','show_list_on_index','keep_list','show_list');");
+    $db->delete_query("settings", "name IN(
+        'list_title','list_country','show_list_on_index','keep_list','show_list'
+        )");
     $db->delete_query("settinggroups", "name='liste'");
 
     rebuild_settings();
@@ -1153,24 +1164,25 @@ function liste_uninstall()
     /*
      * remove plugin templates
      */
-    $db->delete_query("templates", "title IN('show_liste','show_liste_bit','show_list_table_bit','show_list_table')");
+    $db->delete_query("templates", "title IN(
+        'show_liste','show_liste_bit','show_list_table_bit','show_list_table'
+        )");
 }
 
 function liste_activate()
 {
-    global $db, $mybb;
     require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
 
     find_replace_templatesets("index", '#{\$header}(\r?)(\n?)#', "{\$header}\r\n{\$liste}\r\n");
 
-    find_replace_templatesets("header", '#toplinks_help}</a></li>#', "$0\n<li class=\"list_link\"><a href=\"{\$mybb->settings['bburl']}/show_list.php\"><img src=\"{\$mybb->settings[bburl]}/images/liste/list.png\" border=\"0\" alt=\"\" />Aufenthaltsliste</a></li>");
+    find_replace_templatesets("header", '#toplinks_help}</a></li>#', "$0\n<li class=\"list_link\"><a href=\"{\$mybb->settings['bburl']}/show_list.php\">
+            <img src=\"{\$mybb->settings[bburl]}/images/liste/list.png\" border=\"0\" alt=\"\" />Aufenthaltsliste</a></li>");
 
     rebuild_settings();
 }
 
 function liste_deactivate()
 {
-    global $db, $mybb;
     require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
 
     find_replace_templatesets("index", '#(\r?)(\n?){\$liste}(\r?)(\n?)#', "\r\n", 0);

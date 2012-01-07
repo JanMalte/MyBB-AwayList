@@ -10,12 +10,14 @@
  * @license     GNU General Public License version 2 or later; see LICENSE.txt
  */
 $l['followingErrors'] = 'Folgende Fehler sind aufgetreten:';
-$l['errorNotActive'] = 'Das Plugin wurde nicht aktiviert. Bitte aktiviere das Plugin um diese Seite anzuzeigen.';
+$l['errorNotActive'] = 'Das Plugin wurde nicht aktiviert.
+    Bitte aktiviere das Plugin um diese Seite anzuzeigen.';
 $l['errorNoDisplay'] = 'Die Anzeige der Liste wurde deaktiviert';
 $l['errorAirlineMissing'] = 'Bitte geben Sie eine Airline ein.';
 $l['errorMissingPlace'] = 'Bitte geben Sie einen Urlaubsort ein.';
 $l['errorMissingHotel'] = 'Bitte geben Sie einen Hotelnamen ein.';
-$l['errorInvalidPhoneNumber'] = 'Bitte geben Sie im Feld "Telefonnummer" nur Zahlen ein. Die Angabe der Telefonnummer ist freiwillig.';
+$l['errorInvalidPhoneNumber'] = 'Bitte geben Sie im Feld "Telefonnummer" nur Zahlen ein.
+    Die Angabe der Telefonnummer ist freiwillig.';
 $l['errorAlreadyAway'] = 'Sie sind zu diesem Zeitpunkt schon unterwegs';
 $l['errorArrivalNotInFuture'] = 'Das Ankunftsdatum liegt nicht in der Zukunft.';
 $l['errorDepartureNotInFuture'] = 'Das Abflugsdatum liegt nicht in der Zukunft.';
