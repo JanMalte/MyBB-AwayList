@@ -1,6 +1,11 @@
 <?php
 
 define("IN_MYBB", 1);
+class pluginTest {
+    public function add_hook($string, $string) {
+        return true;
+    }
+}
 require_once realpath(dirname(__FILE__)) . '/../source/inc/plugins/liste.php';
 
 /**
