@@ -17,15 +17,7 @@ class SeleneseTests extends PHPUnit_Extensions_SeleniumTestCase
 		'host'    => 'localhost',
 		'port'    => 6666,
 		'timeout' => 300000,
-	),
-	/*array(
-		'name'    => 'Firefox on Linux',
-		'browser' => '*firefox',
-		'host'    => 'localhost',
-		'port'    => 4444,
-		'timeout' => 300000,
-	)*/
-	);
+	));
 
 	#protected $captureScreenshotOnFailure = TRUE;
     #protected $screenshotPath = '/srv/www/contao/system/modules/veloticker/build/logs/selenium/screenshots';
