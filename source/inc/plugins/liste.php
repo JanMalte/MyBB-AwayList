@@ -156,41 +156,29 @@ class ShowDates
 
 /**
  * checks if the user is in one of the allowed usergroups
- * @param $P_allowed the allowed usergroups; seperated with ","(COMMA) e.g.: "4,10,2"
+ * @param string $allowedUserGroups the allowed usergroups; seperated with ","(COMMA) e.g.: "4,10,2"
  * @return boolean true if user is in one of the allowed usergroups
  */
-function check_user($P_allowed = false)
+function isUserInGroup($allowedUserGroups = false)
 {
-    // $mybb exist in the global content
     global $mybb;
-    // set the acces right to false as standard
+    $allowedUserGroupsArray = $usergroups = array();
+
+    // set the acces right to false as default
     $access = false;
+    
     // explode the allowed usergroups to an array
-    $allowed_usergroups = explode(',', $P_allowed);
-    // get the usergroups of the user
-    $additional_usergroups = $mybb->user['additionalgroups'];
+    $allowedUserGroupsArray = explode(',', $allowedUserGroups);
+    
     // explode the additional usergroups of the user to an array
-    $usergroups = explode(',', $additional_usergroups);
+    $usergroups = explode(',', $mybb->user['additionalgroups']);
+    
     // Add the primary usergroup of the user the the usergroups
     $usergroups[] = $mybb->user['usergroup'];
 
-    // is the user logged in
-    if ($mybb->user['uid'] != '0') {
-        // check if the usergroups are in an array
-        if (is_array($usergroups)) {
-            // do this for every usergroup
-            foreach ($usergroups as $usergroup) {
-                // check if the allowed usergroups are in an array
-                if (is_array($allowed_usergroups)) {
-                    // do this for every allowed usergroup
-                    foreach ($allowed_usergroups as $allowed_usergroup) {
-                        // if the usergroup is an allowed usergroup
-                        if ($usergroup == $allowed_usergroup) {
-                            $access = true;
-                        }
-                    }
-                }
-            }
+    foreach ($allowedUserGroupsArray as $allowedUserGroup) {
+        if(in_array($allowedUserGroup, $usergroups)) {
+            $access = true;
         }
     }
     return $access;
@@ -280,7 +268,7 @@ function showEditItemForm()
     $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
     $item = $db->fetch_array($query);
 
-    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
+    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
         $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['data_id'] == '') {
@@ -371,7 +359,7 @@ function showDeleteConfirmDialog()
     $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
     $item = $db->fetch_array($query);
 
-    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
+    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
         $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['data_id'] == '') {
@@ -599,7 +587,7 @@ function deleteItem()
     $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
     $item = $db->fetch_array($query);
 
-    if ($item['uid'] != $mybb->user['uid'] && !check_user(4)) {
+    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
         $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['data_id'] == '') {
@@ -698,7 +686,7 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
         $place = $item['ort'];
         $hotel = $item['hotel'];
         $phone = $item['telefon'];
-        if ((check_user(4)) OR ($item['uid'] == $mybb->user['uid'])) {
+        if ((isUserInGroup(4)) OR ($item['uid'] == $mybb->user['uid'])) {
             $actions = '
                 <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=editItem&data_id=' . $item['data_id'] . '">
                     <img src="' . $mybb->settings['bburl'] . '/images/liste/pencil.png" border="0">
