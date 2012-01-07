@@ -12,8 +12,8 @@ class SeleneseTests extends PHPUnit_Extensions_SeleniumTestCase
 
 	public static $browsers = array(
 	array(
-		'name'    => 'Linux Browser',
-		'browser' => '*chrome',
+		'name'    => 'Opera Browser',
+		'browser' => '*opera',
 		'host'    => 'localhost',
 		'port'    => 6666,
 		'timeout' => 300000,
