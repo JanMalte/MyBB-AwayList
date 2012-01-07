@@ -167,6 +167,7 @@
 				outfile="${builddir}/logs/checkstyle/checkstyle.xml" />
 			<formatter type="summary" outfile="${builddir}/logs/checkstyle/summary.txt" />
 		</phpcodesniffer>
+                <exec command="sleep 60" />
 	</target>
 
 	<!-- This task runs phpcpd, a Copy/Paste Detector (CPD) for PHP Code. You 
@@ -180,6 +181,7 @@
 			<formatter type="pmd" outfile="${builddir}/logs/xml/cpd.xml" />
 			<formatter type="default" outfile="${builddir}/logs/cpd.txt" />
 		</phpcpd>
+                <exec command="sleep 60" />
 	</target>
 
 	<!-- This task runs phpDocumentor, an auto-documentation tool for PHP similar 
