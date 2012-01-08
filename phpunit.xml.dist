@@ -19,10 +19,13 @@
         <testsuite name="SeleniumTests">
             <directory suffix="Test.php">tests-selenium/selenium</directory>
         </testsuite>
-        <testsuite name="SalaneseTest">
+        <testsuite name="SeleneseTest">
                 <file>tests-selenium/TestSeleneseSuite.php</file>
             </testsuite>
     </testsuites>
+    <logging>
+        <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
+    </logging>
     <!--
     <logging>
         <log type="coverage-html" target="build/coverage" title="UnitTests"
@@ -31,8 +34,6 @@
         <log type="coverage-clover" target="build/logs/clover.xml"/>
         <log type="junit" target="build/logs/junit.xml" logIncompleteSkipped="false"/>
     </logging>
-    -->
-    <!--
     <filter>
         <whitelist addUncoveredFilesFromWhitelist="true">
             <directory suffix=".php">source</directory>

@@ -42,6 +42,6 @@ class SeleneseTests extends PHPUnit_Extensions_SeleniumTestCase
      *
      * @var String directory containing the selenese HTML files
      */
-    public static $seleneseDirectory = 'tests-selenium/selenese';
+    #public static $seleneseDirectory =  'tests-selenium/selenese';
 
 }
