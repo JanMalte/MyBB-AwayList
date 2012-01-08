@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @version     liste.php 2012-01-07
+ * @version     liste.php 2012-01-08
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Plugin
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @license     GNU General Public License version 3 or later; see LICENSE.txt
  */
 // Disallow direct access to this file for security reasons
 if (!defined("IN_MYBB")) {
@@ -862,6 +862,7 @@ function getContent()
  * }
  */
 $plugins->add_hook("index_start", "showListOnIndex");
+$plugins->add_hook("showList", "showList");
 $plugins->add_hook("admin_users_do_delete", "ListDeleteUserHook");
 
 function liste_info()

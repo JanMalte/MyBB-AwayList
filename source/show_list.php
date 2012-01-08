@@ -1,13 +1,13 @@
 <?php
 
 /**
- * @version     show_list.php 2012-01-07
+ * @version     show_list.php 2012-01-08
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Plugin
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @license     GNU General Public License version 3 or later; see LICENSE.txt
  */
 define("IN_MYBB", 1);
 define('THIS_SCRIPT', 'show_list.php');
@@ -17,17 +17,9 @@ define("NO_ONLINE", 0);
 
 // include the global MyBB context
 require("./global.php");
-// TODO check if this can be replaced by the hook system
-require_once("./inc/plugins/liste.php");
 
 // load language for the plugin
 $lang->load("liste", false, true);
-
-// redirect to the index if the plugin isn't installed
-if (!liste_is_installed()) {
-    header('Location: ' . $mybb->settings['bburl'], true, 307);
-    die();
-}
 
 if (!$pluginsCache) {
     $pluginsCache = $cache->read("plugins");
@@ -40,7 +32,7 @@ if (array_key_exists('liste', $pluginsCache['active']) &&
         $mybb->user['uid'] == 0) {
         error_no_permission();
     } else {
-        showList();
+        $plugins->run_hooks('showList');
     }
 } else {
 
