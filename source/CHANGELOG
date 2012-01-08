@@ -1,5 +1,10 @@
 This changelog starts with version 1.4.5
 
+Version 1.6.4 (January 8, 2012)
+    * added compatibility with other plugins (using plugin specific action names)
+    * changed show of errors as message
+    * improved validation of item values
+
 Version 1.6.3 (January 6, 2012)
     * added full language support
     * removed unnecessary images
