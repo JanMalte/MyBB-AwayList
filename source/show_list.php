@@ -32,7 +32,8 @@ if (array_key_exists('liste', $pluginsCache['active']) &&
         $mybb->user['uid'] == 0) {
         error_no_permission();
     } else {
-        $plugins->run_hooks('showList');
+        add_breadcrumb($lang->liste);
+        $plugins->run_hooks('awaylist_showList');
     }
 } else {
 

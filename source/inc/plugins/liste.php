@@ -15,173 +15,166 @@ if (!defined("IN_MYBB")) {
         <br />Please make sure IN_MYBB is defined.");
 }
 
-/**
- * Collection of usefull functions for using dates and timestamps
- */
-class ShowDates
-{
+// as this is a often used class in plugins
+// check if it isn't already defined
+if (!class_exists('ShowDates')) {
 
     /**
-     * show a SELECT element for days in a HTML form
-     * @param string $fieldName Name of the field
-     * @param string|integer $selectedDay (Optional) Set to the value of the day which should be selected
-     * @return string HTML code of the SELECT element
+     * Collection of usefull functions for using dates and timestamps
      */
-    public static function showDaySelect($fieldName, $selectedDay = null)
+    class ShowDates
     {
-        // if the selected day isn't given set it to the actual day
-        if ($selectedDay == null)
-            $selectedDay = date("d");
 
-        // set the start HTML of the select form
-        $htmlSelectForm = '<select name="' . $fieldName . '">';
-        // do this 31 times, one for every day
-        for ($i = 01; $i <= 31; $i++) {
-            // convert this to a string with two numbers, e.g.: 04 instade of 4
-            if ($i < 10) {
-                $day = (string) "0" . $i;
-            } else {
-                $day = (string) $i;
+        /**
+         * show a SELECT element for days in a HTML form
+         * @param string $fieldName Name of the field
+         * @param string|integer $selectedDay (Optional) Set to the value of the day which should be selected
+         * @return string HTML code of the SELECT element
+         */
+        public static function showDaySelect($fieldName, $selectedDay = null)
+        {
+            // if the selected day isn't given set it to the actual day
+            if ($selectedDay == null)
+                $selectedDay = date("d");
+
+            // set the start HTML of the select form
+            $htmlSelectForm = '<select name="' . $fieldName . '">';
+            // do this 31 times, one for every day
+            for ($i = 01; $i <= 31; $i++) {
+                // convert this to a string with two numbers, e.g.: 04 instade of 4
+                if ($i < 10) {
+                    $day = (string) "0" . $i;
+                } else {
+                    $day = (string) $i;
+                }
+                // if the actual day is the same as the given day
+                // set this day as selected
+                $selected = '';
+                if ($i == $selectedDay) {
+                    $selected .= 'selected="selected" ';
+                }
+                // add the option the the HTML select form
+                $htmlSelectForm .= '<option ' . $selected . 'value="' . $day . '">' . $day;
             }
-            // if the actual day is the same as the given day
-            // set this day as selected
-            $selected = '';
-            if ($i == $selectedDay) {
-                $selected .= 'selected="selected" ';
-            }
-            // add the option the the HTML select form
-            $htmlSelectForm .= '<option ' . $selected . 'value="' . $day . '">' . $day;
+            // close the select form
+            $htmlSelectForm .= "</select>";
+            // returns the HTML of the select form
+            return $htmlSelectForm;
         }
-        // close the select form
-        $htmlSelectForm .= "</select>";
-        // returns the HTML of the select form
-        return $htmlSelectForm;
-    }
 
-    /**
-     * show a SELECT element for months in a HTML form
-     * @param string $fieldName Name of the field
-     * @param string|integer $selectedMonth (Optional) Set to the value of the month which should be selected
-     * @return string HTML code of the SELECT element
-     */
-    public static function showMonthSelect($fieldName, $selectedMonth = null)
-    {
-        // if the selected month isn't given set it to the actual month
-        if ($selectedMonth == null)
-            $selectedMonth = date("m");
+        /**
+         * show a SELECT element for months in a HTML form
+         * @param string $fieldName Name of the field
+         * @param string|integer $selectedMonth (Optional) Set to the value of the month which should be selected
+         * @return string HTML code of the SELECT element
+         */
+        public static function showMonthSelect($fieldName, $selectedMonth = null)
+        {
+            // if the selected month isn't given set it to the actual month
+            if ($selectedMonth == null)
+                $selectedMonth = date("m");
 
-        // set the start HTML of the select form
-        $htmlSelectForm = '<select name="' . $fieldName . '">';
-        // do this 12 times, one for every month
-        for ($i = 01; $i <= 12; $i++) {
-            // convert this to a string with two numbers, e.g.: 04 instade of 4
-            if ($i < 10) {
-                $month = (string) "0" . $i;
-            } else {
-                $month = (string) $i;
+            // set the start HTML of the select form
+            $htmlSelectForm = '<select name="' . $fieldName . '">';
+            // do this 12 times, one for every month
+            for ($i = 01; $i <= 12; $i++) {
+                // convert this to a string with two numbers, e.g.: 04 instade of 4
+                if ($i < 10) {
+                    $month = (string) "0" . $i;
+                } else {
+                    $month = (string) $i;
+                }
+                // if the actual month is the same as the given month
+                // set this month as selected
+                $selected = '';
+                if ($i == $selectedMonth) {
+                    $selected .= 'selected="selected" ';
+                }
+                // add the option the the HTML select form
+                $htmlSelectForm .= '<option ' . $selected . 'value="' . $month . '">' . $month;
             }
-            // if the actual month is the same as the given month
-            // set this month as selected
-            $selected = '';
-            if ($i == $selectedMonth) {
-                $selected .= 'selected="selected" ';
+            // close the select form
+            $htmlSelectForm .= "</select>";
+            // returns the HTML of the select form
+            return $htmlSelectForm;
+        }
+
+        /**
+         * show a SELECT element for years in a HTML form
+         * @param string $fieldName Name of the field
+         * @param string|integer $selectedYear (Optional) Set to the value of the year which should be selected
+         * @param integer $offset (Optional) Offset for the list of years; negative values are allowed
+         * @param integer $countItems (Optional) Number of items which should be shown
+         * @return string HTML code of the SELECT element
+         */
+        public static function showYearSelect($fieldName, $selectedYear = null, $offset = -1, $countItems = 10)
+        {
+            // if the selected year isn't given set it to the actual year
+            if ($selectedYear == null)
+                $selectedYear = date("Y");
+
+            // add the offset to the current year
+            $startYear = date("Y") + $offset;
+            // set the end year to $countItems later then the current year
+            $endYear = date("Y") + $countItems;
+
+            // set the start HTML of the select form
+            $htmlSelectForm = '<select name="' . $fieldName . '">';
+            // do this $countItems times
+            for ($year = $startYear; $year <= $endYear; $year++) {
+                // if the actual year is the same as the given year
+                // set this year as selected
+                $selected = '';
+                if ($year == $selectedYear) {
+                    $selected .= 'selected="selected" ';
+                }
+                // add the option the the HTML select form
+                $htmlSelectForm .= '<option ' . $selected . 'value="' . $year . '">' . $year;
             }
-            // add the option the the HTML select form
-            $htmlSelectForm .= '<option ' . $selected . 'value="' . $month . '">' . $month;
+            // close the select form
+            $htmlSelectForm .= "</select>";
+            // returns the HTML of the select form
+            return $htmlSelectForm;
         }
-        // close the select form
-        $htmlSelectForm .= "</select>";
-        // returns the HTML of the select form
-        return $htmlSelectForm;
-    }
 
-    /**
-     * show a SELECT element for years in a HTML form
-     * @param string $fieldName Name of the field
-     * @param string|integer $selectedYear (Optional) Set to the value of the year which should be selected
-     * @param integer $offset (Optional) Offset for the list of years; negative values are allowed
-     * @param integer $countItems (Optional) Number of items which should be shown
-     * @return string HTML code of the SELECT element
-     */
-    public static function showYearSelect($fieldName, $selectedYear = null, $offset = -1, $countItems = 10)
-    {
-        // if the selected year isn't given set it to the actual year
-        if ($selectedYear == null)
-            $selectedYear = date("Y");
-
-        // add the offset to the current year
-        $startYear = date("Y") + $offset;
-        // set the end year to $countItems later then the current year
-        $endYear = date("Y") + $countItems;
-
-        // set the start HTML of the select form
-        $htmlSelectForm = '<select name="' . $fieldName . '">';
-        // do this $countItems times
-        for ($year = $startYear; $year <= $endYear; $year++) {
-            // if the actual year is the same as the given year
-            // set this year as selected
-            $selected = '';
-            if ($year == $selectedYear) {
-                $selected .= 'selected="selected" ';
-            }
-            // add the option the the HTML select form
-            $htmlSelectForm .= '<option ' . $selected . 'value="' . $year . '">' . $year;
-        }
-        // close the select form
-        $htmlSelectForm .= "</select>";
-        // returns the HTML of the select form
-        return $htmlSelectForm;
-    }
-
-    /**
-     *
-     * @param integer $firstTimestamp The timestamp which should be higher then the second one
-     * @param integer $secondTimestamp (Optional) The timestamp which should be compared to the first one
-     * @return boolean true if the first value is higher then the second one
-     */
-    public static function checkFutureDate($firstTimestamp, $secondTimestamp = null)
-    {
-        // if the second date isn't set, set it to the current unix timestamp
-        if ($secondTimestamp == null)
-            $secondTimestamp = time();
-
-        // check if the first date is after the second
-        if ($firstTimestamp >= $secondTimestamp) {
-            return true;
-        }
-        return false;
     }
 
 }
 
-/**
- * checks if the user is in one of the allowed usergroups
- * @param string $allowedUserGroups the allowed usergroups; seperated with ","(COMMA) e.g.: "4,10,2"
- * @return boolean true if user is in one of the allowed usergroups
- */
-function isUserInGroup($allowedUserGroups = false)
-{
-    global $mybb;
-    $allowedUserGroupsArray = $usergroups = array();
+// as this is a often used function in plugins
+// check if it isn't already defined
+if (!function_exists('isUserInGroup')) {
 
-    // set the acces right to false as default
-    $access = false;
-    
-    // explode the allowed usergroups to an array
-    $allowedUserGroupsArray = explode(',', $allowedUserGroups);
-    
-    // explode the additional usergroups of the user to an array
-    $usergroups = explode(',', $mybb->user['additionalgroups']);
-    
-    // Add the primary usergroup of the user the the usergroups
-    $usergroups[] = $mybb->user['usergroup'];
+    /**
+     * checks if the user is in one of the allowed usergroups
+     * @param string $allowedGroups the allowed usergroups; seperated with ","(COMMA) e.g.: "4,10,2"
+     * @return boolean true if user is in one of the allowed usergroups
+     */
+    function isUserInGroup($allowedGroups = false)
+    {
+        global $mybb;
 
-    foreach ($allowedUserGroupsArray as $allowedUserGroup) {
-        if(in_array($allowedUserGroup, $usergroups)) {
-            $access = true;
+        // set to false as default
+        $isInGroup = false;
+
+        // explode the allowed usergroups to an array
+        $allowedUserGroups = explode(',', $allowedGroups);
+
+        // explode the additional usergroups of the user to an array
+        $usergroups = explode(',', $mybb->user['additionalgroups']);
+
+        // Add the primary usergroup of the user the the usergroups
+        $usergroups[] = $mybb->user['usergroup'];
+
+        // check if the user is in any of the allowed usergroups
+        foreach ($allowedUserGroups as $allowedUserGroup) {
+            if (in_array($allowedUserGroup, $usergroups)) {
+                $isInGroup = true;
+            }
         }
+        return $isInGroup;
     }
-    return $access;
+
 }
 
 /** * *******************************************************************
@@ -194,14 +187,14 @@ function isUserInGroup($allowedUserGroups = false)
  * shows the insert form for a new item
  * @return the html content
  */
-function showNewItemForm()
+function awaylist_showNewItemForm()
 {
     global $mybb, $lang;
     $lang->load("liste", false, true);
 
     $content = '
 	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
-            <input type="hidden" name="action" value="addItem" />
+            <input type="hidden" name="action" value="addAwlItem" />
             <input type="hidden" name="step2" value="true" />
             <table border="0" cellspacing="1" cellpadding="4" class="tborder">
                 <thead>
@@ -248,7 +241,7 @@ function showNewItemForm()
 		</tr>
 		<tr>
 		  <td class="trow1">* = ' . $lang->requiredFields . '</td>
-		  <td class="trow1"><input type="submit" name="addItem" value="' . $lang->addToList . '"></td>
+		  <td class="trow1"><input type="submit" name="addAwlItem" value="' . $lang->addToList . '"></td>
 		</tr>
             </tbody>
 	  </table>
@@ -260,7 +253,7 @@ function showNewItemForm()
  * show the edit form
  * @return the html content
  */
-function showEditItemForm()
+function awaylist_showEditItemForm()
 {
     global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
@@ -292,7 +285,7 @@ function showEditItemForm()
     }
     $content = '
 	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
-            <input type="hidden" name="action" value="editItem" />
+            <input type="hidden" name="action" value="editAwlItem" />
             <input type="hidden" name="step2" value="true" />
             <input type="hidden" name="data_id" value="' . $item['data_id'] . '" />
             <table border="0" cellspacing="1" cellpadding="4" class="tborder">
@@ -340,7 +333,7 @@ function showEditItemForm()
 		</tr>
 		<tr>
 		  <td class="trow1">* = ' . $lang->requiredFields . '</td>
-		  <td class="trow1"><input type="submit" name="editItem" value="' . $lang->editItem . '"></td>
+		  <td class="trow1"><input type="submit" name="editAwlItem" value="' . $lang->editItem . '"></td>
 		</tr>
             </tbody>
 	  </table>
@@ -351,7 +344,7 @@ function showEditItemForm()
 /**
  * @return the html message
  */
-function showDeleteConfirmDialog()
+function awaylist_showDeleteConfirmDialog()
 {
     global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
@@ -383,7 +376,7 @@ function showDeleteConfirmDialog()
     }
     $content = '
 	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
-            <input type="hidden" name="action" value="deleteItem" />
+            <input type="hidden" name="action" value="deleteAwlItem" />
             <input type="hidden" name="step2" value="true" />
             <input type="hidden" name="data_id" value="' . $item['data_id'] . '" />
             <table border="0" cellspacing="1" cellpadding="4" class="tborder">
@@ -427,7 +420,7 @@ function showDeleteConfirmDialog()
 		</tr>
 		<tr>
 		  <td class="trow1"></td>
-		  <td class="trow1"><input type="submit" name="deleteItem" value="' . $lang->deleteItem . '"></td>
+		  <td class="trow1"><input type="submit" name="deleteAwlItem" value="' . $lang->deleteItem . '"></td>
 		</tr>
             </tbody>
 	  </table>
@@ -439,44 +432,90 @@ function showDeleteConfirmDialog()
  * insert the new item
  * @return boolean if successful
  */
-function insertNewItem()
+function awaylist_insertNewItem(&$message = '')
+{
+    global $db, $mybb;
+
+    $errors = array();
+    if (awaylist_validateItem($errors) == true) {
+        $arrival = mktime(0, 0, 0, $mybb->input['ankunft_monat'], $mybb->input['ankunft_tag'], $mybb->input['ankunft_jahr']);
+        $departure = mktime(0, 0, 0, $mybb->input['abflug_monat'], $mybb->input['abflug_tag'], $mybb->input['abflug_jahr']);
+        $insertData = array(
+            'id' => '',
+            'uid' => $mybb->user['uid'],
+            'username' => $mybb->user['username'],
+            'ankunft' => $db->escape_string($arrival),
+            'abflug' => $db->escape_string($departure),
+            'airline' => $db->escape_string($mybb->input['airline']),
+            'ort' => $db->escape_string($mybb->input['place']),
+            'hotel' => $db->escape_string($mybb->input['hotel']),
+            'telefon' => $db->escape_string($mybb->input['phone']),
+            'data_id' => '',
+            'sort_id' => ''
+        );
+        $db->insert_query('liste', $insertData);
+        return true;
+    } else {
+        $message = awaylist_getHtmlErrorMessage($errors);
+        return false;
+    }
+    return false;
+}
+
+/**
+ * update the item
+ * @return boolean if successful
+ */
+function awaylist_editItem(&$message = '')
+{
+    global $db, $mybb;
+
+    $errors = array();
+    if (awaylist_validateItem($errors, $mybb->input['data_id']) == true) {
+        $arrival = mktime(0, 0, 0, $mybb->input['ankunft_monat'], $mybb->input['ankunft_tag'], $mybb->input['ankunft_jahr']);
+        $departure = mktime(0, 0, 0, $mybb->input['abflug_monat'], $mybb->input['abflug_tag'], $mybb->input['abflug_jahr']);
+        $insertData = array(
+            'ankunft' => $db->escape_string($arrival),
+            'abflug' => $db->escape_string($departure),
+            'airline' => $db->escape_string($mybb->input['airline']),
+            'ort' => $db->escape_string($mybb->input['place']),
+            'hotel' => $db->escape_string($mybb->input['hotel']),
+            'telefon' => $db->escape_string($mybb->input['phone']),
+        );
+        $db->update_query('liste', $insertData, "data_id = '{$mybb->input['data_id']}'");
+        return true;
+    } else {
+        $message = awaylist_getHtmlErrorMessage($errors);
+        return false;
+    }
+    return false;
+}
+
+/**
+ * delete the item
+ * @return boolean if successful
+ */
+function awaylist_deleteItem()
 {
     global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
 
-    if ($mybb->input['airline'] == "")
-        $errors[] = $lang->errorAirlineMissing;
-    if ($mybb->input['place'] == "")
-        $errors[] = $lang->errorMissingPlace;
-    if ($mybb->input['hotel'] == "")
-        $errors[] = $lang->errorMissingHotel;
-    if (preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'], $number)) {
-        unset($number);
-    } else {
-        $errors[] = $lang->errorInvalidPhoneNumber;
-    }
-    $arrival = mktime(0, 0, 0, $mybb->input['ankunft_monat'], $mybb->input['ankunft_tag'], $mybb->input['ankunft_jahr']);
-    $departure = mktime(0, 0, 0, $mybb->input['abflug_monat'], $mybb->input['abflug_tag'], $mybb->input['abflug_jahr']);
+    $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
+    $item = $db->fetch_array($query);
 
-    $check = true;
-    $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$arrival' AND '$departure' ) OR ( abflug  BETWEEN '$arrival' AND '$departure' ) OR (ankunft >= $arrival AND abflug <= $departure) )");
-    while ($db->fetch_array($query)) {
-        $check = false;
+    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
+        $errors[] = $lang->errorNoPermission;
     }
-    if ($check == false)
-        $errors[] = $lang->errorAlreadyAway;
-
-    if (!ShowDates::checkFutureDate($arrival))
-        $errors[] = $lang->errorArrivalNotInFuture;
-    if (!ShowDates::checkFutureDate($departure))
-        $errors[] = $lang->errorDepartureNotInFuture;
-    if (!ShowDates::checkFutureDate($departure, $arrival))
-        $errors[] = $lang->errorArrivalNotBeforeDeparture;
+    if ($mybb->input['data_id'] == '') {
+        $errors[] = $lang->errorNoItemSelected;
+    }
 
     // if any error occurred
     if (isset($errors)) {
         $showList = '';
-        add_breadcrumb($lang->newItem);
+        // variables used in the template
+        global $header, $headerinclude, $footer;
+        add_breadcrumb($lang->deleteItem);
         $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
         $content .= '<p><ul>';
         foreach ($errors as $error) {
@@ -489,31 +528,24 @@ function insertNewItem()
         exit;
     }
 
-    $insertData = array(
-        'id' => '',
-        'uid' => $mybb->user['uid'],
-        'username' => $mybb->user['username'],
-        'ankunft' => $db->escape_string($arrival),
-        'abflug' => $db->escape_string($departure),
-        'airline' => $db->escape_string($mybb->input['airline']),
-        'ort' => $db->escape_string($mybb->input['place']),
-        'hotel' => $db->escape_string($mybb->input['hotel']),
-        'telefon' => $db->escape_string($mybb->input['phone']),
-        'data_id' => '',
-        'sort_id' => ''
-    );
-    $db->insert_query('liste', $insertData);
-
+    $db->delete_query("liste", "data_id='{$mybb->input['data_id']}'");
     return true;
 }
 
 /**
- * update the item
- * @return boolean if successful
+ *
+ * @global MyBB $mybb
+ * @global MyLanguage $lang
+ * @global DB_MySQL $db
+ * @param array $errors array which will contain all errors during validation
+ * @param integer $editItemId
+ * @return boolean true if the item values are valid 
  */
-function editItem()
+function awaylist_validateItem(&$errors, $editItemId = null)
 {
-    global $db, $mybb, $lang, $templates;
+    global $mybb, $lang, $db;
+
+    $errors = array();
     $lang->load("liste", false, true);
 
     if ($mybb->input['airline'] == "")
@@ -533,91 +565,34 @@ function editItem()
     $check = true;
     $query = $db->simple_select("liste", "*", "uid = '{$mybb->user['uid']}' AND ( ( ankunft BETWEEN '$arrival' AND '$departure' ) OR ( abflug  BETWEEN '$arrival' AND '$departure' ) OR (ankunft >= $arrival AND abflug <= $departure) )");
     while ($result = $db->fetch_array($query)) {
-        if ($result['data_id'] != $mybb->input['data_id'])
+        if ($editItemId == null OR $result['data_id'] != $editItemId) {
             $check = false;
+            $existingJourney = ' (' . date('d.m.Y', $result['ankunft']);
+            $existingJourney .= ' bis ' . date('d.m.Y', $result['abflug']) . ')';
+            $errors[] = $lang->errorAlreadyAway . $existingJourney;
+        }
     }
-    if ($check == false)
-        $errors[] = $lang->errorAlreadyAway;
 
-    #if (!ShowDates::checkFutureDate($arrival))
-    #    $errors[] = $lang->errorArrivalNotInFuture;
-    if (!ShowDates::checkFutureDate($departure))
+    if ($editItemId == null) {
+        if ($arrival < time())
+            $errors[] = $lang->errorArrivalNotInFuture;
+    }
+    if ($departure < time())
         $errors[] = $lang->errorDepartureNotInFuture;
-    if (!ShowDates::checkFutureDate($departure, $arrival))
+    if ($departure < $arrival)
         $errors[] = $lang->errorArrivalNotBeforeDeparture;
 
     // if any error occurred
-    if (isset($errors)) {
-        $showList = '';
-        add_breadcrumb($lang->editItem);
-        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
-        $content .= '<p><ul>';
-        foreach ($errors as $error) {
-            $content .= '<li>' . $error . '</li>';
-        }
-        $content .= '</ul></p>';
-        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showList = \"" . $templates->get("show_liste") . "\";");
-        output_page($showList);
-        exit;
+    if (count($errors) > 0) {
+        return false;
     }
-
-    $insertData = array(
-        'ankunft' => $db->escape_string($arrival),
-        'abflug' => $db->escape_string($departure),
-        'airline' => $db->escape_string($mybb->input['airline']),
-        'ort' => $db->escape_string($mybb->input['place']),
-        'hotel' => $db->escape_string($mybb->input['hotel']),
-        'telefon' => $db->escape_string($mybb->input['phone']),
-    );
-    $db->update_query('liste', $insertData, "data_id = '{$mybb->input['data_id']}'");
-
-    return true;
-}
-
-/**
- * delete the item
- * @return boolean if successful
- */
-function deleteItem()
-{
-    global $db, $mybb, $lang, $templates;
-    $lang->load("liste", false, true);
-
-    $query = $db->simple_select("liste", '*', "data_id = '" . $mybb->input['data_id'] . "'");
-    $item = $db->fetch_array($query);
-
-    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
-        $errors[] = $lang->errorNoPermission;
-    }
-    if ($mybb->input['data_id'] == '') {
-        $errors[] = $lang->errorNoItemSelected;
-    }
-
-    // if any error occurred
-    if (isset($errors)) {
-        $showList = '';
-        add_breadcrumb($lang->deleteItem);
-        $content .= '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
-        $content .= '<p><ul>';
-        foreach ($errors as $error) {
-            $content .= '<li>' . $error . '</li>';
-        }
-        $content .= '</ul></p>';
-        $content .= '<a href="javascript:history.back()">' . $lang->back . '</a></div>';
-        eval("\$showList = \"" . $templates->get("show_liste") . "\";");
-        output_page($showList);
-        exit;
-    }
-
-    $db->delete_query("liste", "data_id='{$mybb->input['data_id']}'");
     return true;
 }
 
 /**
  * delete the items of the user which is being deleted
  */
-function ListDeleteUserHook()
+function awaylist_ListDeleteUserHook()
 {
     global $db, $mybb;
 
@@ -628,7 +603,7 @@ function ListDeleteUserHook()
 /**
  * show the table with all items
  */
-function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $startLimit = 0)
+function awaylist_showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $startLimit = 0)
 {
     global $db, $mybb, $lang, $templates;
     $lang->load("liste", false, true);
@@ -648,7 +623,7 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
         $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>' . $lang->personsCurrentlyThere .
             date(" d.m.Y ", $timestamp) . $lang->in . ' ' . $mybb->settings["list_country"] . '</strong></td></tr>';
     } else {
-        $queryItems = $db->simple_select('liste', '*', 'abflug > ' . $timestamp, array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit)
+        $queryItems = $db->simple_select('liste', '*', 'abflug >= ' . $timestamp, array('order_by' => 'ankunft', 'limit_start' => $startLimit, 'limit' => $limit)
         );
         $timeStampNotice = '';
     }
@@ -663,7 +638,7 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
     $selectDateForm = ShowDates::showDaySelect("time_tag", date("d", $timestamp));
     $selectDateForm .= ShowDates::showMonthSelect("time_monat", date("m", $timestamp));
     $selectDateForm .= ShowDates::showYearSelect("time_jahr", date("Y", $timestamp));
-    $addItemUrl = $mybb->settings['bburl'] . '/show_list.php?action=addItem';
+    $addItemUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT . '?action=addAwlItem';
 
     foreach ($arrayItems as $item) {
         $count++;
@@ -711,36 +686,45 @@ function showFullTable($timestamp = null, $useTimestamp = false, $limit = 20, $s
  * main functions for displaying
  *
  */
-function showListOnIndex()
+function awaylist_showListOnIndex()
 {
     global $db, $mybb, $lang, $templates, $liste;
+
+    // load the language
     $lang->load("liste", false, true);
 
     $liste = '';
-    if ($mybb->user['uid'] != 0) {
+    if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] != 0) {
         if ($mybb->settings['show_list_on_index'] == '1') {
-            $liste = getContent();
+            $liste = awaylist_getContent();
         }
     }
 }
 
-function showList()
+function awaylist_showList()
 {
-    global $db, $mybb, $lang, $theme, $templates, $headerinclude, $header, $footer;
-    $lang->load("liste", false, true);
-    $showList = '';
+    global $db, $mybb, $lang, $theme, $templates;
 
+    // variables used in the templates
+    global $headerinclude, $header, $footer;
+
+    // load language
+    $lang->load("liste", false, true);
+
+    // check if the user has the permission to view the list
     if ($mybb->settings['showListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
         error_no_permission();
     }
 
-    $content = getContent();
+    // get the main content to display
+    $content = awaylist_getContent();
 
+    // load the template and fill the placeholders
     eval("\$showList = \"" . $templates->get("show_liste") . "\";");
     output_page($showList);
 }
 
-function getContent()
+function awaylist_getContent()
 {
     global $db, $mybb, $lang;
     $lang->load("liste", false, true);
@@ -752,51 +736,52 @@ function getContent()
     if ($mybb->settings['show_list'] == '1') {
 
         // get/set the limit
-        if ($mybb->input['action'] == "setLimit") {
-            $cookieArray = unserialize($_COOKIE['mybbliste']);
+        if ($mybb->input['action'] == "setAwlLimit") {
+            $cookieArray = unserialize($_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']);
             $limit = $cookieArray['displayLimit'] = $mybb->input['limit'];
             $time = 60 * 60 * 24 * 2;
-            my_setcookie('mybb[liste]', serialize($cookieArray), $time, true);
+            my_setcookie('awaylist', serialize($cookieArray), $time, true);
         } else {
-            $cookieArray = unserialize($_COOKIE['mybb[liste]']);
+            $cookieArray = unserialize($_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']);
             $limit = $cookieArray['displayLimit'];
         }
 
         // decide what to do
-        if ($mybb->input['action'] == 'editItem') {
+        if ($mybb->input['action'] == 'editAwlItem') {
             add_breadcrumb("{$mybb->settings["list_title"]}", THIS_SCRIPT);
-            if ($mybb->input['step2'] == 'true' && editItem() == true) {
+            $message = '';
+            if ($mybb->input['step2'] == 'true' && awaylist_editItem($message) == true) {
                 $message = '<p class="validation_success">' . $lang->editItemSuccessful . '</p>';
-                $content = showFullTable(null, false, $limit);
+                $content = awaylist_showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->editItem);
-                $content = showEditItemForm();
+                $content = awaylist_showEditItemForm();
             }
-        } elseif ($mybb->input['action'] == 'deleteItem') {
+        } elseif ($mybb->input['action'] == 'deleteAwlItem') {
             add_breadcrumb("{$mybb->settings["list_title"]}", THIS_SCRIPT);
-            if ($mybb->input['step2'] == 'true' && deleteItem() == true) {
+            if ($mybb->input['step2'] == 'true' && awaylist_deleteItem() == true) {
                 $message = '<p class="validation_success">' . $lang->deleteItemSuccessful . '</p>';
-                $content = showFullTable(null, false, $limit);
+                $content = awaylist_showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->deleteItem);
-                $content = showDeleteConfirmDialog();
+                $content = awaylist_showDeleteConfirmDialog();
             }
-        } elseif ($mybb->input['action'] == 'addItem') {
+        } elseif ($mybb->input['action'] == 'addAwlItem') {
             add_breadcrumb("{$mybb->settings["list_title"]}", THIS_SCRIPT);
-            if ($mybb->input['step2'] == 'true' && insertNewItem() == true) {
+            $message = '';
+            if ($mybb->input['step2'] == 'true' && awaylist_insertNewItem($message) == true) {
                 $message = '<p class="validation_success">' . $lang->addItemSuccessful . '</p>';
-                $content = showFullTable(null, false, $limit);
+                $content = awaylist_showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->newItem);
-                $content = showNewItemForm();
+                $content = awaylist_showNewItemForm();
             }
-        } elseif ($mybb->input['action'] == "setTimestamp") {
+        } elseif ($mybb->input['action'] == "setAwlTimestamp") {
             add_breadcrumb("{$mybb->settings["list_title"]}");
             $timestamp = mktime(0, 0, 0, $mybb->input['time_monat'], $mybb->input['time_tag'], $mybb->input['time_jahr']);
-            $content = showFullTable($timestamp, true, $limit);
+            $content = awaylist_showFullTable($timestamp, true, $limit);
         } else {
-            add_breadcrumb("{$mybb->settings["list_title"]}");
-            $content = showFullTable(null, false, $limit);
+            $content = awaylist_showFullTable(null, false, $limit);
         }
     } else {
         $content = '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
@@ -806,6 +791,22 @@ function getContent()
     }
 
     return $message . $content . '<br />';
+}
+
+function awaylist_getHtmlErrorMessage($errors)
+{
+    global $lang;
+
+    $lang->load("liste", false, true);
+
+    $content = '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+    $content .= '<p><ul>';
+    foreach ($errors as $error) {
+        $content .= '<li>' . $error . '</li>';
+    }
+    $content .= '</ul></p></div>';
+
+    return $content;
 }
 
 /** * *******************************************************************
@@ -861,9 +862,9 @@ function getContent()
  * {
  * }
  */
-$plugins->add_hook("index_start", "showListOnIndex");
-$plugins->add_hook("showList", "showList");
-$plugins->add_hook("admin_users_do_delete", "ListDeleteUserHook");
+$plugins->add_hook("index_start", "awaylist_showListOnIndex");
+$plugins->add_hook("awaylist_showList", "awaylist_showList");
+$plugins->add_hook("admin_users_do_delete", "awaylist_ListDeleteUserHook");
 
 function liste_info()
 {
@@ -873,7 +874,7 @@ function liste_info()
         "website" => "http://www.malte-gerth.de/mybb.html",
         "author" => "Jan Malte Gerth",
         "authorsite" => "http://www.malte-gerth.de/",
-        "version" => "1.6.3",
+        "version" => "1.6.4",
         "compatibility" => "16*",
     );
 }
@@ -934,14 +935,14 @@ function liste_install()
         <tr>
             <td class="thead" colspan="9">
                 <form action="{$currentUrl}" method="post" style="vertical-align:center; text-align:left; float:left; width:50%;">
-                    <input type="hidden" name="action" value="setLimit" />
+                    <input type="hidden" name="action" value="setAwlLimit" />
                     <strong>{$lang->showOnly} <input type="text" name="limit" value="{$limit}" /> {$lang->entries}</strong>
-                    <input type="submit" name="setLimit" value="{$lang->show}" style="display:inline;"/>
+                    <input type="submit" name="setAwlLimit" value="{$lang->show}" style="display:inline;"/>
                 </form>
                 <form action="{$currentUrl}" method="post" style="vertical-align:center; text-align:right; float:left; width:50%;">
-                    <input type="hidden" name="action" value="setTimestamp" />
+                    <input type="hidden" name="action" value="setAwlTimestamp" />
                     <strong>{$lang->whoIsAt} {$selectDateForm} {$lang->in} {$mybb->settings[\'list_country\']}?</strong>
-                    <input type="submit" name="setTimestamp" value="{$lang->show}" />
+                    <input type="submit" name="setAwlTimestamp" value="{$lang->show}" />
                 </form>
             </td>
         </tr>
@@ -1184,3 +1185,4 @@ function liste_deactivate()
 
     rebuild_settings();
 }
+
