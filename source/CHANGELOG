@@ -1,4 +1,14 @@
+CHANGELOG
+
 This changelog starts with version 1.4.5
+
+Version 1.6.5 (January 8, 2012)
+    * changed the filenames
+    * changed the database structure, provide an upgrade function
+    * changed setting names, make sure to set the correct settings again
+    * added GID for automatic update process
+    * changed description to english
+    * renamed files
 
 Version 1.6.4 (January 8, 2012)
     * added compatibility with other plugins (using plugin specific action names)

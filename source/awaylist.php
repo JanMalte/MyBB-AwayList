@@ -10,7 +10,7 @@
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
  */
 define("IN_MYBB", 1);
-define('THIS_SCRIPT', 'show_list.php');
+define('THIS_SCRIPT', 'awaylist.php');
 // set to "1" if this page should be hidden on the online list
 // default is "0"
 define("NO_ONLINE", 0);
@@ -19,21 +19,23 @@ define("NO_ONLINE", 0);
 require("./global.php");
 
 // load language for the plugin
-$lang->load("liste", false, true);
+$lang->load("awaylist", false, true);
 
 if (!$pluginsCache) {
     $pluginsCache = $cache->read("plugins");
 }
 
-if (array_key_exists('liste', $pluginsCache['active']) &&
-    $pluginsCache['active']['liste'] == 'liste') {
+if (array_key_exists('awaylist', $pluginsCache['active']) &&
+    $pluginsCache['active']['awaylist'] == 'awaylist') {
 
-    if ($mybb->settings['showListOnlyForMembers'] == '1' &&
+    if ($mybb->settings['showAwayListOnlyForMembers'] == '1' &&
         $mybb->user['uid'] == 0) {
         error_no_permission();
     } else {
-        add_breadcrumb($lang->liste);
-        $plugins->run_hooks('awaylist_showList');
+        if ($mybb->settings['showAwayList'] == '1') {
+            add_breadcrumb($lang->liste);
+            $plugins->run_hooks('awaylist_showList');
+        }
     }
 } else {
 
@@ -47,6 +49,6 @@ if (array_key_exists('liste', $pluginsCache['active']) &&
     $content .= '<a href="javascript:history.back()">' . $lang->back . '</a>
         </div>';
 
-    eval("\$showList = \"" . $templates->get("show_liste") . "\";");
+    eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
     output_page($showList);
 }

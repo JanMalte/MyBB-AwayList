@@ -1,38 +1,11 @@
-This is a plugin for the MyBB
+README
 
-It provides a list where members can subscribe when they are at a special place.
-The list include when the journey begins and when it ends. Also some additional informations can be displayed.
+Awaylist - MyBB Plugin
 
-For more Informations about the MyBB take a look at
-	http://www.mybboard.net
-German users can take a look here
-	http://www.mybboard.de
+This plugin provides a list where members can subscribe when they are at a
+special place.
+The list include when the journey begins and when it ends. Also some additional
+informations can be displayed.
 
-Informations about this plugin can be founded here
-	http://www.malte-gerth.de/mybb.html
-
-Informations about the author are placed at this page
-	http://www.malte-gerth.de
-
-/***************************************************************************
- *   Copyright (C) 2012 by Jan Malte Gerth								   *
- *   mail@malte-gerth.de	   											   *
- *                                                                         *
- *   You have to leave the Copyright and the                               *
- *   backlink at a visible position at the frontend                        *
- *                                                                         *
- *   This program is free software; you can redistribute it and/or modify  *
- *   it under the terms of the GNU General Public License as published by  *
- *   the Free Software Foundation; either version 2 of the License, or     *
- *   (at your option) any later version.                                   *
- *                                                                         *
- *   This program is distributed in the hope that it will be useful,       *
- *   but WITHOUT ANY WARRANTY; without even the implied warranty of        *
- *   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the         *
- *   GNU General Public License for more details.                          *
- *                                                                         *
- *   You should have received a copy of the GNU General Public License     *
- *   along with this program; if not, write to the                         *
- *   Free Software Foundation, Inc.,                                       *
- *   59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.             *
- ***************************************************************************/
+Please uninstall any previous version to make sure there are no old changes left.
+The database table can be left, as it still uses the old data.
