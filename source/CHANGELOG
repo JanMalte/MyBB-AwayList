@@ -2,6 +2,9 @@ CHANGELOG
 
 This changelog starts with version 1.4.5
 
+Version 1.6.7 (January 14, 2012)
+    * fixed edit and delete bug
+
 Version 1.6.6 (January 14, 2012)
     * removed unnecessary else statements
 

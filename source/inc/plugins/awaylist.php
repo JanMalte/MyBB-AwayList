@@ -504,7 +504,7 @@ function awaylist_deleteItem()
     $item = $db->fetch_array($query);
 
     $errors = array();
-    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
+    if (( $item['uid'] != $mybb->user['uid'] ) && (!isUserInGroup(4) )) {
         $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['id'] == '') {
@@ -562,10 +562,19 @@ function awaylist_validateItem(&$errors, $editItemId = null)
     $departure = mktime(0, 0, 0, $mybb->input['departure_monat'], $mybb->input['departure_tag'], $mybb->input['departure_jahr']);
 
     $check = true;
-    $whereCondition = "uid = '{$mybb->user['uid']}
-        .' AND ( ( arrival BETWEEN '$arrival' AND '$departure' ) '
-        .' OR ( departure  BETWEEN '$arrival' AND '$departure' ) '
-        .' OR (arrival >= $arrival AND departure <= $departure) )";
+    $editItem = false;
+    $userId = $mybb->user['uid'];
+    if ($editItemId != null) {
+        $query = $db->simple_select("awaylist", '*', "id = '" . $editItemId . "'");
+        $editItem = $db->fetch_array($query);
+    }
+    if ($editItem && $userId != $editItem['uid']) {
+        $userId = $editItem['uid'];
+    }
+    $whereCondition = 'uid = ' . $userId
+        . ' AND ( ( arrival BETWEEN ' . $arrival . ' AND ' . $departure . ' ) '
+        . ' OR ( departure  BETWEEN ' . $arrival . ' AND ' . $departure . ' ) '
+        . ' OR ( arrival >= ' . $arrival . ' AND departure <= ' . $departure . ' ) )';
     $query = $db->simple_select("awaylist", "*", $whereCondition);
     while ($result = $db->fetch_array($query)) {
         if ($editItemId == null OR $result['id'] != $editItemId) {
@@ -883,7 +892,7 @@ function awaylist_info()
         "website" => "http://www.malte-gerth.de/mybb.html",
         "author" => "Jan Malte Gerth",
         "authorsite" => "http://www.malte-gerth.de/",
-        "version" => "1.6.6",
+        "version" => "1.6.7",
         "compatibility" => "16*",
         "gid" => '6a8fbbc82f4aa01fd9ba4a599e80c5c7'
     );
