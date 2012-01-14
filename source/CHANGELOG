@@ -2,6 +2,9 @@ CHANGELOG
 
 This changelog starts with version 1.4.5
 
+Version 1.6.6 (January 14, 2012)
+    * removed unnecessary else statements
+
 Version 1.6.5 (January 8, 2012)
     * changed the filenames
     * changed the database structure, provide an upgrade function
