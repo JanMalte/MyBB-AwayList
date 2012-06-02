@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version     liste.php 2012-01-08
+ * @version     awaylist.php 2012-01-08
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Plugin
@@ -15,6 +15,9 @@ if (!defined("IN_MYBB")) {
         <br />Please make sure IN_MYBB is defined.");
 }
 
+/** * *******************************************************************
+ * HELPER FUNCTIONS
+ */
 // as this is a often used class in plugins
 // check if it isn't already defined
 if (!class_exists('ShowDates')) {
@@ -176,9 +179,7 @@ if (!function_exists('isUserInGroup')) {
 }
 
 /** * *******************************************************************
- *
- * main functions for this plugin
- *
+ * PLUGIN CODE
  */
 
 /**

@@ -1,7 +1,7 @@
 <?php
 
 /**
- * @version     show_list.php 2012-01-08
+ * @version     awaylist.php 2012-01-08
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Plugin

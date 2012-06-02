@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-    <project name="MyBB Plugin Awaylist" default="build">
+    <project name="MyBB Plugin Email Admin about New Members" default="build">
         <target name="build"
             depends="prepare,lint,phploc,pdepend,phpmd-ci,phpcs-ci,phpcpd,phpdoc,phpunit,phpcb"/>
             
