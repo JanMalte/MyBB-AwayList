@@ -1,7 +1,5 @@
 <?php
-
 /**
- * @version     awaylist.php 2012-01-08
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Plugin
@@ -9,20 +7,20 @@
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
  */
-define("IN_MYBB", 1);
+define('IN_MYBB', 1);
 define('THIS_SCRIPT', 'awaylist.php');
 // set to "1" if this page should be hidden on the online list
 // default is "0"
-define("NO_ONLINE", 0);
+define('NO_ONLINE', 0);
 
 // include the global MyBB context
-require("./global.php");
+require_once 'global.php';
 
 // load language for the plugin
-$lang->load("awaylist", false, true);
+$lang->load('awaylist', false, true);
 
 if (!$pluginsCache) {
-    $pluginsCache = $cache->read("plugins");
+    $pluginsCache = $cache->read('plugins');
 }
 
 if (array_key_exists('awaylist', $pluginsCache['active']) &&
