@@ -14,3 +14,7 @@ Install
 
 Please uninstall any previous version to make sure there are no old changes left.
 The database table can be left, as it still uses the old data.
+
+Bug tracker
+====================
+Have a bug or idea? Please create an issue on GitHub at https://github.com/JanMalte/MyBB-AwayList/issues
