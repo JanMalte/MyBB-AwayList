@@ -5,7 +5,7 @@
  * @subpackage  Plugin
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
- * @license     GNU General Public License version 3 or later; see LICENSE.txt
+ * @license     GNU General Public License version 3 or later
  */
 // Disallow direct access to this file for security reasons
 if (!defined('IN_MYBB')) {
@@ -22,14 +22,22 @@ if (!class_exists('ShowDates')) {
 
     /**
      * Collection of usefull functions for using dates and timestamps
+     * @category    MyBB.Plugins
+     * @package     AwayList
+     * @subpackage  Plugin
+     * @author      Malte Gerth <http://www.malte-gerth.de>
+     * @copyright   Copyright (C) Malte Gerth. All rights reserved.
+     * @license     GNU General Public License version 3 or later
      */
     class ShowDates
     {
 
         /**
          * show a SELECT element for days in a HTML form
+         * 
          * @param string $fieldName Name of the field
-         * @param string|integer $selectedDay (Optional) Set to the value of the day which should be selected
+         * @param string|integer $selectedDay OPTIONAL Set to the value of the
+         * day which should be selected
          * @return string HTML code of the SELECT element
          */
         public static function showDaySelect($fieldName, $selectedDay = null)
@@ -42,7 +50,8 @@ if (!class_exists('ShowDates')) {
             // do this 31 times, one for every day
             for ($i = 01; $i <= 31; $i++) {
                 $day = (string) $i;
-                // convert this to a string with two numbers, e.g.: 04 instade of 4
+                // convert this to a string with two numbers,
+                // e.g.: 04 instade of 4
                 if ($i < 10) {
                     $day = (string) "0" . $i;
                 }
@@ -53,7 +62,8 @@ if (!class_exists('ShowDates')) {
                     $selected .= 'selected="selected" ';
                 }
                 // add the option the the HTML select form
-                $htmlSelectForm .= '<option ' . $selected . 'value="' . $day . '">' . $day;
+                $htmlSelectForm .= '<option ' . $selected
+                    . 'value="' . $day . '">' . $day;
             }
             // close the select form
             $htmlSelectForm .= "</select>";
@@ -63,8 +73,10 @@ if (!class_exists('ShowDates')) {
 
         /**
          * show a SELECT element for months in a HTML form
+         * 
          * @param string $fieldName Name of the field
-         * @param string|integer $selectedMonth (Optional) Set to the value of the month which should be selected
+         * @param string|integer $selectedMonth OPTIONAL Set to the value of the
+         * month which should be selected
          * @return string HTML code of the SELECT element
          */
         public static function showMonthSelect($fieldName, $selectedMonth = null)
@@ -77,7 +89,8 @@ if (!class_exists('ShowDates')) {
             // do this 12 times, one for every month
             for ($i = 01; $i <= 12; $i++) {
                 $month = (string) $i;
-                // convert this to a string with two numbers, e.g.: 04 instade of 4
+                // convert this to a string with two numbers,
+                // e.g.: 04 instade of 4
                 if ($i < 10) {
                     $month = (string) "0" . $i;
                 }
@@ -88,7 +101,8 @@ if (!class_exists('ShowDates')) {
                     $selected .= 'selected="selected" ';
                 }
                 // add the option the the HTML select form
-                $htmlSelectForm .= '<option ' . $selected . 'value="' . $month . '">' . $month;
+                $htmlSelectForm .= '<option ' . $selected
+                    . 'value="' . $month . '">' . $month;
             }
             // close the select form
             $htmlSelectForm .= "</select>";
@@ -98,10 +112,13 @@ if (!class_exists('ShowDates')) {
 
         /**
          * show a SELECT element for years in a HTML form
+         * 
          * @param string $fieldName Name of the field
-         * @param string|integer $selectedYear (Optional) Set to the value of the year which should be selected
-         * @param integer $offset (Optional) Offset for the list of years; negative values are allowed
-         * @param integer $countItems (Optional) Number of items which should be shown
+         * @param string|integer $selectedYear OPTIONAL Set to the value of
+         * the year which should be selected
+         * @param integer $offset OPTIONAL Offset for the list of years;
+         * negative values are allowed
+         * @param integer $countItems OPTIONAL Number of items which should be shown
          * @return string HTML code of the SELECT element
          */
         public static function showYearSelect($fieldName, $selectedYear = null,
@@ -126,7 +143,8 @@ if (!class_exists('ShowDates')) {
                     $selected .= 'selected="selected" ';
                 }
                 // add the option the the HTML select form
-                $htmlSelectForm .= '<option ' . $selected . 'value="' . $year . '">' . $year;
+                $htmlSelectForm .= '<option ' . $selected
+                    . 'value="' . $year . '">' . $year;
             }
             // close the select form
             $htmlSelectForm .= "</select>";
@@ -144,7 +162,9 @@ if (!function_exists('isUserInGroup')) {
 
     /**
      * checks if the user is in one of the allowed usergroups
-     * @param string $allowedGroups the allowed usergroups; seperated with ","(COMMA) e.g.: "4,10,2"
+     * 
+     * @param string $allowedGroups the allowed usergroups;
+     * seperated with ","(COMMA) e.g.: "4,10,2"
      * @return boolean true if user is in one of the allowed usergroups
      */
     function isUserInGroup($allowedGroups = false)
@@ -404,7 +424,8 @@ function awaylist_showDeleteConfirmDialog()
                 <thead>
                     <tr>
                         <td class="thead" colspan="2">
-                            <div><strong>' . $lang->deleteItem . '</strong><br /><div class="smalltext"></div></div>
+                            <div><strong>' . $lang->deleteItem . '</strong><br />'
+        . '<div class="smalltext"></div></div>
                         </td>
                     </tr>
                 </thead>
@@ -436,12 +457,14 @@ function awaylist_showDeleteConfirmDialog()
 		  <td class="trow1">' . $item['hotel'] . '</td>
 		</tr>
 		<tr>
-		  <td class="trow2"><b>' . $lang->phoneAt . ' ' . $mybb->settings["awayListCountry"] . ':</b></td>
+		  <td class="trow2"><b>' . $lang->phoneAt . ' '
+        . $mybb->settings["awayListCountry"] . ':</b></td>
 		  <td class="trow2">' . $item['phone'] . '</td>
 		</tr>
 		<tr>
 		  <td class="trow1"></td>
-		  <td class="trow1"><input type="submit" name="deleteAwlItem" value="' . $lang->deleteItem . '"></td>
+		  <td class="trow1"><input type="submit" name="deleteAwlItem"'
+        . ' value="' . $lang->deleteItem . '"></td>
 		</tr>
             </tbody>
 	  </table>
@@ -674,8 +697,10 @@ function awaylist_showFullTable($timestamp = null, $useTimestamp = false,
     $whereCondition = 'departure >= ' . $timestamp;
     if ($useTimestamp == true) {
         $whereCondition = $timestamp . ' BETWEEN arrival AND departure';
-        $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>' . $lang->personsCurrentlyThere .
-            date(" d.m.Y ", $timestamp) . $lang->in . ' ' . $mybb->settings["awayListCountry"] . '</strong></td></tr>';
+        $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>'
+            . $lang->personsCurrentlyThere . date(" d.m.Y ", $timestamp)
+            . $lang->in . ' ' . $mybb->settings["awayListCountry"]
+            . '</strong></td></tr>';
     }
     $options = array(
         'order_by' => 'arrival',
@@ -701,7 +726,8 @@ function awaylist_showFullTable($timestamp = null, $useTimestamp = false,
     $selectDateForm .= ShowDates::showYearSelect(
             "time_jahr", date("Y", $timestamp)
     );
-    $addItemUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT . '?action=addAwlItem';
+    $addItemUrl = $mybb->settings['bburl'] . '/'
+        . THIS_SCRIPT . '?action=addAwlItem';
 
     foreach ($arrayItems as $item) {
         $count++;
@@ -710,7 +736,8 @@ function awaylist_showFullTable($timestamp = null, $useTimestamp = false,
             . '</a>';
 
         $currentDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-        if (($item['arrival'] < $currentDate) && ($item['departure'] > $currentDate)) {
+        if (($item['arrival'] < $currentDate)
+            && ($item['departure'] > $currentDate)) {
             $status = '<img src="' . $mybb->settings['bburl']
                 . '/images/awaylist/vor_ort.png" border="0">';
         } elseif ($item['departure'] == $currentDate) {
@@ -756,14 +783,16 @@ function awaylist_showFullTable($timestamp = null, $useTimestamp = false,
  */
 function awaylist_showListOnIndex()
 {
-    global $db, $mybb, $lang, $templates, $awaylist;
+    global $mybb, $lang, $awaylist;
 
     // load the language
     $lang->load("awaylist", false, true);
 
     $awaylist = '';
-    if ($mybb->settings['showAwayListOnlyForMembers'] == '1' && $mybb->user['uid'] != 0) {
-        if ($mybb->settings['showAwayList'] == '1' && $mybb->settings['showAwayListOnIndex'] == '1') {
+    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
+        && $mybb->user['uid'] != 0) {
+        if ($mybb->settings['showAwayList'] == '1'
+            && $mybb->settings['showAwayListOnIndex'] == '1') {
             $awaylist = awaylist_getContent();
         }
     }
@@ -780,7 +809,8 @@ function awaylist_showList()
     $lang->load("awaylist", false, true);
 
     // check if the user has the permission to view the list
-    if ($mybb->settings['showAwayListOnlyForMembers'] == '1' && $mybb->user['uid'] == 0) {
+    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
+        && $mybb->user['uid'] == 0) {
         error_no_permission();
     }
 
@@ -809,10 +839,14 @@ function awaylist_getContent()
     if ($mybb->settings['showAwayList'] == '1') {
 
         // get/set the limit
-        $cookieArray = unserialize($_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']);
+        $cookieArray = unserialize(
+            $_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']
+        );
         $limit = $cookieArray['displayLimit'];
         if ($mybb->input['action'] == "setAwlLimit") {
-            $cookieArray = unserialize($_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']);
+            $cookieArray = unserialize(
+                $_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']
+            );
             $limit = $cookieArray['displayLimit'] = $mybb->input['limit'];
             $time = 60 * 60 * 24 * 2;
             my_setcookie('awaylist', serialize($cookieArray), $time, true);
@@ -822,8 +856,11 @@ function awaylist_getContent()
         if ($mybb->input['action'] == 'editAwlItem') {
             add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
             $message = '';
-            if ($mybb->input['step2'] == 'true' && awaylist_editItem($message) == true) {
-                $message = '<p class="validation_success">' . $lang->editItemSuccessful . '</p>';
+            if ($mybb->input['step2'] == 'true'
+                && awaylist_editItem($message) == true) {
+                $message = '<p class="validation_success">'
+                    . $lang->editItemSuccessful
+                    . '</p>';
                 $content = awaylist_showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->editItem);
@@ -831,8 +868,11 @@ function awaylist_getContent()
             }
         } elseif ($mybb->input['action'] == 'deleteAwlItem') {
             add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
-            if ($mybb->input['step2'] == 'true' && awaylist_deleteItem() == true) {
-                $message = '<p class="validation_success">' . $lang->deleteItemSuccessful . '</p>';
+            if ($mybb->input['step2'] == 'true'
+                && awaylist_deleteItem() == true) {
+                $message = '<p class="validation_success">'
+                    . $lang->deleteItemSuccessful
+                    . '</p>';
                 $content = awaylist_showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->deleteItem);
@@ -841,8 +881,11 @@ function awaylist_getContent()
         } elseif ($mybb->input['action'] == 'addAwlItem') {
             add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
             $message = '';
-            if ($mybb->input['step2'] == 'true' && awaylist_insertNewItem($message) == true) {
-                $message = '<p class="validation_success">' . $lang->addItemSuccessful . '</p>';
+            if ($mybb->input['step2'] == 'true'
+                && awaylist_insertNewItem($message) == true) {
+                $message = '<p class="validation_success">'
+                    . $lang->addItemSuccessful
+                    . '</p>';
                 $content = awaylist_showFullTable(null, false, $limit);
             } else {
                 add_breadcrumb($lang->newItem);
@@ -858,7 +901,9 @@ function awaylist_getContent()
             $content = awaylist_showFullTable(null, false, $limit);
         }
     } else {
-        $content = '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+        $content = '<div class="error low_warning"><p><em>'
+            . $lang->followingErrors
+            . '</em></p>';
         $content .= '<p><ul>';
         $content .= '<li>' . $lang->errorNoDisplay . '</li>';
         $content .= '</ul></p></div>';
@@ -873,7 +918,9 @@ function awaylist_getHtmlErrorMessage($errors)
 
     $lang->load("awaylist", false, true);
 
-    $content = '<div class="error low_warning"><p><em>' . $lang->followingErrors . '</em></p>';
+    $content = '<div class="error low_warning"><p><em>'
+        . $lang->followingErrors
+        . '</em></p>';
     $content .= '<p><ul>';
     foreach ($errors as $error) {
         $content .= '<li>' . $error . '</li>';
@@ -944,7 +991,8 @@ function awaylist_info()
 {
     return array(
         "name" => "Awaylist",
-        "description" => "It provides a list where members can subscribe when they are at a special place",
+        "description" => "It provides a list where members can subscribe"
+        . " when they are at a special place",
         "website" => "http://www.malte-gerth.de/mybb.html",
         "author" => "Jan Malte Gerth",
         "authorsite" => "http://www.malte-gerth.de/",
@@ -1094,7 +1142,8 @@ function awaylist_install()
     // create our database table
     $dbversion = $db->get_version();
     if ($dbversion > 5) {
-        $createTableQuery = "CREATE TABLE IF NOT EXISTS `" . $db->table_prefix . "awaylist` (
+        $createTableQuery = "CREATE TABLE IF NOT EXISTS "
+            . "`" . $db->table_prefix . "awaylist` (
             `id` bigint(20) NOT NULL auto_increment,
             `sort_id` bigint(20) default NULL,
             `uid` int(10) unsigned default NULL,
@@ -1108,7 +1157,8 @@ function awaylist_install()
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
     } else {
-        $createTableQuery = "CREATE TABLE IF NOT EXISTS `" . $db->table_prefix . "awaylist` (
+        $createTableQuery = "CREATE TABLE IF NOT EXISTS "
+            . "`" . $db->table_prefix . "awaylist` (
             `id` bigint(20) NOT NULL auto_increment,
             `sort_id` bigint(20) default NULL,
             `uid` int(10) unsigned default NULL,
@@ -1268,22 +1318,24 @@ function awaylist_deactivate()
 {
     require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
 
-    find_replace_templatesets("index", '#(\r?)(\n?){\$awaylist}(\r?)(\n?)#',
-                              "\r\n", 0);
+    find_replace_templatesets(
+        "index", '#(\r?)(\n?){\$awaylist}(\r?)(\n?)#', "\r\n", 0
+    );
 
-    find_replace_templatesets("header",
-                              '#(\n?)<li class="awaylist_link">(.*)</li>#', '',
-                              0);
+    find_replace_templatesets(
+        "header", '#(\n?)<li class="awaylist_link">(.*)</li>#', '', 0
+    );
 
     rebuild_settings();
 }
 
 function upgradeTo165()
 {
-    global $mybb, $db;
+    global $db;
 
     if ($db->table_exists('liste')) {
-        $renameTableQuery = "RENAME TABLE " . $db->table_prefix . "liste TO " . $db->table_prefix . "awaylist ;";
+        $renameTableQuery = "RENAME TABLE " . $db->table_prefix . "liste "
+            . " TO " . $db->table_prefix . "awaylist ;";
         $db->write_query($renameTableQuery);
     }
 
