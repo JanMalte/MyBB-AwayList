@@ -1,13 +1,13 @@
 <?php
 /**
- * @category 
- * @package 
- * @subpackage 
- * @copyright Copyright (c) 2012 METEOS Deutschland (www.meteos.de)
- * @license 
- * @author Malte Gerth <malte.gerth@meteos.de>
- * @link http://www.meteos.de/
- * @since 
+ * bootstraping for PHPUnit tests
+ * 
+ * @category    MyBB.Plugins
+ * @package     AwayList
+ * @subpackage  Tests
+ * @author      Malte Gerth <http://www.malte-gerth.de>
+ * @copyright   Copyright (C) Malte Gerth. All rights reserved.
+ * @license     GNU General Public License version 3 or later
  */
 
 define('APPLICATION_PATH', '/srv/www/mybb/mybb16');

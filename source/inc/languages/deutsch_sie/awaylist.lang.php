@@ -1,13 +1,14 @@
 <?php
-
 /**
- * @version     liste.lang.php 2012-01-07
+ * translation strings for AwayList plugin
+ * 
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Language
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
- * @license     GNU General Public License version 2 or later; see LICENSE.txt
+ * @license     GNU General Public License version 3 or later
+ * @filesource
  */
 $l['followingErrors'] = 'Folgende Fehler sind aufgetreten:';
 $l['errorNotActive'] = 'Das Plugin wurde nicht aktiviert.

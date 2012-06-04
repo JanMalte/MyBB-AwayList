@@ -1,11 +1,14 @@
 <?php
 /**
+ * AwayList plugin for MyBB
+ * 
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Plugin
  * @author      Malte Gerth <http://www.malte-gerth.de>
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
+ * @filesource
  */
 define('IN_MYBB', 1);
 define('THIS_SCRIPT', 'awaylist.php');

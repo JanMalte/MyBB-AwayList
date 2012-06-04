@@ -1,5 +1,7 @@
 <?php
 /**
+ * default test
+ * 
  * @category    MyBB.Plugins
  * @package     AwayList
  * @subpackage  Tests

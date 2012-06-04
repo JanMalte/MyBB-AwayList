@@ -176,8 +176,13 @@
         <exec executable="phpdoc" failonerror="true">
             <arg value="--directory" />
             <arg path="${basedir}" />
+            <arg value="--sourcecode" />
+            <arg value="--title" />
+            <arg value="${ant.project.name}" />
             <arg value="--target" />
             <arg path="${basedir}/build/api" />
+            <arg value="-c" />
+            <arg value="${basedir}/build-tools/phpdoc.xml" />
         </exec>
     </target>
         

@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<phpdoc>
+    <parser>
+        <markers>
+            <item>TODO</item>
+            <item>FIXME</item>
+        </markers>
+        <extensions>
+            <extension>php</extension>
+            <extension>php3</extension>
+            <extension>phtml</extension>
+        </extensions>
+        <visibility></visibility>
+    </parser>
+    <logging>
+        <level>notice</level>
+        <paths>
+            <default>{APP_ROOT}phpdoc.log</default>
+            <errors>{APP_ROOT}phpdoc-errors.log</errors>
+        </paths>
+    </logging>
+    <transformations>
+        <template name="responsive" />
+    </transformations>
+</phpdoc>
