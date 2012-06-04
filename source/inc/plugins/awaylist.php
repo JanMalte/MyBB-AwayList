@@ -481,7 +481,7 @@ function awaylist_insertNewItem(&$message = '')
     global $db, $mybb;
 
     $errors = array();
-    if (awaylist_validateItem($errors) == true) {
+    if (AwayList::validateItem($errors) == true) {
         $arrival = mktime(
             0, 0, 0, $mybb->input['arrival_monat'], $mybb->input['arrival_tag'],
             $mybb->input['arrival_jahr']
@@ -521,7 +521,7 @@ function awaylist_editItem(&$message = '')
     global $db, $mybb;
 
     $errors = array();
-    if (awaylist_validateItem($errors, $mybb->input['id']) == true) {
+    if (AwayList::validateItem($errors, $mybb->input['id']) == true) {
         $arrival = mktime(
             0, 0, 0, $mybb->input['arrival_monat'], $mybb->input['arrival_tag'],
             $mybb->input['arrival_jahr']
@@ -592,76 +592,6 @@ function awaylist_deleteItem()
     }
 
     $db->delete_query("awaylist", "id='{$mybb->input['id']}'");
-    return true;
-}
-
-/**
- *
- * @global MyBB $mybb
- * @global MyLanguage $lang
- * @global DB_MySQL $db
- * @param array $errors array which will contain all errors during validation
- * @param integer $editItemId
- * @return boolean true if the item values are valid 
- */
-function awaylist_validateItem(&$errors, $editItemId = null)
-{
-    global $mybb, $lang, $db;
-
-    $errors = array();
-    $lang->load("awaylist", false, true);
-
-    if ($mybb->input['airline'] == "") $errors[] = $lang->errorAirlineMissing;
-    if ($mybb->input['place'] == "") $errors[] = $lang->errorMissingPlace;
-    if ($mybb->input['hotel'] == "") $errors[] = $lang->errorMissingHotel;
-    if (!preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'])) {
-        $errors[] = $lang->errorInvalidPhoneNumber;
-    }
-    $arrival = mktime(
-        0, 0, 0, $mybb->input['arrival_monat'], $mybb->input['arrival_tag'],
-        $mybb->input['arrival_jahr']
-    );
-    $departure = mktime(
-        0, 0, 0, $mybb->input['departure_monat'], $mybb->input['departure_tag'],
-        $mybb->input['departure_jahr']
-    );
-
-    $check = true;
-    $editItem = false;
-    $userId = $mybb->user['uid'];
-    if ($editItemId != null) {
-        $query = $db->simple_select("awaylist", '*',
-                                    "id = '" . $editItemId . "'");
-        $editItem = $db->fetch_array($query);
-    }
-    if ($editItem && $userId != $editItem['uid']) {
-        $userId = $editItem['uid'];
-    }
-    $whereCondition = 'uid = ' . $userId
-        . ' AND ( ( arrival BETWEEN ' . $arrival . ' AND ' . $departure . ' ) '
-        . ' OR ( departure  BETWEEN ' . $arrival . ' AND ' . $departure . ' ) '
-        . ' OR ( arrival >= ' . $arrival . ' AND departure <= ' . $departure . ' ) )';
-    $query = $db->simple_select("awaylist", "*", $whereCondition);
-    while ($result = $db->fetch_array($query)) {
-        if ($editItemId == null OR $result['id'] != $editItemId) {
-            $check = false;
-            $existingJourney = ' (' . date('d.m.Y', $result['arrival']);
-            $existingJourney .= ' bis ' . date('d.m.Y', $result['departure']) . ')';
-            $errors[] = $lang->errorAlreadyAway . $existingJourney;
-        }
-    }
-
-    if ($editItemId == null) {
-        if ($arrival < time()) $errors[] = $lang->errorArrivalNotInFuture;
-    }
-    if ($departure < time()) $errors[] = $lang->errorDepartureNotInFuture;
-    if ($departure < $arrival)
-            $errors[] = $lang->errorArrivalNotBeforeDeparture;
-
-    // if any error occurred
-    if (count($errors) > 0) {
-        return false;
-    }
     return true;
 }
 
@@ -893,9 +823,10 @@ function awaylist_getContent()
             }
         } elseif ($mybb->input['action'] == "setAwlTimestamp") {
             add_breadcrumb("{$mybb->settings["awayListTitle"]}");
-            $timestamp = mktime(0, 0, 0, $mybb->input['time_monat'],
-                                $mybb->input['time_tag'],
-                                $mybb->input['time_jahr']);
+            $timestamp = mktime(
+                0, 0, 0, $mybb->input['time_monat'], $mybb->input['time_tag'],
+                $mybb->input['time_jahr']
+            );
             $content = awaylist_showFullTable($timestamp, true, $limit);
         } else {
             $content = awaylist_showFullTable(null, false, $limit);
@@ -1012,8 +943,9 @@ function awaylist_is_installed()
                 return true;
             }
         } else {
-            $query = $db->simple_select('templates', '*',
-                                        'title = \'show_awaylist\'');
+            $query = $db->simple_select(
+                'templates', '*', 'title = \'show_awaylist\''
+            );
             if ($db->num_rows($query)) {
                 return true;
             }
@@ -1137,7 +1069,7 @@ function awaylist_install()
     $db->insert_query("templates", $tplTableBit);
 
     // TODO remove legacy methode in the future
-    upgradeTo165();
+    AwayList::upgradeTo165();
 
     // create our database table
     $dbversion = $db->get_version();
@@ -1329,31 +1261,142 @@ function awaylist_deactivate()
     rebuild_settings();
 }
 
-function upgradeTo165()
+/**
+ * all needed functions for awaylist
+ * 
+ * @category    MyBB.Plugins
+ * @package     AwayList
+ * @subpackage  Plugin
+ * @author      Malte Gerth <http://www.malte-gerth.de>
+ * @copyright   Copyright (C) Malte Gerth. All rights reserved.
+ * @license     GNU General Public License version 3 or later
+ */
+class AwayList
 {
-    global $db;
 
-    if ($db->table_exists('liste')) {
-        $renameTableQuery = "RENAME TABLE " . $db->table_prefix . "liste "
-            . " TO " . $db->table_prefix . "awaylist ;";
-        $db->write_query($renameTableQuery);
+    /**
+     * upgrade an old database table to the new format
+     * 
+     * @global DB_MySQL $db 
+     * 
+     * @return void 
+     */
+    public static function upgradeTo165()
+    {
+        global $db;
+
+        // check if the upgrade was already performed before
+        if ($db->table_exists('awaylist')) {
+            return false;
+        }
+
+        if ($db->table_exists('liste')) {
+            $renameTableQuery = "RENAME TABLE " . $db->table_prefix . "liste "
+                . " TO " . $db->table_prefix . "awaylist ;";
+            $db->write_query($renameTableQuery);
+        }
+
+        if ($db->field_exists('ankunft', 'awaylist'))
+                $db->rename_column(
+                'awaylist', 'ankunft', 'arrival', 'int(11) default NULL'
+            );
+        if ($db->field_exists('abflug', 'awaylist'))
+                $db->rename_column(
+                'awaylist', 'abflug', 'departure', 'int(11) default NULL'
+            );
+        if ($db->field_exists('ort', 'awaylist'))
+                $db->rename_column(
+                'awaylist', 'ort', 'place', 'varchar(255) NOT NULL'
+            );
+        if ($db->field_exists('telefon', 'awaylist'))
+                $db->rename_column(
+                'awaylist', 'telefon', 'phone', 'varchar(255) NOT NULL'
+            );
+        if ($db->field_exists('data_id', 'awaylist')) {
+            $db->drop_column('awaylist', 'id');
+            $db->rename_column(
+                'awaylist', 'data_id', 'id',
+                'bigint(20) NOT NULL auto_increment'
+            );
+        }
     }
 
-    if ($db->field_exists('ankunft', 'awaylist'))
-            $db->rename_column('awaylist', 'ankunft', 'arrival',
-                               'int(11) default NULL');
-    if ($db->field_exists('abflug', 'awaylist'))
-            $db->rename_column('awaylist', 'abflug', 'departure',
-                               'int(11) default NULL');
-    if ($db->field_exists('ort', 'awaylist'))
-            $db->rename_column('awaylist', 'ort', 'place',
-                               'varchar(255) NOT NULL');
-    if ($db->field_exists('telefon', 'awaylist'))
-            $db->rename_column('awaylist', 'telefon', 'phone',
-                               'varchar(255) NOT NULL');
-    if ($db->field_exists('data_id', 'awaylist')) {
-        $db->drop_column('awaylist', 'id');
-        $db->rename_column('awaylist', 'data_id', 'id',
-                           'bigint(20) NOT NULL auto_increment');
+    /**
+     * validate an item
+     * 
+     * @global MyBB $mybb
+     * @global MyLanguage $lang
+     * @global DB_MySQL $db
+     * 
+     * @param array $errors array which will contain all errors during validation
+     * @param integer $editItemId
+     * 
+     * @return boolean true if the item values are valid 
+     */
+    public static function validateItem(&$errors, $editItemId = null)
+    {
+        global $mybb, $lang, $db;
+
+        if (!is_array($errors)) {
+            $errors = array();
+        }
+
+        $lang->load("awaylist", false, true);
+
+        if ($mybb->input['airline'] == "")
+                $errors[] = $lang->errorAirlineMissing;
+        if ($mybb->input['place'] == "") $errors[] = $lang->errorMissingPlace;
+        if ($mybb->input['hotel'] == "") $errors[] = $lang->errorMissingHotel;
+        if (!preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'])) {
+            $errors[] = $lang->errorInvalidPhoneNumber;
+        }
+        $arrival = mktime(
+            0, 0, 0, $mybb->input['arrival_monat'], $mybb->input['arrival_tag'],
+            $mybb->input['arrival_jahr']
+        );
+        $departure = mktime(
+            0, 0, 0, $mybb->input['departure_monat'],
+            $mybb->input['departure_tag'], $mybb->input['departure_jahr']
+        );
+
+        $check = true;
+        $editItem = false;
+        $userId = $mybb->user['uid'];
+        if ($editItemId != null) {
+            $query = $db->simple_select(
+                "awaylist", '*', "id = '" . $editItemId . "'"
+            );
+            $editItem = $db->fetch_array($query);
+        }
+        if ($editItem && $userId != $editItem['uid']) {
+            $userId = $editItem['uid'];
+        }
+        $whereCondition = 'uid = ' . $userId
+            . ' AND ( ( arrival BETWEEN ' . $arrival . ' AND ' . $departure . ' ) '
+            . ' OR ( departure  BETWEEN ' . $arrival . ' AND ' . $departure . ' ) '
+            . ' OR ( arrival >= ' . $arrival . ' AND departure <= ' . $departure . ' ) )';
+        $query = $db->simple_select("awaylist", "*", $whereCondition);
+        while ($result = $db->fetch_array($query)) {
+            if ($editItemId == null OR $result['id'] != $editItemId) {
+                $check = false;
+                $existingJourney = ' (' . date('d.m.Y', $result['arrival']);
+                $existingJourney .= ' bis ' . date('d.m.Y', $result['departure']) . ')';
+                $errors[] = $lang->errorAlreadyAway . $existingJourney;
+            }
+        }
+
+        if ($editItemId == null) {
+            if ($arrival < time()) $errors[] = $lang->errorArrivalNotInFuture;
+        }
+        if ($departure < time()) $errors[] = $lang->errorDepartureNotInFuture;
+        if ($departure < $arrival)
+                $errors[] = $lang->errorArrivalNotBeforeDeparture;
+
+        // if any error occurred
+        if (count($errors) > 0) {
+            return false;
+        }
+        return true;
     }
+
 }
