@@ -127,7 +127,7 @@ if (!class_exists('ShowDates')) {
          * @return string HTML code of the SELECT element
          */
         public static function showYearSelect($fieldName, $selectedYear = null,
-                                              $offset = -1, $countItems = 10)
+            $offset = -1, $countItems = 10)
         {
             // if the selected year isn't given set it to the actual year
             if ($selectedYear == null) $selectedYear = date("Y");
@@ -163,522 +163,9 @@ if (!class_exists('ShowDates')) {
 
 /** * *******************************************************************
  * 
- * PLUGIN CODE
+ * PLUGIN INSTALL/UNINSTALL ROUTINES
  * 
  * ******************************************************************** */
-
-/**
- * shows the insert form for a new item
- * @return the html content
- */
-function awaylist_showNewItemForm($validateErrors = null)
-{
-    global $mybb, $lang;
-    $lang->load("awaylist", false, true);
-
-    $item = array(
-        'arrival_tag' => $mybb->input['arrival_tag'],
-        'arrival_monat' => $mybb->input['arrival_monat'],
-        'arrival_jahr' => $mybb->input['arrival_jahr'],
-        'departure_tag' => $mybb->input['departure_tag'],
-        'departure_monat' => $mybb->input['departure_monat'],
-        'departure_jahr' => $mybb->input['departure_jahr'],
-        'airline' => $mybb->input['airline'],
-        'place' => $mybb->input['place'],
-        'hotel' => $mybb->input['hotel'],
-        'phone' => $mybb->input['phone'],
-    );
-
-    $content = AwayList::getItemForm($item, 'addAwlItem', $validateErrors);
-    return $content;
-}
-
-/**
- * show the edit form
- * @return the html content
- */
-function awaylist_showEditItemForm($validateErrors = null)
-{
-    global $db, $mybb, $lang, $templates;
-    $lang->load("awaylist", false, true);
-
-    $query = $db->simple_select(
-        "awaylist", '*', "id = '" . $mybb->input['id'] . "'"
-    );
-    $item = $db->fetch_array($query);
-
-    $errors = array();
-    if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
-        $errors[] = $lang->errorNoPermission;
-    }
-    if ($mybb->input['id'] == '') {
-        $errors[] = $lang->errorNoItemSelected;
-    }
-
-    // if any error occurred
-    if (!empty($errors)) {
-        $showList = '';
-        add_breadcrumb($lang->editItem);
-        $content .= '<div class="error low_warning"><p><em>'
-            . $lang->followingErrors
-            . '</em></p>';
-        $content .= '<p><ul>';
-        foreach ($errors as $error) {
-            $content .= '<li>' . $error . '</li>';
-        }
-        $content .= '</ul></p>';
-        $content .= '<a href="javascript:history.back()">'
-            . $lang->back
-            . '</a></div>';
-        eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
-        output_page($showList);
-        exit;
-    }
-    $item['arrival_tag'] = date('d', $item['arrival']);
-    $item['arrival_monat'] = date('m', $item['arrival']);
-    $item['arrival_jahr'] = date('Y', $item['arrival']);
-    $item['departure_tag'] = date('d', $item['departure']);
-    $item['departure_monat'] = date('m', $item['departure']);
-    $item['departure_jahr'] = date('Y', $item['departure']);
-    foreach($mybb->input as $key => $value) {
-        if(array_key_exists($key, $item)) {
-            $item[$key] = $value;
-        }
-    }
-    $content = AwayList::getItemForm($item, 'editAwlItem', $validateErrors);
-    return $content;
-}
-
-/**
- * @return the html message
- */
-function awaylist_showDeleteConfirmDialog()
-{
-    global $db, $mybb, $lang, $templates;
-    $lang->load("awaylist", false, true);
-
-    $query = $db->simple_select(
-        "awaylist", '*', "id = '" . $mybb->input['id'] . "'"
-    );
-    $item = $db->fetch_array($query);
-
-    $errors = array();
-    if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
-        $errors[] = $lang->errorNoPermission;
-    }
-    if ($mybb->input['id'] == '') {
-        $errors[] = $lang->errorNoItemSelected;
-    }
-
-    // if any error occurred
-    if (!empty($errors)) {
-        $showList = '';
-        add_breadcrumb($lang->deleteItem);
-        $content .= '<div class="error low_warning"><p><em>'
-            . $lang->followingErrors
-            . '</em></p>';
-        $content .= '<p><ul>';
-        foreach ($errors as $error) {
-            $content .= '<li>' . $error . '</li>';
-        }
-        $content .= '</ul></p>';
-        $content .= '<a href="javascript:history.back()">'
-            . $lang->back
-            . '</a></div>';
-        eval("\$showList .= \"" . $templates->get("show_awaylist") . "\";");
-        output_page($showList);
-        exit;
-    }
-    $content = '
-	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
-            <input type="hidden" name="action" value="deleteAwlItem" />
-            <input type="hidden" name="step2" value="true" />
-            <input type="hidden" name="id" value="' . $item['id'] . '" />
-            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
-                <thead>
-                    <tr>
-                        <td class="thead" colspan="2">
-                            <div><strong>' . $lang->deleteItem . '</strong><br />'
-        . '<div class="smalltext"></div></div>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody style="" id="cat_1_e">
-                    <tr>
-                        <td class="trow1"><b>' . $lang->arrival . ':</b></td>
-                        <td class="trow1">';
-    $content .= date('d.m.Y', $item['arrival']);
-    $content .= '
-		  </td>
-		</tr>
-		<tr>
-		  <td class="trow2"><b>' . $lang->departure . ':</b></td>
-		  <td class="trow2">';
-    $content .= date('d.m.Y', $item['departure']);
-    $content .= '
-		  </td>
-		</tr>
-		<tr>
-		  <td class="trow1"><b>' . $lang->airline . ':</b></td>
-		  <td class="trow1">' . $item['airline'] . '</td>
-		</tr>
-		<tr>
-		  <td class="trow2"><b>' . $lang->place . ':</b></td>
-		  <td class="trow2">' . $item['place'] . '</td>
-		</tr>
-		<tr>
-		  <td class="trow1"><b>' . $lang->hotel . ':</b></td>
-		  <td class="trow1">' . $item['hotel'] . '</td>
-		</tr>
-		<tr>
-		  <td class="trow2"><b>' . $lang->phoneAt . ' '
-        . $mybb->settings["awayListCountry"] . ':</b></td>
-		  <td class="trow2">' . $item['phone'] . '</td>
-		</tr>
-		<tr>
-		  <td class="trow1"></td>
-		  <td class="trow1"><input type="submit" name="deleteAwlItem"'
-        . ' value="' . $lang->deleteItem . '"></td>
-		</tr>
-            </tbody>
-	  </table>
-	</form>';
-    return $content;
-}
-
-/**
- * insert the new item
- * @return boolean if successful
- */
-function awaylist_insertNewItem(&$message = '', &$validateErrors = null)
-{
-    global $db, $mybb;
-
-    $errors = array();
-    if (AwayList::validateItem($errors) == true) {
-        $arrival = mktime(
-            0, 0, 0, $mybb->input['arrival_monat'], $mybb->input['arrival_tag'],
-            $mybb->input['arrival_jahr']
-        );
-        $departure = mktime(
-            0, 0, 0, $mybb->input['departure_monat'],
-            $mybb->input['departure_tag'], $mybb->input['departure_jahr']
-        );
-        $insertData = array(
-            'id' => '',
-            'uid' => $mybb->user['uid'],
-            'username' => $mybb->user['username'],
-            'arrival' => $db->escape_string($arrival),
-            'departure' => $db->escape_string($departure),
-            'airline' => $db->escape_string($mybb->input['airline']),
-            'place' => $db->escape_string($mybb->input['place']),
-            'hotel' => $db->escape_string($mybb->input['hotel']),
-            'phone' => $db->escape_string($mybb->input['phone']),
-            'id' => '',
-            'sort_id' => ''
-        );
-        $db->insert_query('awaylist', $insertData);
-        return true;
-    } else {
-        $validateErrors = $errors;
-        $message = AwayList::getHtmlErrorMessage($errors);
-        return false;
-    }
-    return false;
-}
-
-/**
- * update the item
- * @return boolean if successful
- */
-function awaylist_editItem(&$message = '', &$validateErrors = null)
-{
-    global $db, $mybb;
-
-    $errors = array();
-    if (AwayList::validateItem($errors, $mybb->input['id']) == true) {
-        $arrival = mktime(
-            0, 0, 0, $mybb->input['arrival_monat'], $mybb->input['arrival_tag'],
-            $mybb->input['arrival_jahr']
-        );
-        $departure = mktime(
-            0, 0, 0, $mybb->input['departure_monat'],
-            $mybb->input['departure_tag'], $mybb->input['departure_jahr']
-        );
-        $insertData = array(
-            'arrival' => $db->escape_string($arrival),
-            'departure' => $db->escape_string($departure),
-            'airline' => $db->escape_string($mybb->input['airline']),
-            'place' => $db->escape_string($mybb->input['place']),
-            'hotel' => $db->escape_string($mybb->input['hotel']),
-            'phone' => $db->escape_string($mybb->input['phone']),
-        );
-        $db->update_query('awaylist', $insertData, "id = '{$mybb->input['id']}'");
-        return true;
-    } else {
-        $message = AwayList::getHtmlErrorMessage($errors);
-        $validateErrors = $errors;
-        return false;
-    }
-    return false;
-}
-
-/**
- * delete the items of the user which is being deleted
- */
-function awaylist_ListDeleteUserHook()
-{
-    global $db, $mybb;
-
-    $uid = intval($mybb->input['uid']);
-    $db->delete_query("awaylist", "uid='$uid'");
-}
-
-/**
- * show the table with all items
- */
-function awaylist_showFullTable($timestamp = null, $useTimestamp = false,
-                                $limit = 20, $startLimit = 0)
-{
-    global $db, $mybb, $lang, $templates;
-    $lang->load("awaylist", false, true);
-
-    // limit of displayed items
-    if ($limit < 1) {
-        $limit = 20;
-    }
-
-    if ($timestamp == null) {
-        $timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-    }
-    $timeStampNotice = '';
-    $whereCondition = 'departure >= ' . $timestamp;
-    if ($useTimestamp == true) {
-        $whereCondition = $timestamp . ' BETWEEN arrival AND departure';
-        $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>'
-            . $lang->personsCurrentlyThere . date(" d.m.Y ", $timestamp)
-            . $lang->in . ' ' . $mybb->settings["awayListCountry"]
-            . '</strong></td></tr>';
-    }
-    $options = array(
-        'order_by' => 'arrival',
-        'limit_start' => $startLimit,
-        'limit' => $limit
-    );
-    $queryItems = $db->simple_select('awaylist', '*', $whereCondition, $options);
-
-    $countUsers = 0;
-    $countUsers = $db->num_rows($queryItems);
-    $arrayItems = array();
-    while ($item = $db->fetch_array($queryItems)) {
-        $arrayItems[$item['id']] = $item;
-    }
-
-    $currentUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT;
-    $selectDateForm = ShowDates::showDaySelect(
-            "time_tag", date("d", $timestamp)
-    );
-    $selectDateForm .= ShowDates::showMonthSelect(
-            "time_monat", date("m", $timestamp)
-    );
-    $selectDateForm .= ShowDates::showYearSelect(
-            "time_jahr", date("Y", $timestamp)
-    );
-    $addItemUrl = $mybb->settings['bburl'] . '/'
-        . THIS_SCRIPT . '?action=addAwlItem';
-
-    foreach ($arrayItems as $item) {
-        $count++;
-        $userlink = '<a href="' . get_profile_link($item['uid']) . '">'
-            . $item['username']
-            . '</a>';
-
-        $currentDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-        if (($item['arrival'] < $currentDate)
-            && ($item['departure'] > $currentDate)) {
-            $status = '<img src="' . $mybb->settings['bburl']
-                . '/images/awaylist/vor_ort.png" border="0">';
-        } elseif ($item['departure'] == $currentDate) {
-            $status = '<img src="' . $mybb->settings['bburl']
-                . '/images/awaylist/rueckflug.png" border="0">';
-        } elseif ($item['arrival'] == $currentDate) {
-            $status = '<img src="' . $mybb->settings['bburl']
-                . '/images/awaylist/hinflug.png" border="0">';
-        } else {
-            $status = '<img src="' . $mybb->settings['bburl']
-                . '/images/awaylist/daheim.png" border="0">';
-        }
-
-        $arrival = date("d.m.Y", $item['arrival']);
-        $departure = date("d.m.Y", $item['departure']);
-        $airline = $item['airline'];
-        $place = $item['place'];
-        $hotel = $item['hotel'];
-        $phone = $item['phone'];
-        $actions = '';
-        if ((AwayList::isUserInGroup(4)) OR ($item['uid'] == $mybb->user['uid'])) {
-            $actions = '
-                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=editAwlItem&id=' . $item['id'] . '">
-                    <img src="' . $mybb->settings['bburl'] . '/images/awaylist/pencil.png" border="0">
-                </a>
-                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=deleteAwlItem&id=' . $item['id'] . '">
-                    <img src="' . $mybb->settings['bburl'] . '/images/awaylist/no.png" border="0">
-                </a>';
-        }
-
-        eval("\$tableItems .= \"" . $templates->get("show_awaylist_table_bit") . "\";");
-    }
-
-    eval("\$content .= \"" . $templates->get("show_awaylist_table") . "\";");
-
-    return $content;
-}
-
-/** * *******************************************************************
- *
- * main functions for displaying
- *
- * ******************************************************************** */
-function awaylist_showListOnIndex()
-{
-    global $mybb, $lang, $awaylist;
-
-    // load the language
-    $lang->load("awaylist", false, true);
-
-    $awaylist = '';
-    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
-        && $mybb->user['uid'] != 0) {
-        if ($mybb->settings['showAwayList'] == '1'
-            && $mybb->settings['showAwayListOnIndex'] == '1') {
-            $awaylist = awaylist_getContent();
-        }
-    }
-}
-
-function awaylist_showList()
-{
-    global $db, $mybb, $lang, $theme, $templates;
-
-    // variables used in the templates
-    global $headerinclude, $header, $footer;
-
-    // load language
-    $lang->load("awaylist", false, true);
-
-    // check if the user has the permission to view the list
-    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
-        && $mybb->user['uid'] == 0) {
-        error_no_permission();
-    }
-
-    // get the main content to display
-    $content = awaylist_getContent();
-
-    // load the template and fill the placeholders
-    eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
-    output_page($showList);
-}
-
-function awaylist_getContent()
-{
-    global $db, $mybb, $lang;
-    $lang->load("awaylist", false, true);
-
-    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
-        && THIS_SCRIPT == 'awaylist.php'
-        && $mybb->user['uid'] == 0) {
-        error_no_permission();
-    }
-
-    $message = null;
-    $content = null;
-
-    if ($mybb->settings['showAwayList'] == '1') {
-
-        // get/set the limit
-        $cookieArray = unserialize(
-            $_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']
-        );
-        $limit = $cookieArray['displayLimit'];
-        if ($mybb->input['action'] == "setAwlLimit") {
-            $cookieArray = unserialize(
-                $_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']
-            );
-            $limit = $cookieArray['displayLimit'] = $mybb->input['limit'];
-            $time = 60 * 60 * 24 * 2;
-            my_setcookie('awaylist', serialize($cookieArray), $time, true);
-        }
-
-        // decide what to do
-        if ($mybb->input['action'] == 'editAwlItem') {
-            add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
-            $message = '';
-            if ($mybb->input['step2'] == 'true'
-                && awaylist_editItem($message, $validateErrors) == true) {
-                $message = '<p class="validation_success">'
-                    . $lang->editItemSuccessful
-                    . '</p>';
-                $content = awaylist_showFullTable(null, false, $limit);
-            } else {
-                add_breadcrumb($lang->editItem);
-                $content = awaylist_showEditItemForm($validateErrors);
-            }
-        } elseif ($mybb->input['action'] == 'deleteAwlItem') {
-            add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
-            if ($mybb->input['step2'] == 'true'
-                && AwayList::deleteItem($mybb->input['id']) == true) {
-                $message = '<p class="validation_success">'
-                    . $lang->deleteItemSuccessful
-                    . '</p>';
-                $content = awaylist_showFullTable(null, false, $limit);
-            } else {
-                add_breadcrumb($lang->deleteItem);
-                $content = awaylist_showDeleteConfirmDialog();
-            }
-        } elseif ($mybb->input['action'] == 'addAwlItem') {
-            add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
-            $message = '';
-            if ($mybb->input['step2'] == 'true'
-                && awaylist_insertNewItem($message, $validateErrors) == true) {
-                $message = '<p class="validation_success">'
-                    . $lang->addItemSuccessful
-                    . '</p>';
-                $content = awaylist_showFullTable(null, false, $limit);
-            } else {
-                add_breadcrumb($lang->newItem);
-                $content = awaylist_showNewItemForm($validateErrors);
-            }
-        } elseif ($mybb->input['action'] == "setAwlTimestamp") {
-            add_breadcrumb("{$mybb->settings["awayListTitle"]}");
-            $timestamp = mktime(
-                0, 0, 0, $mybb->input['time_monat'], $mybb->input['time_tag'],
-                $mybb->input['time_jahr']
-            );
-            $content = awaylist_showFullTable($timestamp, true, $limit);
-        } else {
-            $content = awaylist_showFullTable(null, false, $limit);
-        }
-    } else {
-        $content = '<div class="error low_warning"><p><em>'
-            . $lang->followingErrors
-            . '</em></p>';
-        $content .= '<p><ul>';
-        $content .= '<li>' . $lang->errorNoDisplay . '</li>';
-        $content .= '</ul></p></div>';
-    }
-
-    return $message . $content . '<br />';
-}
-
-/** * *******************************************************************
- * 
- * ADDITIONAL PLUGIN INSTALL/UNINSTALL ROUTINES
- * 
- * ******************************************************************** */
-$plugins->add_hook("index_start", "awaylist_showListOnIndex");
-$plugins->add_hook("awaylist_showList", "awaylist_showList");
-$plugins->add_hook("admin_users_do_delete", "awaylist_ListDeleteUserHook");
 
 /**
  * return the information about the plugin as an array
@@ -1073,6 +560,90 @@ function awaylist_deactivate()
     rebuild_settings();
 }
 
+/** * *******************************************************************
+ * 
+ * PLUGIN CODE
+ * 
+ * ******************************************************************** */
+// add plugin hooks
+$plugins->add_hook("index_start", "awaylist_showListOnIndex");
+$plugins->add_hook("awaylist_showList", "awaylist_showList");
+$plugins->add_hook("admin_users_do_delete", "awaylist_ListDeleteUserHook");
+
+/**
+ * show awaylist on index
+ * 
+ * @global type $mybb
+ * @global type $lang
+ * @global type $awaylist 
+ */
+function awaylist_showListOnIndex()
+{
+    global $mybb, $lang, $awaylist;
+
+    // load the language
+    $lang->load("awaylist", false, true);
+
+    $awaylist = '';
+    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
+        && $mybb->user['uid'] != 0) {
+        if ($mybb->settings['showAwayList'] == '1'
+            && $mybb->settings['showAwayListOnIndex'] == '1') {
+            $awaylist = AwayList::getContent();
+        }
+    }
+}
+
+/**
+ * show awaylist on own page
+ * 
+ * @global type $db
+ * @global type $mybb
+ * @global type $lang
+ * @global type $theme
+ * @global type $templates
+ * @global type $headerinclude
+ * @global type $header
+ * @global type $footer 
+ */
+function awaylist_showList()
+{
+    global $db, $mybb, $lang, $theme, $templates;
+
+    // variables used in the templates
+    global $headerinclude, $header, $footer;
+
+    // load language
+    $lang->load("awaylist", false, true);
+
+    // check if the user has the permission to view the list
+    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
+        && $mybb->user['uid'] == 0) {
+        error_no_permission();
+    }
+
+    // get the main content to display
+    $content = AwayList::getContent();
+
+    // load the template and fill the placeholders
+    eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
+    output_page($showList);
+}
+
+/**
+ * delete the items of the user which is being deleted
+ * 
+ * @global type $db
+ * @global type $mybb 
+ */
+function awaylist_ListDeleteUserHook()
+{
+    global $db, $mybb;
+
+    $uid = intval($mybb->input['uid']);
+    $db->delete_query("awaylist", "uid='$uid'");
+}
+
 /**
  * all needed functions for awaylist
  * 
@@ -1164,6 +735,475 @@ class AwayList
                 );
             }
         }
+    }
+
+    /**
+     * get the html code to display
+     * 
+     * @global DB_MySQL $db
+     * @global MyBB $mybb
+     * @global MyLanguage $lang
+     * @return string  
+     */
+    public static function getContent()
+    {
+        global $db, $mybb, $lang;
+        $lang->load("awaylist", false, true);
+
+        if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
+            && THIS_SCRIPT == 'awaylist.php'
+            && $mybb->user['uid'] == 0) {
+            error_no_permission();
+        }
+
+        $message = null;
+        $content = null;
+
+        if ($mybb->settings['showAwayList'] == '1') {
+
+            // get/set the limit
+            $cookieArray = unserialize(
+                $_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']
+            );
+            $limit = $cookieArray['displayLimit'];
+            if ($mybb->input['action'] == "setAwlLimit") {
+                $cookieArray = unserialize(
+                    $_COOKIE[$mybb->settings['cookieprefix'] . 'awaylist']
+                );
+                $limit = $cookieArray['displayLimit'] = $mybb->input['limit'];
+                $time = 60 * 60 * 24 * 2;
+                my_setcookie('awaylist', serialize($cookieArray), $time, true);
+            }
+
+            // decide what to do
+            if ($mybb->input['action'] == 'editAwlItem') {
+                add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
+                $message = '';
+                if ($mybb->input['step2'] == 'true'
+                    && AwayList::editItem($message, $validateErrors) == true) {
+                    $message = '<p class="validation_success">'
+                        . $lang->editItemSuccessful
+                        . '</p>';
+                    $content = AwayList::showFullTable(null, false, $limit);
+                } else {
+                    add_breadcrumb($lang->editItem);
+                    $content = AwayList::showEditItemForm($validateErrors);
+                }
+            } elseif ($mybb->input['action'] == 'deleteAwlItem') {
+                add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
+                if ($mybb->input['step2'] == 'true'
+                    && AwayList::deleteItem($mybb->input['id']) == true) {
+                    $message = '<p class="validation_success">'
+                        . $lang->deleteItemSuccessful
+                        . '</p>';
+                    $content = AwayList::showFullTable(null, false, $limit);
+                } else {
+                    add_breadcrumb($lang->deleteItem);
+                    $content = AwayList::showDeleteConfirmDialog();
+                }
+            } elseif ($mybb->input['action'] == 'addAwlItem') {
+                add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
+                $message = '';
+                if ($mybb->input['step2'] == 'true'
+                    && AwayList::insertNewItem($message, $validateErrors) == true) {
+                    $message = '<p class="validation_success">'
+                        . $lang->addItemSuccessful
+                        . '</p>';
+                    $content = AwayList::showFullTable(null, false, $limit);
+                } else {
+                    add_breadcrumb($lang->newItem);
+                    $content = AwayList::showNewItemForm($validateErrors);
+                }
+            } elseif ($mybb->input['action'] == "setAwlTimestamp") {
+                add_breadcrumb("{$mybb->settings["awayListTitle"]}");
+                $timestamp = mktime(
+                    0, 0, 0, $mybb->input['time_monat'],
+                    $mybb->input['time_tag'], $mybb->input['time_jahr']
+                );
+                $content = AwayList::showFullTable($timestamp, true, $limit);
+            } else {
+                $content = AwayList::showFullTable(null, false, $limit);
+            }
+        } else {
+            $content = '<div class="error low_warning"><p><em>'
+                . $lang->followingErrors
+                . '</em></p>';
+            $content .= '<p><ul>';
+            $content .= '<li>' . $lang->errorNoDisplay . '</li>';
+            $content .= '</ul></p></div>';
+        }
+
+        return $message . $content . '<br />';
+    }
+
+    /**
+     * show the table with all items
+     */
+    public static function showFullTable($timestamp = null,
+        $useTimestamp = false, $limit = 20, $startLimit = 0)
+    {
+        global $db, $mybb, $lang, $templates;
+        $lang->load("awaylist", false, true);
+
+        // limit of displayed items
+        if ($limit < 1) {
+            $limit = 20;
+        }
+
+        if ($timestamp == null) {
+            $timestamp = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+        }
+        $timeStampNotice = '';
+        $whereCondition = 'departure >= ' . $timestamp;
+        if ($useTimestamp == true) {
+            $whereCondition = $timestamp . ' BETWEEN arrival AND departure';
+            $timeStampNotice = '<tr><td class="tcat" colspan="9"><strong>'
+                . $lang->personsCurrentlyThere . date(" d.m.Y ", $timestamp)
+                . $lang->in . ' ' . $mybb->settings["awayListCountry"]
+                . '</strong></td></tr>';
+        }
+        $options = array(
+            'order_by' => 'arrival',
+            'limit_start' => $startLimit,
+            'limit' => $limit
+        );
+        $queryItems = $db->simple_select('awaylist', '*', $whereCondition,
+            $options);
+
+        $countUsers = 0;
+        $countUsers = $db->num_rows($queryItems);
+        $arrayItems = array();
+        while ($item = $db->fetch_array($queryItems)) {
+            $arrayItems[$item['id']] = $item;
+        }
+
+        $currentUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT;
+        $selectDateForm = ShowDates::showDaySelect(
+                "time_tag", date("d", $timestamp)
+        );
+        $selectDateForm .= ShowDates::showMonthSelect(
+                "time_monat", date("m", $timestamp)
+        );
+        $selectDateForm .= ShowDates::showYearSelect(
+                "time_jahr", date("Y", $timestamp)
+        );
+        $addItemUrl = $mybb->settings['bburl'] . '/'
+            . THIS_SCRIPT . '?action=addAwlItem';
+
+        foreach ($arrayItems as $item) {
+            $count++;
+            $userlink = '<a href="' . get_profile_link($item['uid']) . '">'
+                . $item['username']
+                . '</a>';
+
+            $currentDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
+            if (($item['arrival'] < $currentDate)
+                && ($item['departure'] > $currentDate)) {
+                $status = '<img src="' . $mybb->settings['bburl']
+                    . '/images/awaylist/vor_ort.png" border="0">';
+            } elseif ($item['departure'] == $currentDate) {
+                $status = '<img src="' . $mybb->settings['bburl']
+                    . '/images/awaylist/rueckflug.png" border="0">';
+            } elseif ($item['arrival'] == $currentDate) {
+                $status = '<img src="' . $mybb->settings['bburl']
+                    . '/images/awaylist/hinflug.png" border="0">';
+            } else {
+                $status = '<img src="' . $mybb->settings['bburl']
+                    . '/images/awaylist/daheim.png" border="0">';
+            }
+
+            $arrival = date("d.m.Y", $item['arrival']);
+            $departure = date("d.m.Y", $item['departure']);
+            $airline = $item['airline'];
+            $place = $item['place'];
+            $hotel = $item['hotel'];
+            $phone = $item['phone'];
+            $actions = '';
+            if ((AwayList::isUserInGroup(4)) OR ($item['uid'] == $mybb->user['uid'])) {
+                $actions = '
+                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=editAwlItem&id=' . $item['id'] . '">
+                    <img src="' . $mybb->settings['bburl'] . '/images/awaylist/pencil.png" border="0">
+                </a>
+                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=deleteAwlItem&id=' . $item['id'] . '">
+                    <img src="' . $mybb->settings['bburl'] . '/images/awaylist/no.png" border="0">
+                </a>';
+            }
+
+            eval("\$tableItems .= \"" . $templates->get("show_awaylist_table_bit") . "\";");
+        }
+
+        eval("\$content .= \"" . $templates->get("show_awaylist_table") . "\";");
+
+        return $content;
+    }
+
+    /**
+     * shows the insert form for a new item
+     * 
+     * @param array $validateErrors 
+     * @return the html content
+     */
+    public static function showNewItemForm($validateErrors = null)
+    {
+        global $mybb, $lang;
+        $lang->load("awaylist", false, true);
+
+        $item = array(
+            'arrival_tag' => $mybb->input['arrival_tag'],
+            'arrival_monat' => $mybb->input['arrival_monat'],
+            'arrival_jahr' => $mybb->input['arrival_jahr'],
+            'departure_tag' => $mybb->input['departure_tag'],
+            'departure_monat' => $mybb->input['departure_monat'],
+            'departure_jahr' => $mybb->input['departure_jahr'],
+            'airline' => $mybb->input['airline'],
+            'place' => $mybb->input['place'],
+            'hotel' => $mybb->input['hotel'],
+            'phone' => $mybb->input['phone'],
+        );
+
+        $content = AwayList::getItemForm($item, 'addAwlItem', $validateErrors);
+        return $content;
+    }
+
+    /**
+     * show the edit form
+     * 
+     * @param array $validateErrors 
+     * @return the html content
+     */
+    public static function showEditItemForm($validateErrors = null)
+    {
+        global $db, $mybb, $lang, $templates;
+        $lang->load("awaylist", false, true);
+
+        $query = $db->simple_select(
+            "awaylist", '*', "id = '" . $mybb->input['id'] . "'"
+        );
+        $item = $db->fetch_array($query);
+
+        $errors = array();
+        if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
+            $errors[] = $lang->errorNoPermission;
+        }
+        if ($mybb->input['id'] == '') {
+            $errors[] = $lang->errorNoItemSelected;
+        }
+
+        // if any error occurred
+        if (!empty($errors)) {
+            $showList = '';
+            add_breadcrumb($lang->editItem);
+            $content .= '<div class="error low_warning"><p><em>'
+                . $lang->followingErrors
+                . '</em></p>';
+            $content .= '<p><ul>';
+            foreach ($errors as $error) {
+                $content .= '<li>' . $error . '</li>';
+            }
+            $content .= '</ul></p>';
+            $content .= '<a href="javascript:history.back()">'
+                . $lang->back
+                . '</a></div>';
+            eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
+            output_page($showList);
+            exit;
+        }
+        $item['arrival_tag'] = date('d', $item['arrival']);
+        $item['arrival_monat'] = date('m', $item['arrival']);
+        $item['arrival_jahr'] = date('Y', $item['arrival']);
+        $item['departure_tag'] = date('d', $item['departure']);
+        $item['departure_monat'] = date('m', $item['departure']);
+        $item['departure_jahr'] = date('Y', $item['departure']);
+        foreach ($mybb->input as $key => $value) {
+            if (array_key_exists($key, $item)) {
+                $item[$key] = $value;
+            }
+        }
+        $content = AwayList::getItemForm($item, 'editAwlItem', $validateErrors);
+        return $content;
+    }
+
+    /**
+     * show delete confirm dialog
+     * 
+     * @return the html message
+     */
+    public static function showDeleteConfirmDialog()
+    {
+        global $db, $mybb, $lang, $templates;
+        $lang->load("awaylist", false, true);
+
+        $query = $db->simple_select(
+            "awaylist", '*', "id = '" . $mybb->input['id'] . "'"
+        );
+        $item = $db->fetch_array($query);
+
+        $errors = array();
+        if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
+            $errors[] = $lang->errorNoPermission;
+        }
+        if ($mybb->input['id'] == '') {
+            $errors[] = $lang->errorNoItemSelected;
+        }
+
+        // if any error occurred
+        if (!empty($errors)) {
+            $showList = '';
+            add_breadcrumb($lang->deleteItem);
+            $content .= '<div class="error low_warning"><p><em>'
+                . $lang->followingErrors
+                . '</em></p>';
+            $content .= '<p><ul>';
+            foreach ($errors as $error) {
+                $content .= '<li>' . $error . '</li>';
+            }
+            $content .= '</ul></p>';
+            $content .= '<a href="javascript:history.back()">'
+                . $lang->back
+                . '</a></div>';
+            eval("\$showList .= \"" . $templates->get("show_awaylist") . "\";");
+            output_page($showList);
+            exit;
+        }
+        $content = '
+	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
+            <input type="hidden" name="action" value="deleteAwlItem" />
+            <input type="hidden" name="step2" value="true" />
+            <input type="hidden" name="id" value="' . $item['id'] . '" />
+            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
+                <thead>
+                    <tr>
+                        <td class="thead" colspan="2">
+                            <div><strong>' . $lang->deleteItem . '</strong><br />'
+            . '<div class="smalltext"></div></div>
+                        </td>
+                    </tr>
+                </thead>
+                <tbody style="" id="cat_1_e">
+                    <tr>
+                        <td class="trow1"><b>' . $lang->arrival . ':</b></td>
+                        <td class="trow1">';
+        $content .= date('d.m.Y', $item['arrival']);
+        $content .= '
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>' . $lang->departure . ':</b></td>
+		  <td class="trow2">';
+        $content .= date('d.m.Y', $item['departure']);
+        $content .= '
+		  </td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>' . $lang->airline . ':</b></td>
+		  <td class="trow1">' . $item['airline'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>' . $lang->place . ':</b></td>
+		  <td class="trow2">' . $item['place'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow1"><b>' . $lang->hotel . ':</b></td>
+		  <td class="trow1">' . $item['hotel'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow2"><b>' . $lang->phoneAt . ' '
+            . $mybb->settings["awayListCountry"] . ':</b></td>
+		  <td class="trow2">' . $item['phone'] . '</td>
+		</tr>
+		<tr>
+		  <td class="trow1"></td>
+		  <td class="trow1"><input type="submit" name="deleteAwlItem"'
+            . ' value="' . $lang->deleteItem . '"></td>
+		</tr>
+            </tbody>
+	  </table>
+	</form>';
+        return $content;
+    }
+
+    /**
+     * insert the new item
+     * 
+     * @param string $message 
+     * @param array $validateErrors 
+     * @return boolean if successful 
+     */
+    public static function insertNewItem(&$message = '', &$validateErrors = null)
+    {
+        global $db, $mybb;
+
+        $errors = array();
+        if (AwayList::validateItem($errors) == true) {
+            $arrival = mktime(
+                0, 0, 0, $mybb->input['arrival_monat'],
+                $mybb->input['arrival_tag'], $mybb->input['arrival_jahr']
+            );
+            $departure = mktime(
+                0, 0, 0, $mybb->input['departure_monat'],
+                $mybb->input['departure_tag'], $mybb->input['departure_jahr']
+            );
+            $insertData = array(
+                'id' => '',
+                'uid' => $mybb->user['uid'],
+                'username' => $mybb->user['username'],
+                'arrival' => $db->escape_string($arrival),
+                'departure' => $db->escape_string($departure),
+                'airline' => $db->escape_string($mybb->input['airline']),
+                'place' => $db->escape_string($mybb->input['place']),
+                'hotel' => $db->escape_string($mybb->input['hotel']),
+                'phone' => $db->escape_string($mybb->input['phone']),
+                'id' => '',
+                'sort_id' => ''
+            );
+            $db->insert_query('awaylist', $insertData);
+            return true;
+        } else {
+            $validateErrors = $errors;
+            $message = AwayList::getHtmlErrorMessage($errors);
+            return false;
+        }
+        return false;
+    }
+
+    /**
+     * update the item
+     * 
+     * @param string $message 
+     * @param array $validateErrors 
+     * @return boolean if successful
+     */
+    public static function editItem(&$message = '', &$validateErrors = null)
+    {
+        global $db, $mybb;
+
+        $errors = array();
+        if (AwayList::validateItem($errors, $mybb->input['id']) == true) {
+            $arrival = mktime(
+                0, 0, 0, $mybb->input['arrival_monat'],
+                $mybb->input['arrival_tag'], $mybb->input['arrival_jahr']
+            );
+            $departure = mktime(
+                0, 0, 0, $mybb->input['departure_monat'],
+                $mybb->input['departure_tag'], $mybb->input['departure_jahr']
+            );
+            $insertData = array(
+                'arrival' => $db->escape_string($arrival),
+                'departure' => $db->escape_string($departure),
+                'airline' => $db->escape_string($mybb->input['airline']),
+                'place' => $db->escape_string($mybb->input['place']),
+                'hotel' => $db->escape_string($mybb->input['hotel']),
+                'phone' => $db->escape_string($mybb->input['phone']),
+            );
+            $db->update_query('awaylist', $insertData,
+                "id = '{$mybb->input['id']}'");
+            return true;
+        } else {
+            $message = AwayList::getHtmlErrorMessage($errors);
+            $validateErrors = $errors;
+            return false;
+        }
+        return false;
     }
 
     /**
@@ -1334,7 +1374,7 @@ class AwayList
      * @return string 
      */
     public static function getItemForm($item, $action = 'addAwlItem',
-                                       $validateErrors = null)
+        $validateErrors = null)
     {
         global $mybb, $lang;
         $lang->load("awaylist", false, true);
@@ -1368,9 +1408,9 @@ class AwayList
         }
         $content .= ShowDates::showDaySelect("arrival_tag", $arrivalDay);
         $content .= ShowDates::showMonthSelect("arrival_monat",
-                                               $item['arrival_monat']);
+                $item['arrival_monat']);
         $content .= ShowDates::showYearSelect("arrival_jahr",
-                                              $item['arrival_jahr']);
+                $item['arrival_jahr']);
         $content .= '
 		  </td>
 		</tr>';
@@ -1383,14 +1423,14 @@ class AwayList
 		  <td class="trow2"><b>' . $lang->departure . ':</b>*</td>
 		  <td class="trow2">';
         $content .= ShowDates::showDaySelect("departure_tag",
-                                             $mybb->input['departure_tag']);
+                $mybb->input['departure_tag']);
         $depatureMonth = $item['departure_monat'];
         if (empty($depatureMonth)) {
             $depatureMonth = str_pad((date('m') + 1), 2, 0, STR_PAD_LEFT);
         }
         $content .= ShowDates::showMonthSelect("departure_monat", $depatureMonth);
         $content .= ShowDates::showYearSelect("departure_jahr",
-                                              $item['departure_jahr']);
+                $item['departure_jahr']);
         $content .= '
 		  </td>
 		</tr>';
