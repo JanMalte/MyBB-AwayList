@@ -530,7 +530,10 @@ function awaylist_activate()
 
     find_replace_templatesets(
         "header", '#toplinks_help}</a></li>#',
-        "$0\n<li class=\"awaylist_link\"><a href=\"{\$mybb->settings['bburl']}/awaylist.php\"><img src=\"{\$mybb->settings['bburl']}/images/awaylist/list.png\" border=\"0\" alt=\"\" />Awaylist</a></li>"
+        "$0\n<li class=\"awaylist_link\">"
+        . "<a href=\"{\$mybb->settings['bburl']}/awaylist.php\">"
+        . "<img src=\"{\$mybb->settings['bburl']}/images/awaylist/list.png\""
+        . "border=\"0\" alt=\"\" />Awaylist</a></li>"
     );
 
     rebuild_settings();
@@ -660,6 +663,7 @@ class AwayList
     /**
      * checks if the user is in one of the allowed usergroups
      * 
+     * @global MyBB $mybb
      * @param string $allowedGroups the allowed usergroups;
      * seperated with ","(COMMA) e.g.: "4,10,2"
      * @return boolean true if user is in one of the allowed usergroups
@@ -695,7 +699,6 @@ class AwayList
      * 
      * @deprecated since version 1.6.8
      * @global DB_MySQL $db 
-     * 
      * @return void 
      */
     public static function upgradeTo165()
@@ -711,22 +714,26 @@ class AwayList
 
         // update field names of previous versions
         if ($db->table_exists('awaylist')) {
-            if ($db->field_exists('ankunft', 'awaylist'))
-                    $db->rename_column(
+            if ($db->field_exists('ankunft', 'awaylist')) {
+                $db->rename_column(
                     'awaylist', 'ankunft', 'arrival', 'int(11) default NULL'
                 );
-            if ($db->field_exists('abflug', 'awaylist'))
-                    $db->rename_column(
+            }
+            if ($db->field_exists('abflug', 'awaylist')) {
+                $db->rename_column(
                     'awaylist', 'abflug', 'departure', 'int(11) default NULL'
                 );
-            if ($db->field_exists('ort', 'awaylist'))
-                    $db->rename_column(
+            }
+            if ($db->field_exists('ort', 'awaylist')) {
+                $db->rename_column(
                     'awaylist', 'ort', 'place', 'varchar(255) NOT NULL'
                 );
-            if ($db->field_exists('telefon', 'awaylist'))
-                    $db->rename_column(
+            }
+            if ($db->field_exists('telefon', 'awaylist')) {
+                $db->rename_column(
                     'awaylist', 'telefon', 'phone', 'varchar(255) NOT NULL'
                 );
+            }
             if ($db->field_exists('data_id', 'awaylist')) {
                 $db->drop_column('awaylist', 'id');
                 $db->rename_column(
@@ -743,7 +750,7 @@ class AwayList
      * @global DB_MySQL $db
      * @global MyBB $mybb
      * @global MyLanguage $lang
-     * @return string  
+     * @return string the html content 
      */
     public static function getContent()
     {
@@ -751,8 +758,8 @@ class AwayList
         $lang->load("awaylist", false, true);
 
         if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
-            && THIS_SCRIPT == 'awaylist.php'
-            && $mybb->user['uid'] == 0) {
+            && THIS_SCRIPT == 'awaylist.php' && $mybb->user['uid'] == 0
+        ) {
             error_no_permission();
         }
 
@@ -780,7 +787,8 @@ class AwayList
                 add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
                 $message = '';
                 if ($mybb->input['step2'] == 'true'
-                    && AwayList::editItem($message, $validateErrors) == true) {
+                    && AwayList::editItem($message, $validateErrors) == true
+                ) {
                     $message = '<p class="validation_success">'
                         . $lang->editItemSuccessful
                         . '</p>';
@@ -792,7 +800,8 @@ class AwayList
             } elseif ($mybb->input['action'] == 'deleteAwlItem') {
                 add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
                 if ($mybb->input['step2'] == 'true'
-                    && AwayList::deleteItem($mybb->input['id']) == true) {
+                    && AwayList::deleteItem($mybb->input['id']) == true
+                ) {
                     $message = '<p class="validation_success">'
                         . $lang->deleteItemSuccessful
                         . '</p>';
@@ -805,7 +814,8 @@ class AwayList
                 add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
                 $message = '';
                 if ($mybb->input['step2'] == 'true'
-                    && AwayList::insertNewItem($message, $validateErrors) == true) {
+                    && AwayList::insertNewItem($message, $validateErrors) == true
+                ) {
                     $message = '<p class="validation_success">'
                         . $lang->addItemSuccessful
                         . '</p>';
@@ -838,6 +848,16 @@ class AwayList
 
     /**
      * show the table with all items
+     * 
+     * @global DB_MySQL $db
+     * @global MyBB $mybb
+     * @global MyLanguage $lang
+     * @global mixed $templates
+     * @param integer $timestamp
+     * @param boolean $useTimestamp
+     * @param integer $limit
+     * @param integer $startLimit
+     * @return string 
      */
     public static function showFullTable($timestamp = null,
         $useTimestamp = false, $limit = 20, $startLimit = 0)
@@ -867,8 +887,9 @@ class AwayList
             'limit_start' => $startLimit,
             'limit' => $limit
         );
-        $queryItems = $db->simple_select('awaylist', '*', $whereCondition,
-            $options);
+        $queryItems = $db->simple_select(
+            'awaylist', '*', $whereCondition, $options
+        );
 
         $countUsers = 0;
         $countUsers = $db->num_rows($queryItems);
@@ -879,13 +900,13 @@ class AwayList
 
         $currentUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT;
         $selectDateForm = ShowDates::showDaySelect(
-                "time_tag", date("d", $timestamp)
+                'time_tag', date("d", $timestamp)
         );
         $selectDateForm .= ShowDates::showMonthSelect(
-                "time_monat", date("m", $timestamp)
+                'time_monat', date("m", $timestamp)
         );
         $selectDateForm .= ShowDates::showYearSelect(
-                "time_jahr", date("Y", $timestamp)
+                'time_jahr', date("Y", $timestamp)
         );
         $addItemUrl = $mybb->settings['bburl'] . '/'
             . THIS_SCRIPT . '?action=addAwlItem';
@@ -898,7 +919,8 @@ class AwayList
 
             $currentDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
             if (($item['arrival'] < $currentDate)
-                && ($item['departure'] > $currentDate)) {
+                && ($item['departure'] > $currentDate)
+            ) {
                 $status = '<img src="' . $mybb->settings['bburl']
                     . '/images/awaylist/vor_ort.png" border="0">';
             } elseif ($item['departure'] == $currentDate) {
@@ -919,17 +941,27 @@ class AwayList
             $hotel = $item['hotel'];
             $phone = $item['phone'];
             $actions = '';
-            if ((AwayList::isUserInGroup(4)) OR ($item['uid'] == $mybb->user['uid'])) {
-                $actions = '
-                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=editAwlItem&id=' . $item['id'] . '">
-                    <img src="' . $mybb->settings['bburl'] . '/images/awaylist/pencil.png" border="0">
-                </a>
-                <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=deleteAwlItem&id=' . $item['id'] . '">
-                    <img src="' . $mybb->settings['bburl'] . '/images/awaylist/no.png" border="0">
-                </a>';
+            if (AwayList::isUserInGroup(4)
+                OR ($item['uid'] == $mybb->user['uid'])
+            ) {
+                $actions = '<a class="icon"'
+                    . 'href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT
+                    . '?action=editAwlItem&id=' . $item['id'] . '">'
+                    . '<img src="' . $mybb->settings['bburl']
+                    . '/images/awaylist/pencil.png" border="0">'
+                    . '</a>' . PHP_EOL
+                    . '<a class="icon" href="' . $mybb->settings["bburl"]
+                    . '/' . THIS_SCRIPT . '?action=deleteAwlItem&id='
+                    . $item['id'] . '">'
+                    . '<img src="' . $mybb->settings['bburl']
+                    . '/images/awaylist/no.png" border="0">'
+                    . '</a>';
             }
 
-            eval("\$tableItems .= \"" . $templates->get("show_awaylist_table_bit") . "\";");
+            eval(
+                "\$tableItems .= \"" .
+                $templates->get("show_awaylist_table_bit") . "\";"
+            );
         }
 
         eval("\$content .= \"" . $templates->get("show_awaylist_table") . "\";");
@@ -940,8 +972,10 @@ class AwayList
     /**
      * shows the insert form for a new item
      * 
-     * @param array $validateErrors 
-     * @return the html content
+     * @global MyBB $mybb
+     * @global MyLanguage $lang
+     * @param array $validateErrors
+     * @return string the html content 
      */
     public static function showNewItemForm($validateErrors = null)
     {
@@ -968,8 +1002,12 @@ class AwayList
     /**
      * show the edit form
      * 
-     * @param array $validateErrors 
-     * @return the html content
+     * @global DB_MySQL $db
+     * @global MyBB $mybb
+     * @global MyLanguage $lang
+     * @global mixed $templates
+     * @param array $validateErrors
+     * @return string the html content 
      */
     public static function showEditItemForm($validateErrors = null)
     {
@@ -1026,7 +1064,11 @@ class AwayList
     /**
      * show delete confirm dialog
      * 
-     * @return the html message
+     * @global DB_MySQL $db
+     * @global MyBB $mybb
+     * @global MyLanguage $lang
+     * @global mixed $templates
+     * @return string the html message 
      */
     public static function showDeleteConfirmDialog()
     {
@@ -1065,30 +1107,29 @@ class AwayList
             output_page($showList);
             exit;
         }
-        $content = '
-	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
-            <input type="hidden" name="action" value="deleteAwlItem" />
-            <input type="hidden" name="step2" value="true" />
-            <input type="hidden" name="id" value="' . $item['id'] . '" />
-            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
-                <thead>
-                    <tr>
-                        <td class="thead" colspan="2">
-                            <div><strong>' . $lang->deleteItem . '</strong><br />'
-            . '<div class="smalltext"></div></div>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody style="" id="cat_1_e">
-                    <tr>
-                        <td class="trow1"><b>' . $lang->arrival . ':</b></td>
-                        <td class="trow1">';
+        $content = '<form action="' . $mybb->settings["bburl"] . '/'
+            . THIS_SCRIPT . '" method="post">'
+            . '<input type="hidden" name="action" value="deleteAwlItem" />'
+            . '<input type="hidden" name="step2" value="true" />'
+            . ' <input type="hidden" name="id" value="' . $item['id'] . '" />'
+            . '<table border="0" cellspacing="1" cellpadding="4" class="tborder">'
+            . ' <thead>'
+            . '   <tr>'
+            . '     <td class="thead" colspan="2">'
+            . '       <div>'
+            . '         <strong>' . $lang->deleteItem . '</strong><br />'
+            . '         <div class="smalltext"></div>'
+            . '       </div>'
+            . '     </td>'
+            . '   </tr>'
+            . ' </thead>'
+            . ' <tbody style="" id="cat_1_e">'
+            . '   <tr>'
+            . '     <td class="trow1"><b>' . $lang->arrival . ':</b></td>'
+            . '     <td class="trow1">';
         $content .= date('d.m.Y', $item['arrival']);
-        $content .= '
-		  </td>
-		</tr>
-		<tr>
-		  <td class="trow2"><b>' . $lang->departure . ':</b></td>
+        $content .= '</td></tr><tr>';
+        $content .= '<td class="trow2"><b>' . $lang->departure . ':</b></td>
 		  <td class="trow2">';
         $content .= date('d.m.Y', $item['departure']);
         $content .= '
@@ -1125,6 +1166,8 @@ class AwayList
     /**
      * insert the new item
      * 
+     * @global MyBB $mybb
+     * @global DB_MySQL $db
      * @param string $message 
      * @param array $validateErrors 
      * @return boolean if successful 
@@ -1169,6 +1212,8 @@ class AwayList
     /**
      * update the item
      * 
+     * @global MyBB $mybb
+     * @global DB_MySQL $db
      * @param string $message 
      * @param array $validateErrors 
      * @return boolean if successful
@@ -1195,8 +1240,9 @@ class AwayList
                 'hotel' => $db->escape_string($mybb->input['hotel']),
                 'phone' => $db->escape_string($mybb->input['phone']),
             );
-            $db->update_query('awaylist', $insertData,
-                "id = '{$mybb->input['id']}'");
+            $db->update_query(
+                'awaylist', $insertData, "id = '{$mybb->input['id']}'"
+            );
             return true;
         } else {
             $message = AwayList::getHtmlErrorMessage($errors);
@@ -1212,10 +1258,8 @@ class AwayList
      * @global MyBB $mybb
      * @global MyLanguage $lang
      * @global DB_MySQL $db
-     * 
      * @param array $errors array which will contain all errors during validation
      * @param integer $editItemId
-     * 
      * @return boolean true if the item values are valid 
      */
     public static function validateItem(&$errors, $editItemId = null)
@@ -1228,12 +1272,15 @@ class AwayList
 
         $lang->load("awaylist", false, true);
 
-        if ($mybb->input['airline'] == "")
-                $errors['airline'] = $lang->errorAirlineMissing;
-        if ($mybb->input['place'] == "")
-                $errors['place'] = $lang->errorMissingPlace;
-        if ($mybb->input['hotel'] == "")
-                $errors['hotel'] = $lang->errorMissingHotel;
+        if ($mybb->input['airline'] == "") {
+            $errors['airline'] = $lang->errorAirlineMissing;
+        }
+        if ($mybb->input['place'] == "") {
+            $errors['place'] = $lang->errorMissingPlace;
+        }
+        if ($mybb->input['hotel'] == "") {
+            $errors['hotel'] = $lang->errorMissingHotel;
+        }
         if (!preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'])) {
             $errors['phone'] = $lang->errorInvalidPhoneNumber;
         }
@@ -1264,22 +1311,25 @@ class AwayList
             . ' OR ( arrival >= ' . $arrival . ' AND departure <= ' . $departure . ' ) )';
         $query = $db->simple_select("awaylist", "*", $whereCondition);
         while ($result = $db->fetch_array($query)) {
-            if ($editItemId == null OR $result['id'] != $editItemId) {
+            if (($editItemId == null) OR ($result['id'] != $editItemId)) {
                 $check = false;
-                $existingJourney = ' (' . date('d.m.Y', $result['arrival']);
-                $existingJourney .= ' bis ' . date('d.m.Y', $result['departure']) . ')';
+                $existingJourney = ' (' . date('d.m.Y', $result['arrival'])
+                    . ' bis ' . date('d.m.Y', $result['departure']) . ')';
                 $errors['arrival'] = $lang->errorAlreadyAway . $existingJourney;
             }
         }
 
         if ($editItemId == null) {
-            if ($arrival < time())
-                    $errors['arrival'] = $lang->errorArrivalNotInFuture;
+            if ($arrival < time()) {
+                $errors['arrival'] = $lang->errorArrivalNotInFuture;
+            }
         }
-        if ($departure < time())
-                $errors['depature'] = $lang->errorDepartureNotInFuture;
-        if ($departure < $arrival)
-                $errors['depature'] = $lang->errorArrivalNotBeforeDeparture;
+        if ($departure < time()) {
+            $errors['depature'] = $lang->errorDepartureNotInFuture;
+        }
+        if ($departure < $arrival) {
+            $errors['depature'] = $lang->errorArrivalNotBeforeDeparture;
+        }
 
         // if any error occurred
         if (count($errors) > 0) {
@@ -1291,11 +1341,24 @@ class AwayList
     /**
      * delete the item
      * 
+     * @global DB_MySQL $db
+     * @global MyBB $mybb
+     * @global MyLanguage $lang
+     * @global mixed $templates
+     * @global mixed $header
+     * @global mixed $headerinclude
+     * @global mixed $footer
+     * @param integer $itemId
      * @return boolean 
      */
     public static function deleteItem($itemId)
     {
         global $db, $mybb, $lang, $templates;
+
+        // variables used in the template
+        global $header, $headerinclude, $footer;
+
+        // load language
         $lang->load("awaylist", false, true);
 
         $itemId = (int) $itemId;
@@ -1306,7 +1369,9 @@ class AwayList
         $item = $db->fetch_array($query);
 
         $errors = array();
-        if (( $item['uid'] != $mybb->user['uid'] ) && (!AwayList::isUserInGroup(4) )) {
+        if (( $item['uid'] != $mybb->user['uid'] )
+            && (!AwayList::isUserInGroup(4) )
+        ) {
             $errors[] = $lang->errorNoPermission;
         }
         if ($itemId == '' || empty($item)) {
@@ -1316,8 +1381,7 @@ class AwayList
         // if any error occurred
         if (!empty($errors)) {
             $showList = '';
-            // variables used in the template
-            global $header, $headerinclude, $footer;
+
             add_breadcrumb($lang->deleteItem);
             $content .= '<div class="error low_warning"><p><em>'
                 . $lang->followingErrors
@@ -1350,17 +1414,23 @@ class AwayList
     {
         global $lang;
 
+        // load language
         $lang->load("awaylist", false, true);
 
+        // add error container
         $content = '<div class="error low_warning"><p><em>'
-            . $lang->followingErrors
-            . '</em></p>';
-        $content .= '<p><ul>';
+            . $lang->followingErrors . '</em></p>'
+            . '<p><ul>';
+
+        // add every error message
         foreach ($errors as $error) {
             $content .= '<li>' . $error . '</li>';
         }
+
+        // finish error container
         $content .= '</ul></p></div>';
 
+        // return html code
         return $content;
     }
 
@@ -1379,104 +1449,103 @@ class AwayList
         global $mybb, $lang;
         $lang->load("awaylist", false, true);
 
-        $content = '
-        <style>.error input {border-color: #B94A48;color: #B94A48;}.error td {background-color: #F2DEDE!important;}</style>
-	<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '" method="post">
-            <input type="hidden" name="action" value="' . $action . '" />
-            <input type="hidden" name="id" value="' . $item['id'] . '" />
-            <input type="hidden" name="step2" value="true" />
-            <table border="0" cellspacing="1" cellpadding="4" class="tborder">
-                <thead>
-                    <tr>
-                        <td class="thead" colspan="2">
-                            <div><strong>' . $lang->addToList . '</strong><br /><div class="smalltext"></div></div>
-                        </td>
-                    </tr>
-                </thead>
-                <tbody style="" id="cat_1_e">';
+        $content = '<style>.error input {border-color: #B94A48;color: #B94A48;}'
+            . '.error td {background-color: #F2DEDE!important;}</style>'
+            . '<form action="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT
+            . '" method="post">'
+            . '<input type="hidden" name="action" value="' . $action . '" />'
+            . '<input type="hidden" name="id" value="' . $item['id'] . '" />'
+            . '<input type="hidden" name="step2" value="true" />'
+            . '<table border="0" cellspacing="1" cellpadding="4" class="tborder">'
+            . '<thead>'
+            . '<tr>'
+            . '<td class="thead" colspan="2">'
+            . '<div><strong>' . $lang->addToList . '</strong><br />'
+            . '<div class="smalltext"></div></div>'
+            . '</td>'
+            . '</tr>'
+            . '</thead>'
+            . '<tbody style="" id="cat_1_e">';
         if (isset($validateErrors['arrival'])) {
             $content .= '<tr class="error">';
         } else {
             $content .= '<tr>';
         }
-        $content .= '
-                        <td class="trow1"><b>' . $lang->arrival . ':</b>*</td>
-                        <td class="trow1">';
+        $content .= '<td class="trow1"><b>' . $lang->arrival . ':</b>*</td>'
+            . '<td class="trow1">';
         $arrivalDay = $item['arrival_tag'];
         if (empty($arrivalDay)) {
             $arrivalDay = str_pad((date('d') + 1), 2, 0, STR_PAD_LEFT);
         }
         $content .= ShowDates::showDaySelect("arrival_tag", $arrivalDay);
-        $content .= ShowDates::showMonthSelect("arrival_monat",
-                $item['arrival_monat']);
-        $content .= ShowDates::showYearSelect("arrival_jahr",
-                $item['arrival_jahr']);
-        $content .= '
-		  </td>
-		</tr>';
+        $content .= ShowDates::showMonthSelect(
+                "arrival_monat", $item['arrival_monat']
+        );
+        $content .= ShowDates::showYearSelect(
+                "arrival_jahr", $item['arrival_jahr']
+        );
+        $content .= '</td></tr>';
         if (isset($validateErrors['depature'])) {
             $content .= '<tr class="error">';
         } else {
             $content .= '<tr>';
         }
-        $content .= '
-		  <td class="trow2"><b>' . $lang->departure . ':</b>*</td>
-		  <td class="trow2">';
-        $content .= ShowDates::showDaySelect("departure_tag",
-                $mybb->input['departure_tag']);
+        $content .= '<td class="trow2"><b>' . $lang->departure . ':</b>*</td>'
+            . '<td class="trow2">';
+        $content .= ShowDates::showDaySelect(
+                "departure_tag", $mybb->input['departure_tag']
+        );
         $depatureMonth = $item['departure_monat'];
         if (empty($depatureMonth)) {
             $depatureMonth = str_pad((date('m') + 1), 2, 0, STR_PAD_LEFT);
         }
         $content .= ShowDates::showMonthSelect("departure_monat", $depatureMonth);
-        $content .= ShowDates::showYearSelect("departure_jahr",
-                $item['departure_jahr']);
-        $content .= '
-		  </td>
-		</tr>';
+        $content .= ShowDates::showYearSelect(
+                "departure_jahr", $item['departure_jahr']
+        );
+        $content .= '</td></tr>';
         if (isset($validateErrors['airline'])) {
             $content .= '<tr class="error">';
         } else {
             $content .= '<tr>';
         }
-        $content .= '
-		  <td class="trow1"><b>' . $lang->airline . ':</b>*</td>
-		  <td class="trow1"><input placeholder="' . $lang->airline . '" value="' . $item['airline'] . '" type="text" name="airline" size="40" maxlength="20" /></td>
-		</tr>';
+        $content .= '<td class="trow1"><b>' . $lang->airline . ':</b>*</td>'
+            . '<td class="trow1"><input placeholder="' . $lang->airline . '"'
+            . ' value="' . $item['airline'] . '" type="text" name="airline" '
+            . 'size="40" maxlength="20" /></td></tr>';
         if (isset($validateErrors['place'])) {
             $content .= '<tr class="error">';
         } else {
             $content .= '<tr>';
         }
-        $content .= '
-		  <td class="trow2"><b>' . $lang->place . ':</b>*</td>
-		  <td class="trow2"><input placeholder="' . $lang->place . '" value="' . $item['place'] . '" type="text" name="place" size="40" maxlength="20" /></td>
-		</tr>';
+        $content .= '<td class="trow2"><b>' . $lang->place . ':</b>*</td>'
+            . '<td class="trow2"><input placeholder="' . $lang->place . '" '
+            . 'value="' . $item['place'] . '" type="text" name="place" '
+            . 'size="40" maxlength="20" /></td></tr>';
         if (isset($validateErrors['hotel'])) {
             $content .= '<tr class="error">';
         } else {
             $content .= '<tr>';
         }
-        $content .= '
-		  <td class="trow1"><b>' . $lang->hotel . ':</b>*</td>
-		  <td class="trow1"><input placeholder="' . $lang->hotel . '" value="' . $item['hotel'] . '" type="text" name="hotel" size="40" maxlength="20" /></td>
-		</tr>';
+        $content .= '<td class="trow1"><b>' . $lang->hotel . ':</b>*</td>'
+            . '<td class="trow1"><input placeholder="' . $lang->hotel . '" '
+            . 'value="' . $item['hotel'] . '" type="text" name="hotel" '
+            . 'size="40" maxlength="20" /></td></tr>';
         if (isset($validateErrors['phone'])) {
             $content .= '<tr class="error">';
         } else {
             $content .= '<tr>';
         }
-        $content .= '
-		  <td class="trow2"><b>' . $lang->phoneAt . ' ' . $mybb->settings["awayListCountry"] . ':</b></td>
-		  <td class="trow2"><input placeholder="' . $lang->phoneAt . ' ' . $mybb->settings["awayListCountry"] . '" value="' . $item['phone'] . '" type="text" name="phone" size="25" maxlength="15" /></td>
-		</tr>
-		<tr>
-		  <td class="trow1">* = ' . $lang->requiredFields . '</td>
-		  <td class="trow1"><input type="submit" name="addAwlItem" value="' . $lang->addToList . '"></td>
-		</tr>
-            </tbody>
-	  </table>
-	</form>';
+        $content .= '<td class="trow2"><b>' . $lang->phoneAt . ' '
+            . $mybb->settings["awayListCountry"] . ':</b></td>'
+            . '<td class="trow2"><input placeholder="' . $lang->phoneAt . ' '
+            . $mybb->settings["awayListCountry"] . '" value="' . $item['phone']
+            . '" type="text" name="phone" size="25" maxlength="15" /></td>'
+            . '</tr><tr><td class="trow1">* = ' . $lang->requiredFields . '</td>'
+            . '<td class="trow1"><input type="submit" name="addAwlItem" '
+            . 'value="' . $lang->addToList . '"></td></tr></tbody></table>'
+            . '</form>';
+
         return $content;
     }
 
