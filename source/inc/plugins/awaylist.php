@@ -226,145 +226,14 @@ function awaylist_is_installed()
  * any work will be performed in the _activate() routine.
  * 
  * @global type $db
- * @global type $mybb 
  * @return void 
  */
 function awaylist_install()
 {
-    global $db, $mybb;
+    global $db;
     require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
 
-    /*
-     * add plugin templates
-     */
-    $tplShowAwayListe = array(
-        "tid" => "NULL",
-        "title" => "show_awaylist",
-        "template" => "<html>
-	<head>
-		<title>{\$mybb->settings[awayListTitle]}</title>
-		<base href=\"{\$mybb->settings[bburl]}/\">
-		{\$headerinclude}
-	</head>
-	<body>
-		{\$header}
-		{\$content}
-		{\$footer}
-	</body>
-</html>",
-        "sid" => "-1",
-    );
-    $db->insert_query("templates", $tplShowAwayListe);
-
-    $tplShowAwayListTable = array(
-        "tid" => "NULL",
-        "title" => "show_awaylist_table",
-        "template" => $db->escape_string(
-            '<table border="0" cellspacing="1" cellpadding="4" class="tborder">
-    <thead>
-        <tr>
-            <td class="thead" colspan="9">
-                <form action="{$currentUrl}" method="post" '
-            . 'style="vertical-align:center; text-align:left; float:left; width:50%;">
-                    <input type="hidden" name="action" value="setAwlLimit" />
-                    <strong>{$lang->showOnly} <input type="text" name="limit" '
-            . 'value="{$limit}" /> {$lang->entries}</strong>
-                    <input type="submit" name="setAwlLimit" '
-            . 'value="{$lang->show}" style="display:inline;"/>
-                </form>
-                <form action="{$currentUrl}" method="post" '
-            . 'style="vertical-align:center; text-align:right; float:left; width:50%;">
-                    <input type="hidden" name="action" value="setAwlTimestamp" />
-                    <strong>{$lang->whoIsAt} {$selectDateForm} {$lang->in} '
-            . '{$mybb->settings[\'awayListCountry\']}?</strong>
-                    <input type="submit" name="setAwlTimestamp" '
-            . 'value="{$lang->show}" />
-                </form>
-            </td>
-        </tr>
-    </thead>
-</table>
-<table border="0" cellspacing="1" cellpadding="4" class="tborder">
-    <thead>
-        <tr>
-            <td class="thead" colspan="9">
-                <div class="expcolimage"><img '
-            . 'src="{$mybb->settings[\'bburl\']}/{$theme[\'imgdir\']}/collapse.gif" '
-            . 'id="liste_1_img" class="expander" alt="[-]" /></div>
-                <span style="vertical-align:center; text-align:right; float:left;">
-                    <strong>
-                        <a href="{$addItemUrl}" style="vertical-align: top;">
-                            <img '
-            . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/viewmag+.png" '
-            . 'border="0" valign="center"> {$lang->addToList}
-                        </a>
-                    </strong>
-                </span>
-            </td>
-        </tr>
-    </thead>
-    <tbody style="" id="liste_1_e">
-    {$timeStampNotice}
-    <tr>
-        <td class="tcat" width="15%" align="center">'
-            . '<strong>{$lang->name}</strong></td>
-        <td class="tcat" width="5%" align="center">'
-            . '<strong>{$lang->status}</strong></td>
-        <td class="tcat" width="5%" align="center">'
-            . '<strong>{$lang->arrival}</strong></td>
-        <td class="tcat" width="5%" align="center">'
-            . '<strong>{$lang->departure}</strong></td>
-        <td class="tcat" width="15%" align="center">'
-            . '<strong>{$lang->airline}</strong></td>
-        <td class="tcat" width="15%" align="center">'
-            . '<strong>{$lang->place}</strong></td>
-        <td class="tcat" width="15%" align="center">'
-            . '<strong>{$lang->hotel}</strong></td>
-        <td class="tcat" width="15%" align="center">'
-            . '<strong>{$lang->phoneAt} {$mybb->settings[\'awayListCountry\']}'
-            . '</strong></td>
-        <td class="tcat" width="2%" align="center">'
-            . '<strong>{$lang->action}</strong></td>
-    </tr>
-    {$tableItems}
-    <tr>
-        <td class="tcat" colspan="9">
-            <span style="vertical-align:center; text-align:left; float:right;">
-                <img '
-            . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/pencil.png" '
-            . 'border="0"> = {$lang->edit}
-                <img '
-            . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/no.png" '
-            . 'border="0"> = {$lang->delete}
-            </span>
-        </td>
-    </tr>
-</tbody>
-</table>'
-        ),
-        "sid" => "-1",
-    );
-    $db->insert_query("templates", $tplShowAwayListTable);
-
-    $tplTableBit = array(
-        "tid" => "NULL",
-        "title" => "show_awaylist_table_bit",
-        "template" => $db->escape_string(
-            '<tr>
-    <td class="trow1">{$userlink}</td>
-    <td class="trow1">{$status}</td>
-    <td class="trow1" style="white-space: nowrap;">{$arrival}</td>
-    <td class="trow1" style="white-space: nowrap;">{$departure}</td>
-    <td class="trow1">{$airline}</td>
-    <td class="trow1">{$place}</td>
-    <td class="trow1">{$hotel}</td>
-    <td class="trow1">{$phone}</td>
-    <td class="trow1">{$actions}</td>
-</tr>'
-        ),
-        "sid" => "-1",
-    );
-    $db->insert_query("templates", $tplTableBit);
+    AwayList::installTemplates();
 
     // TODO remove legacy methode in the future
     AwayList::upgradeTo165();
@@ -404,94 +273,7 @@ function awaylist_install()
     }
     $db->write_query($createTableQuery);
 
-    /*
-     * add plugin settings
-     */
-    $settingsGroup = array(
-        "gid" => "NULL",
-        "name" => "awaylist",
-        "title" => "Awaylist",
-        "description" => "Settings for the Awaylist Plugin",
-        "disporder" => "1",
-        "isdefault" => "no"
-    );
-    $db->insert_query("settinggroups", $settingsGroup);
-    $gid = $db->insert_id();
-
-    $settingsData = array(
-        "sid" => "NULL",
-        "name" => "showAwayList",
-        "title" => "Anzeige der Liste",
-        "description" => "Soll die Liste angezeigt werden?",
-        "optionscode" => "yesno",
-        "value" => "1",
-        "disporder" => "10",
-        "gid" => intval($gid)
-    );
-    $db->insert_query("settings", $settingsData);
-
-    $settingsData = array(
-        "sid" => "NULL",
-        "name" => "keep_list",
-        "title" => "Informationen behalten",
-        "description" => "Sollen die gespeicherten Informationen der Aufenthalte
-            beim Deaktivieren des Plugins erhalten bleiben?",
-        "optionscode" => "yesno",
-        "value" => "1",
-        "disporder" => "20",
-        "gid" => intval($gid)
-    );
-    $db->insert_query("settings", $settingsData);
-
-    $settingVisible = array(
-        "sid" => "NULL",
-        "name" => "showAwayListOnlyForMembers",
-        "title" => "Liste nur für Mitglieder anzeigen",
-        "description" => "Soll die Liste nur für Mitglieder sichtbar sein?",
-        "optionscode" => "yesno",
-        "value" => "1",
-        "disporder" => "30",
-        "gid" => intval($gid)
-    );
-    $db->insert_query("settings", $settingVisible);
-
-    $settingsData = array(
-        "sid" => "NULL",
-        "name" => "showAwayListOnIndex",
-        "title" => "Auf der Startseite anzeigen",
-        "description" => "Soll die Liste auf der Startseite angezeigt werden?",
-        "optionscode" => "yesno",
-        "value" => "0",
-        "disporder" => "40",
-        "gid" => intval($gid)
-    );
-    $db->insert_query("settings", $settingsData);
-
-    $settingsData = array(
-        "sid" => "NULL",
-        "name" => "awayListCountry",
-        "title" => "Name des Landes",
-        "description" => "Für welches Land gilt die Tabelle?",
-        "optionscode" => "text",
-        "value" => "Thailand",
-        "disporder" => "50",
-        "gid" => intval($gid)
-    );
-    $db->insert_query("settings", $settingsData);
-
-    $settingsData = array(
-        "sid" => "NULL",
-        "name" => "awayListTitle",
-        "title" => "Titel des Plugins",
-        "description" => "Welcher Titel soll angezeigt werden?",
-        "optionscode" => "text",
-        "value" => "Wer ist wann in Thailand",
-        "disporder" => "60",
-        "gid" => intval($gid)
-    );
-    $db->insert_query("settings", $settingsData);
-
-    rebuild_settings();
+    AwayList::installSettings();
 }
 
 /**
@@ -624,7 +406,6 @@ function awaylist_showListOnIndex()
 /**
  * show awaylist on own page
  * 
- * @global type $db
  * @global type $mybb
  * @global type $lang
  * @global type $theme
@@ -635,7 +416,7 @@ function awaylist_showListOnIndex()
  */
 function awaylist_showList()
 {
-    global $db, $mybb, $lang, $theme, $templates;
+    global $mybb, $lang, $theme, $templates;
 
     // variables used in the templates
     global $headerinclude, $header, $footer;
@@ -766,6 +547,252 @@ class AwayList
                 );
             }
         }
+    }
+
+    /**
+     * install the templates
+     * 
+     * @global DB_MySQL $db
+     * @return void 
+     */
+    public static function installTemplates()
+    {
+        global $db;
+        require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
+
+        /*
+         * add plugin templates
+         */
+        $tplShowAwayListe = array(
+            "tid" => "NULL",
+            "title" => "show_awaylist",
+            "template" => "<html>
+	<head>
+		<title>{\$mybb->settings[awayListTitle]}</title>
+		<base href=\"{\$mybb->settings[bburl]}/\">
+		{\$headerinclude}
+	</head>
+	<body>
+		{\$header}
+		{\$content}
+		{\$footer}
+	</body>
+</html>",
+            "sid" => "-1",
+        );
+        $db->insert_query("templates", $tplShowAwayListe);
+
+        $tplShowAwayListTable = array(
+            "tid" => "NULL",
+            "title" => "show_awaylist_table",
+            "template" => $db->escape_string(
+                '<table border="0" cellspacing="1" cellpadding="4" class="tborder">
+    <thead>
+        <tr>
+            <td class="thead" colspan="9">
+                <form action="{$currentUrl}" method="post" '
+                . 'style="vertical-align:center; text-align:left; float:left; width:50%;">
+                    <input type="hidden" name="action" value="setAwlLimit" />
+                    <strong>{$lang->showOnly} <input type="text" name="limit" '
+                . 'value="{$limit}" /> {$lang->entries}</strong>
+                    <input type="submit" name="setAwlLimit" '
+                . 'value="{$lang->show}" style="display:inline;"/>
+                </form>
+                <form action="{$currentUrl}" method="post" '
+                . 'style="vertical-align:center; text-align:right; float:left; width:50%;">
+                    <input type="hidden" name="action" value="setAwlTimestamp" />
+                    <strong>{$lang->whoIsAt} {$selectDateForm} {$lang->in} '
+                . '{$mybb->settings[\'awayListCountry\']}?</strong>
+                    <input type="submit" name="setAwlTimestamp" '
+                . 'value="{$lang->show}" />
+                </form>
+            </td>
+        </tr>
+    </thead>
+</table>
+<table border="0" cellspacing="1" cellpadding="4" class="tborder">
+    <thead>
+        <tr>
+            <td class="thead" colspan="9">
+                <div class="expcolimage"><img '
+                . 'src="{$mybb->settings[\'bburl\']}/{$theme[\'imgdir\']}/collapse.gif" '
+                . 'id="liste_1_img" class="expander" alt="[-]" /></div>
+                <span style="vertical-align:center; text-align:right; float:left;">
+                    <strong>
+                        <a href="{$addItemUrl}" style="vertical-align: top;">
+                            <img '
+                . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/viewmag+.png" '
+                . 'border="0" valign="center"> {$lang->addToList}
+                        </a>
+                    </strong>
+                </span>
+            </td>
+        </tr>
+    </thead>
+    <tbody style="" id="liste_1_e">
+    {$timeStampNotice}
+    <tr>
+        <td class="tcat" width="15%" align="center">'
+                . '<strong>{$lang->name}</strong></td>
+        <td class="tcat" width="5%" align="center">'
+                . '<strong>{$lang->status}</strong></td>
+        <td class="tcat" width="5%" align="center">'
+                . '<strong>{$lang->arrival}</strong></td>
+        <td class="tcat" width="5%" align="center">'
+                . '<strong>{$lang->departure}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+                . '<strong>{$lang->airline}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+                . '<strong>{$lang->place}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+                . '<strong>{$lang->hotel}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+                . '<strong>{$lang->phoneAt} {$mybb->settings[\'awayListCountry\']}'
+                . '</strong></td>
+        <td class="tcat" width="2%" align="center">'
+                . '<strong>{$lang->action}</strong></td>
+    </tr>
+    {$tableItems}
+    <tr>
+        <td class="tcat" colspan="9">
+            <span style="vertical-align:center; text-align:left; float:right;">
+                <img '
+                . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/pencil.png" '
+                . 'border="0"> = {$lang->edit}
+                <img '
+                . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/no.png" '
+                . 'border="0"> = {$lang->delete}
+            </span>
+        </td>
+    </tr>
+</tbody>
+</table>'
+            ),
+            "sid" => "-1",
+        );
+        $db->insert_query("templates", $tplShowAwayListTable);
+
+        $tplTableBit = array(
+            "tid" => "NULL",
+            "title" => "show_awaylist_table_bit",
+            "template" => $db->escape_string(
+                '<tr>
+    <td class="trow1">{$userlink}</td>
+    <td class="trow1">{$status}</td>
+    <td class="trow1" style="white-space: nowrap;">{$arrival}</td>
+    <td class="trow1" style="white-space: nowrap;">{$departure}</td>
+    <td class="trow1">{$airline}</td>
+    <td class="trow1">{$place}</td>
+    <td class="trow1">{$hotel}</td>
+    <td class="trow1">{$phone}</td>
+    <td class="trow1">{$actions}</td>
+</tr>'
+            ),
+            "sid" => "-1",
+        );
+        $db->insert_query("templates", $tplTableBit);
+    }
+
+    /**
+     * install the plugin settings
+     * 
+     * @global DB_MySQL $db
+     * @global MyBB $mybb 
+     * @return void 
+     */
+    public static function installSettings()
+    {
+        global $db, $mybb;
+        require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
+        
+        /*
+         * add plugin settings
+         */
+        $settingsGroup = array(
+            "gid" => "NULL",
+            "name" => "awaylist",
+            "title" => "Awaylist",
+            "description" => "Settings for the Awaylist Plugin",
+            "disporder" => "1",
+            "isdefault" => "no"
+        );
+        $db->insert_query("settinggroups", $settingsGroup);
+        $gid = $db->insert_id();
+
+        $settingsData = array(
+            "sid" => "NULL",
+            "name" => "showAwayList",
+            "title" => "Anzeige der Liste",
+            "description" => "Soll die Liste angezeigt werden?",
+            "optionscode" => "yesno",
+            "value" => "1",
+            "disporder" => "10",
+            "gid" => intval($gid)
+        );
+        $db->insert_query("settings", $settingsData);
+
+        $settingsData = array(
+            "sid" => "NULL",
+            "name" => "keep_list",
+            "title" => "Informationen behalten",
+            "description" => "Sollen die gespeicherten Informationen der Aufenthalte
+            beim Deaktivieren des Plugins erhalten bleiben?",
+            "optionscode" => "yesno",
+            "value" => "1",
+            "disporder" => "20",
+            "gid" => intval($gid)
+        );
+        $db->insert_query("settings", $settingsData);
+
+        $settingVisible = array(
+            "sid" => "NULL",
+            "name" => "showAwayListOnlyForMembers",
+            "title" => "Liste nur für Mitglieder anzeigen",
+            "description" => "Soll die Liste nur für Mitglieder sichtbar sein?",
+            "optionscode" => "yesno",
+            "value" => "1",
+            "disporder" => "30",
+            "gid" => intval($gid)
+        );
+        $db->insert_query("settings", $settingVisible);
+
+        $settingsData = array(
+            "sid" => "NULL",
+            "name" => "showAwayListOnIndex",
+            "title" => "Auf der Startseite anzeigen",
+            "description" => "Soll die Liste auf der Startseite angezeigt werden?",
+            "optionscode" => "yesno",
+            "value" => "0",
+            "disporder" => "40",
+            "gid" => intval($gid)
+        );
+        $db->insert_query("settings", $settingsData);
+
+        $settingsData = array(
+            "sid" => "NULL",
+            "name" => "awayListCountry",
+            "title" => "Name des Landes",
+            "description" => "Für welches Land gilt die Tabelle?",
+            "optionscode" => "text",
+            "value" => "Thailand",
+            "disporder" => "50",
+            "gid" => intval($gid)
+        );
+        $db->insert_query("settings", $settingsData);
+
+        $settingsData = array(
+            "sid" => "NULL",
+            "name" => "awayListTitle",
+            "title" => "Titel des Plugins",
+            "description" => "Welcher Titel soll angezeigt werden?",
+            "optionscode" => "text",
+            "value" => "Wer ist wann in Thailand",
+            "disporder" => "60",
+            "gid" => intval($gid)
+        );
+        $db->insert_query("settings", $settingsData);
+
+        rebuild_settings();
     }
 
     /**
