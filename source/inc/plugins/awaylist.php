@@ -264,15 +264,21 @@ function awaylist_install()
     <thead>
         <tr>
             <td class="thead" colspan="9">
-                <form action="{$currentUrl}" method="post" style="vertical-align:center; text-align:left; float:left; width:50%;">
+                <form action="{$currentUrl}" method="post" '
+            . 'style="vertical-align:center; text-align:left; float:left; width:50%;">
                     <input type="hidden" name="action" value="setAwlLimit" />
-                    <strong>{$lang->showOnly} <input type="text" name="limit" value="{$limit}" /> {$lang->entries}</strong>
-                    <input type="submit" name="setAwlLimit" value="{$lang->show}" style="display:inline;"/>
+                    <strong>{$lang->showOnly} <input type="text" name="limit" '
+            . 'value="{$limit}" /> {$lang->entries}</strong>
+                    <input type="submit" name="setAwlLimit" '
+            . 'value="{$lang->show}" style="display:inline;"/>
                 </form>
-                <form action="{$currentUrl}" method="post" style="vertical-align:center; text-align:right; float:left; width:50%;">
+                <form action="{$currentUrl}" method="post" '
+            . 'style="vertical-align:center; text-align:right; float:left; width:50%;">
                     <input type="hidden" name="action" value="setAwlTimestamp" />
-                    <strong>{$lang->whoIsAt} {$selectDateForm} {$lang->in} {$mybb->settings[\'awayListCountry\']}?</strong>
-                    <input type="submit" name="setAwlTimestamp" value="{$lang->show}" />
+                    <strong>{$lang->whoIsAt} {$selectDateForm} {$lang->in} '
+            . '{$mybb->settings[\'awayListCountry\']}?</strong>
+                    <input type="submit" name="setAwlTimestamp" '
+            . 'value="{$lang->show}" />
                 </form>
             </td>
         </tr>
@@ -282,11 +288,15 @@ function awaylist_install()
     <thead>
         <tr>
             <td class="thead" colspan="9">
-                <div class="expcolimage"><img src="{$mybb->settings[\'bburl\']}/{$theme[\'imgdir\']}/collapse.gif" id="liste_1_img" class="expander" alt="[-]" /></div>
+                <div class="expcolimage"><img '
+            . 'src="{$mybb->settings[\'bburl\']}/{$theme[\'imgdir\']}/collapse.gif" '
+            . 'id="liste_1_img" class="expander" alt="[-]" /></div>
                 <span style="vertical-align:center; text-align:right; float:left;">
                     <strong>
                         <a href="{$addItemUrl}" style="vertical-align: top;">
-                            <img src="{$mybb->settings[\'bburl\']}/images/awaylist/viewmag+.png" border="0" valign="center"> {$lang->addToList}
+                            <img '
+            . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/viewmag+.png" '
+            . 'border="0" valign="center"> {$lang->addToList}
                         </a>
                     </strong>
                 </span>
@@ -296,22 +306,36 @@ function awaylist_install()
     <tbody style="" id="liste_1_e">
     {$timeStampNotice}
     <tr>
-        <td class="tcat" width="15%" align="center"><strong>{$lang->name}</strong></td>
-        <td class="tcat" width="5%" align="center"><strong>{$lang->status}</strong></td>
-        <td class="tcat" width="5%" align="center"><strong>{$lang->arrival}</strong></td>
-        <td class="tcat" width="5%" align="center"><strong>{$lang->departure}</strong></td>
-        <td class="tcat" width="15%" align="center"><strong>{$lang->airline}</strong></td>
-        <td class="tcat" width="15%" align="center"><strong>{$lang->place}</strong></td>
-        <td class="tcat" width="15%" align="center"><strong>{$lang->hotel}</strong></td>
-        <td class="tcat" width="15%" align="center"><strong>{$lang->phoneAt} {$mybb->settings[\'awayListCountry\']}</strong></td>
-        <td class="tcat" width="2%" align="center"><strong>{$lang->action}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+            . '<strong>{$lang->name}</strong></td>
+        <td class="tcat" width="5%" align="center">'
+            . '<strong>{$lang->status}</strong></td>
+        <td class="tcat" width="5%" align="center">'
+            . '<strong>{$lang->arrival}</strong></td>
+        <td class="tcat" width="5%" align="center">'
+            . '<strong>{$lang->departure}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+            . '<strong>{$lang->airline}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+            . '<strong>{$lang->place}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+            . '<strong>{$lang->hotel}</strong></td>
+        <td class="tcat" width="15%" align="center">'
+            . '<strong>{$lang->phoneAt} {$mybb->settings[\'awayListCountry\']}'
+            . '</strong></td>
+        <td class="tcat" width="2%" align="center">'
+            . '<strong>{$lang->action}</strong></td>
     </tr>
     {$tableItems}
     <tr>
         <td class="tcat" colspan="9">
             <span style="vertical-align:center; text-align:left; float:right;">
-                <img src="{$mybb->settings[\'bburl\']}/images/awaylist/pencil.png" border="0"> = {$lang->edit}
-                <img src="{$mybb->settings[\'bburl\']}/images/awaylist/no.png" border="0"> = {$lang->delete}
+                <img '
+            . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/pencil.png" '
+            . 'border="0"> = {$lang->edit}
+                <img '
+            . 'src="{$mybb->settings[\'bburl\']}/images/awaylist/no.png" '
+            . 'border="0"> = {$lang->delete}
             </span>
         </td>
     </tr>
@@ -353,13 +377,13 @@ function awaylist_install()
             `id` bigint(20) NOT NULL auto_increment,
             `sort_id` bigint(20) default NULL,
             `uid` int(10) unsigned default NULL,
-            `username` text character set utf8 collate utf8_unicode_ci,
+            `username` text,
             `arrival` int(11) default NULL,
             `departure` int(11) default NULL,
-            `airline` varchar(100) character set utf8 collate utf8_unicode_ci NOT NULL,
-            `place` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
-            `hotel` varchar(255) character set utf8 collate utf8_unicode_ci NOT NULL,
-            `phone` varchar(255) character set utf8 collate utf8_unicode_ci default NULL,
+            `airline` varchar(100) NOT NULL,
+            `place` varchar(255) NOT NULL,
+            `hotel` varchar(255) NOT NULL,
+            `phone` varchar(255) default NULL,
             PRIMARY KEY  (`id`)
             ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
     } else {
@@ -787,42 +811,42 @@ class AwayList
                 add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
                 $message = '';
                 if ($mybb->input['step2'] == 'true'
-                    && AwayList::editItem($message, $validateErrors) == true
+                    && self::editItem($message, $validateErrors) == true
                 ) {
                     $message = '<p class="validation_success">'
                         . $lang->editItemSuccessful
                         . '</p>';
-                    $content = AwayList::showFullTable(null, false, $limit);
+                    $content = self::showFullTable(null, false, $limit);
                 } else {
                     add_breadcrumb($lang->editItem);
-                    $content = AwayList::showEditItemForm($validateErrors);
+                    $content = self::showEditItemForm($validateErrors);
                 }
             } elseif ($mybb->input['action'] == 'deleteAwlItem') {
                 add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
                 if ($mybb->input['step2'] == 'true'
-                    && AwayList::deleteItem($mybb->input['id']) == true
+                    && self::deleteItem($mybb->input['id']) == true
                 ) {
                     $message = '<p class="validation_success">'
                         . $lang->deleteItemSuccessful
                         . '</p>';
-                    $content = AwayList::showFullTable(null, false, $limit);
+                    $content = self::showFullTable(null, false, $limit);
                 } else {
                     add_breadcrumb($lang->deleteItem);
-                    $content = AwayList::showDeleteConfirmDialog();
+                    $content = self::showDeleteConfirmDialog();
                 }
             } elseif ($mybb->input['action'] == 'addAwlItem') {
                 add_breadcrumb("{$mybb->settings["awayListTitle"]}", THIS_SCRIPT);
                 $message = '';
                 if ($mybb->input['step2'] == 'true'
-                    && AwayList::insertNewItem($message, $validateErrors) == true
+                    && self::insertNewItem($message, $validateErrors) == true
                 ) {
                     $message = '<p class="validation_success">'
                         . $lang->addItemSuccessful
                         . '</p>';
-                    $content = AwayList::showFullTable(null, false, $limit);
+                    $content = self::showFullTable(null, false, $limit);
                 } else {
                     add_breadcrumb($lang->newItem);
-                    $content = AwayList::showNewItemForm($validateErrors);
+                    $content = self::showNewItemForm($validateErrors);
                 }
             } elseif ($mybb->input['action'] == "setAwlTimestamp") {
                 add_breadcrumb("{$mybb->settings["awayListTitle"]}");
@@ -830,9 +854,9 @@ class AwayList
                     0, 0, 0, $mybb->input['time_monat'],
                     $mybb->input['time_tag'], $mybb->input['time_jahr']
                 );
-                $content = AwayList::showFullTable($timestamp, true, $limit);
+                $content = self::showFullTable($timestamp, true, $limit);
             } else {
-                $content = AwayList::showFullTable(null, false, $limit);
+                $content = self::showFullTable(null, false, $limit);
             }
         } else {
             $content = '<div class="error low_warning"><p><em>'
@@ -941,7 +965,7 @@ class AwayList
             $hotel = $item['hotel'];
             $phone = $item['phone'];
             $actions = '';
-            if (AwayList::isUserInGroup(4)
+            if (self::isUserInGroup(4)
                 OR ($item['uid'] == $mybb->user['uid'])
             ) {
                 $actions = '<a class="icon"'
@@ -995,7 +1019,7 @@ class AwayList
             'phone' => $mybb->input['phone'],
         );
 
-        $content = AwayList::getItemForm($item, 'addAwlItem', $validateErrors);
+        $content = self::getItemForm($item, 'addAwlItem', $validateErrors);
         return $content;
     }
 
@@ -1020,7 +1044,7 @@ class AwayList
         $item = $db->fetch_array($query);
 
         $errors = array();
-        if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
+        if ($item['uid'] != $mybb->user['uid'] && !self::isUserInGroup(4)) {
             $errors[] = $lang->errorNoPermission;
         }
         if ($mybb->input['id'] == '') {
@@ -1057,7 +1081,7 @@ class AwayList
                 $item[$key] = $value;
             }
         }
-        $content = AwayList::getItemForm($item, 'editAwlItem', $validateErrors);
+        $content = self::getItemForm($item, 'editAwlItem', $validateErrors);
         return $content;
     }
 
@@ -1081,7 +1105,7 @@ class AwayList
         $item = $db->fetch_array($query);
 
         $errors = array();
-        if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
+        if ($item['uid'] != $mybb->user['uid'] && !self::isUserInGroup(4)) {
             $errors[] = $lang->errorNoPermission;
         }
         if ($mybb->input['id'] == '') {
@@ -1177,7 +1201,7 @@ class AwayList
         global $db, $mybb;
 
         $errors = array();
-        if (AwayList::validateItem($errors) == true) {
+        if (self::validateItem($errors) == true) {
             $arrival = mktime(
                 0, 0, 0, $mybb->input['arrival_monat'],
                 $mybb->input['arrival_tag'], $mybb->input['arrival_jahr']
@@ -1203,7 +1227,7 @@ class AwayList
             return true;
         } else {
             $validateErrors = $errors;
-            $message = AwayList::getHtmlErrorMessage($errors);
+            $message = self::getHtmlErrorMessage($errors);
             return false;
         }
         return false;
@@ -1223,7 +1247,7 @@ class AwayList
         global $db, $mybb;
 
         $errors = array();
-        if (AwayList::validateItem($errors, $mybb->input['id']) == true) {
+        if (self::validateItem($errors, $mybb->input['id']) == true) {
             $arrival = mktime(
                 0, 0, 0, $mybb->input['arrival_monat'],
                 $mybb->input['arrival_tag'], $mybb->input['arrival_jahr']
@@ -1245,7 +1269,7 @@ class AwayList
             );
             return true;
         } else {
-            $message = AwayList::getHtmlErrorMessage($errors);
+            $message = self::getHtmlErrorMessage($errors);
             $validateErrors = $errors;
             return false;
         }
@@ -1370,7 +1394,7 @@ class AwayList
 
         $errors = array();
         if (( $item['uid'] != $mybb->user['uid'] )
-            && (!AwayList::isUserInGroup(4) )
+            && (!self::isUserInGroup(4) )
         ) {
             $errors[] = $lang->errorNoPermission;
         }
