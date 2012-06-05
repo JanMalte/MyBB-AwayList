@@ -2,6 +2,9 @@ CHANGELOG
 
 This changelog starts with version 1.4.5
 
+Version 1.6.8 (June 5, 2012)
+    * fixed SQL error on install
+
 Version 1.6.7 (January 14, 2012)
     * fixed edit and delete bug
 
