@@ -17,8 +17,10 @@ if (!defined('IN_MYBB')) {
 }
 
 /** * *******************************************************************
+ * 
  * HELPER FUNCTIONS
- */
+ * 
+ * ******************************************************************** */
 // as this is a often used class in plugins
 // check if it isn't already defined
 if (!class_exists('ShowDates')) {
@@ -159,47 +161,11 @@ if (!class_exists('ShowDates')) {
 
 }
 
-// as this is a often used function in plugins
-// check if it isn't already defined
-if (!function_exists('isUserInGroup')) {
-
-    /**
-     * checks if the user is in one of the allowed usergroups
-     * 
-     * @param string $allowedGroups the allowed usergroups;
-     * seperated with ","(COMMA) e.g.: "4,10,2"
-     * @return boolean true if user is in one of the allowed usergroups
-     */
-    function isUserInGroup($allowedGroups = false)
-    {
-        global $mybb;
-
-        // set to false as default
-        $isInGroup = false;
-
-        // explode the allowed usergroups to an array
-        $allowedUserGroups = explode(',', $allowedGroups);
-
-        // explode the additional usergroups of the user to an array
-        $usergroups = explode(',', $mybb->user['additionalgroups']);
-
-        // Add the primary usergroup of the user the the usergroups
-        $usergroups[] = $mybb->user['usergroup'];
-
-        // check if the user is in any of the allowed usergroups
-        foreach ($allowedUserGroups as $allowedUserGroup) {
-            if (in_array($allowedUserGroup, $usergroups)) {
-                $isInGroup = true;
-            }
-        }
-        return $isInGroup;
-    }
-
-}
-
 /** * *******************************************************************
+ * 
  * PLUGIN CODE
- */
+ * 
+ * ******************************************************************** */
 
 /**
  * shows the insert form for a new item
@@ -282,7 +248,7 @@ function awaylist_showEditItemForm()
     $item = $db->fetch_array($query);
 
     $errors = array();
-    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
+    if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
         $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['id'] == '') {
@@ -392,7 +358,7 @@ function awaylist_showDeleteConfirmDialog()
     $item = $db->fetch_array($query);
 
     $errors = array();
-    if ($item['uid'] != $mybb->user['uid'] && !isUserInGroup(4)) {
+    if ($item['uid'] != $mybb->user['uid'] && !AwayList::isUserInGroup(4)) {
         $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['id'] == '') {
@@ -509,7 +475,7 @@ function awaylist_insertNewItem(&$message = '')
         $db->insert_query('awaylist', $insertData);
         return true;
     } else {
-        $message = awaylist_getHtmlErrorMessage($errors);
+        $message = AwayList::getHtmlErrorMessage($errors);
         return false;
     }
     return false;
@@ -544,7 +510,7 @@ function awaylist_editItem(&$message = '')
         $db->update_query('awaylist', $insertData, "id = '{$mybb->input['id']}'");
         return true;
     } else {
-        $message = awaylist_getHtmlErrorMessage($errors);
+        $message = AwayList::getHtmlErrorMessage($errors);
         return false;
     }
     return false;
@@ -565,7 +531,7 @@ function awaylist_deleteItem()
     $item = $db->fetch_array($query);
 
     $errors = array();
-    if (( $item['uid'] != $mybb->user['uid'] ) && (!isUserInGroup(4) )) {
+    if (( $item['uid'] != $mybb->user['uid'] ) && (!AwayList::isUserInGroup(4) )) {
         $errors[] = $lang->errorNoPermission;
     }
     if ($mybb->input['id'] == '') {
@@ -691,7 +657,7 @@ function awaylist_showFullTable($timestamp = null, $useTimestamp = false,
         $hotel = $item['hotel'];
         $phone = $item['phone'];
         $actions = '';
-        if ((isUserInGroup(4)) OR ($item['uid'] == $mybb->user['uid'])) {
+        if ((AwayList::isUserInGroup(4)) OR ($item['uid'] == $mybb->user['uid'])) {
             $actions = '
                 <a class="icon" href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT . '?action=editAwlItem&id=' . $item['id'] . '">
                     <img src="' . $mybb->settings['bburl'] . '/images/awaylist/pencil.png" border="0">
@@ -713,7 +679,7 @@ function awaylist_showFullTable($timestamp = null, $useTimestamp = false,
  *
  * main functions for displaying
  *
- */
+ * ******************************************************************** */
 function awaylist_showListOnIndex()
 {
     global $mybb, $lang, $awaylist;
@@ -846,81 +812,20 @@ function awaylist_getContent()
     return $message . $content . '<br />';
 }
 
-function awaylist_getHtmlErrorMessage($errors)
-{
-    global $lang;
-
-    $lang->load("awaylist", false, true);
-
-    $content = '<div class="error low_warning"><p><em>'
-        . $lang->followingErrors
-        . '</em></p>';
-    $content .= '<p><ul>';
-    foreach ($errors as $error) {
-        $content .= '<li>' . $error . '</li>';
-    }
-    $content .= '</ul></p></div>';
-
-    return $content;
-}
-
 /** * *******************************************************************
+ * 
  * ADDITIONAL PLUGIN INSTALL/UNINSTALL ROUTINES
- *
- * _install():
- *   Called whenever a plugin is installed by clicking the "Install" button in the plugin manager.
- *   If no install routine exists, the install button is not shown and it assumed any work will be
- *   performed in the _activate() routine.
- *
- * function hello_install()
- * {
- * }
- *
- * _is_installed():
- *   Called on the plugin management page to establish if a plugin is already installed or not.
- *   This should return TRUE if the plugin is installed (by checking tables, fields etc) or FALSE
- *   if the plugin is not installed.
- *
- * function hello_is_installed()
- * {
- *      global $db;
- *      if($db->table_exists("hello_world"))
- *      {
- *          return true;
- *      }
- *      return false;
- * }
- *
- * _uninstall():
- *    Called whenever a plugin is to be uninstalled. This should remove ALL traces of the plugin
- *    from the installation (tables etc). If it does not exist, uninstall button is not shown.
- *
- * function hello_uninstall()
- * {
- * }
- *
- * _activate():
- *    Called whenever a plugin is activated via the Admin CP. This should essentially make a plugin
- *    "visible" by adding templates/template changes, language changes etc.
- *
- * function hello_activate()
- * {
- * }
- *
- * _deactivate():
- *    Called whenever a plugin is deactivated. This should essentially "hide" the plugin from view
- *    by removing templates/template changes etc. It should not, however, remove any information
- *    such as tables, fields etc - that should be handled by an _uninstall routine. When a plugin is
- *    uninstalled, this routine will also be called before _uninstall() if the plugin is active.
- *
- * function hello_deactivate()
- * {
- * }
- */
+ * 
+ * ******************************************************************** */
 $plugins->add_hook("index_start", "awaylist_showListOnIndex");
 $plugins->add_hook("awaylist_showList", "awaylist_showList");
 $plugins->add_hook("admin_users_do_delete", "awaylist_ListDeleteUserHook");
 
+/**
+ * return the information about the plugin as an array
+ * 
+ * @return array 
+ */
 function awaylist_info()
 {
     return array(
@@ -936,6 +841,16 @@ function awaylist_info()
     );
 }
 
+/**
+ * Called on the plugin management page to establish if a plugin is already
+ * installed or not.<br />
+ * This should return TRUE if the plugin is installed (by checking tables,
+ * fields etc) or FALSE if the plugin is not installed.
+ * 
+ * @global type $db
+ * @global type $mybb
+ * @return boolean 
+ */
 function awaylist_is_installed()
 {
     global $db, $mybb;
@@ -958,6 +873,16 @@ function awaylist_is_installed()
     return false;
 }
 
+/**
+ * Called whenever a plugin is installed by clicking the "Install" button in the
+ * plugin manager.<br />
+ * If no install routine exists, the install button is not shown and it assumed
+ * any work will be performed in the _activate() routine.
+ * 
+ * @global type $db
+ * @global type $mybb 
+ * @return void 
+ */
 function awaylist_install()
 {
     global $db, $mybb;
@@ -1199,6 +1124,15 @@ function awaylist_install()
     rebuild_settings();
 }
 
+/**
+ * Called whenever a plugin is to be uninstalled. This should remove ALL traces
+ * of the plugin from the installation (tables etc). If it does not exist,
+ * uninstall button is not shown.
+ * 
+ * @global type $db
+ * @global type $mybb 
+ * @return void 
+ */
 function awaylist_uninstall()
 {
     global $db, $mybb;
@@ -1233,6 +1167,13 @@ function awaylist_uninstall()
     );
 }
 
+/**
+ * Called whenever a plugin is activated via the Admin CP. This should
+ * essentially make a plugin "visible" by adding templates/template changes,
+ * language changes etc.
+ * 
+ * @return void 
+ */
 function awaylist_activate()
 {
     require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
@@ -1249,6 +1190,15 @@ function awaylist_activate()
     rebuild_settings();
 }
 
+/**
+ * Called whenever a plugin is deactivated. This should essentially "hide" the
+ * plugin from view by removing templates/template changes etc. It should not,
+ * however, remove any information such as tables, fields etc - that should be
+ * handled by an _uninstall routine. When a plugin is uninstalled, this routine
+ * will also be called before _uninstall() if the plugin is active.
+ * 
+ * @return void  
+ */
 function awaylist_deactivate()
 {
     require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
@@ -1278,8 +1228,42 @@ class AwayList
 {
 
     /**
-     * upgrade an old database table to the new format
+     * checks if the user is in one of the allowed usergroups
      * 
+     * @param string $allowedGroups the allowed usergroups;
+     * seperated with ","(COMMA) e.g.: "4,10,2"
+     * @return boolean true if user is in one of the allowed usergroups
+     */
+    public static function isUserInGroup($allowedGroups = false)
+    {
+        global $mybb;
+
+        // set to false as default
+        $isInGroup = false;
+
+        // explode the allowed usergroups to an array
+        $allowedUserGroups = explode(',', $allowedGroups);
+
+        // explode the additional usergroups of the user to an array
+        $usergroups = explode(',', $mybb->user['additionalgroups']);
+
+        // Add the primary usergroup of the user the the usergroups
+        $usergroups[] = $mybb->user['usergroup'];
+
+        // check if the user is in any of the allowed usergroups
+        foreach ($allowedUserGroups as $allowedUserGroup) {
+            if (in_array($allowedUserGroup, $usergroups)) {
+                $isInGroup = true;
+            }
+        }
+        return $isInGroup;
+    }
+
+    /**
+     * Upgrade an old database table to the new format.<br />
+     * This will be removed in the future someday
+     * 
+     * @deprecated since version 1.6.8
      * @global DB_MySQL $db 
      * 
      * @return void 
@@ -1288,39 +1272,38 @@ class AwayList
     {
         global $db;
 
-        // check if the upgrade was already performed before
-        if ($db->table_exists('awaylist')) {
-            return false;
-        }
-
-        if ($db->table_exists('liste')) {
+        // rename table of previous versions
+        if ($db->table_exists('liste') && !$db->table_exists('awaylist')) {
             $renameTableQuery = "RENAME TABLE " . $db->table_prefix . "liste "
                 . " TO " . $db->table_prefix . "awaylist ;";
             $db->write_query($renameTableQuery);
         }
 
-        if ($db->field_exists('ankunft', 'awaylist'))
+        // update field names of previous versions
+        if ($db->table_exists('awaylist')) {
+            if ($db->field_exists('ankunft', 'awaylist'))
+                    $db->rename_column(
+                    'awaylist', 'ankunft', 'arrival', 'int(11) default NULL'
+                );
+            if ($db->field_exists('abflug', 'awaylist'))
+                    $db->rename_column(
+                    'awaylist', 'abflug', 'departure', 'int(11) default NULL'
+                );
+            if ($db->field_exists('ort', 'awaylist'))
+                    $db->rename_column(
+                    'awaylist', 'ort', 'place', 'varchar(255) NOT NULL'
+                );
+            if ($db->field_exists('telefon', 'awaylist'))
+                    $db->rename_column(
+                    'awaylist', 'telefon', 'phone', 'varchar(255) NOT NULL'
+                );
+            if ($db->field_exists('data_id', 'awaylist')) {
+                $db->drop_column('awaylist', 'id');
                 $db->rename_column(
-                'awaylist', 'ankunft', 'arrival', 'int(11) default NULL'
-            );
-        if ($db->field_exists('abflug', 'awaylist'))
-                $db->rename_column(
-                'awaylist', 'abflug', 'departure', 'int(11) default NULL'
-            );
-        if ($db->field_exists('ort', 'awaylist'))
-                $db->rename_column(
-                'awaylist', 'ort', 'place', 'varchar(255) NOT NULL'
-            );
-        if ($db->field_exists('telefon', 'awaylist'))
-                $db->rename_column(
-                'awaylist', 'telefon', 'phone', 'varchar(255) NOT NULL'
-            );
-        if ($db->field_exists('data_id', 'awaylist')) {
-            $db->drop_column('awaylist', 'id');
-            $db->rename_column(
-                'awaylist', 'data_id', 'id',
-                'bigint(20) NOT NULL auto_increment'
-            );
+                    'awaylist', 'data_id', 'id',
+                    'bigint(20) NOT NULL auto_increment'
+                );
+            }
         }
     }
 
@@ -1400,6 +1383,31 @@ class AwayList
             return false;
         }
         return true;
+    }
+
+    /**
+     * get the HTML code for the error messages
+     * 
+     * @global MyLanguage $lang
+     * @param array $errors
+     * @return string 
+     */
+    public static function getHtmlErrorMessage($errors)
+    {
+        global $lang;
+
+        $lang->load("awaylist", false, true);
+
+        $content = '<div class="error low_warning"><p><em>'
+            . $lang->followingErrors
+            . '</em></p>';
+        $content .= '<p><ul>';
+        foreach ($errors as $error) {
+            $content .= '<li>' . $error . '</li>';
+        }
+        $content .= '</ul></p></div>';
+
+        return $content;
     }
 
 }

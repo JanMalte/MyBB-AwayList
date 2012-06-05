@@ -7,7 +7,8 @@
         </markers>
         <extensions>
             <extension>php</extension>
-            <extension>php3</extension>
+            <extension>php4</extension>
+            <extension>php5</extension>
             <extension>phtml</extension>
         </extensions>
         <visibility></visibility>

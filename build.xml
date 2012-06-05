@@ -181,7 +181,7 @@
             <arg value="${ant.project.name}" />
             <arg value="--target" />
             <arg path="${basedir}/build/api" />
-            <arg value="-c" />
+            <arg value="--config" />
             <arg value="${basedir}/build-tools/phpdoc.xml" />
         </exec>
     </target>
