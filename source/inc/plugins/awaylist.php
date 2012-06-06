@@ -914,7 +914,6 @@ class AwayList
      * @global mixed $templates
      * @global mixed $theme
      * @param integer $timestamp
-     * @param boolean $useTimestamp
      * @param integer $limit
      * @param integer $startLimit
      * @return string 

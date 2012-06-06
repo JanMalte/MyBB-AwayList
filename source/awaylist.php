@@ -10,14 +10,18 @@
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
  * @filesource
  */
+if (defined('UNITTESTING')) {
+    exit();
+}
+
 // allow mybb access
-define('IN_MYBB', 1);
+defined('IN_MYBB') || define('IN_MYBB', 1);
 
 // name of the file
-define('THIS_SCRIPT', 'awaylist.php');
+defined('THIS_SCRIPT') || define('THIS_SCRIPT', 'awaylist.php');
 
 // set to "1" if this page should be hidden on the online list; default is "0"
-define('NO_ONLINE', 0);
+defined('NO_ONLINE') || define('NO_ONLINE', 0);
 
 // define variables before global.php
 $lang = null;

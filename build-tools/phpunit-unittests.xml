@@ -2,7 +2,7 @@
 
 <phpunit 
         bootstrap="../tests/bootstrap.php"
-        backupGlobals="false"
+        backupGlobals="true"
         backupStaticAttributes="false"
         colors="true"
         convertErrorsToExceptions="true"
@@ -17,19 +17,15 @@
             <directory suffix="Test.php">../tests</directory>
         </testsuite>
     </testsuites>
-    <!--
     <logging>
         <log type="junit" target="../build/logs/junit.xml" logIncompleteSkipped="true"/>
     </logging>
-    -->
     
     <logging>
-        <!--
         <log type="coverage-html" target="../build/coverage" title="UnitTests"
             charset="UTF-8" yui="true" highlight="true"
             lowUpperBound="35" highLowerBound="70"/>
         <log type="coverage-clover" target="../build/logs/clover.xml"/>
-        -->
         <log type="junit" target="../build/logs/junit.xml" logIncompleteSkipped="true"/>
     </logging>
     
