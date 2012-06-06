@@ -848,9 +848,6 @@ class AwayList
             // decide what to do
             switch ($mybb->input['action']) {
                 case 'editAwlItem':
-                    add_breadcrumb(
-                        "{$mybb->settings["awayListTitle"]}", THIS_SCRIPT
-                    );
                     $message = '';
                     if ($mybb->input['step2'] == 'true'
                         && self::editItem($message, $validateErrors) == true
@@ -865,9 +862,6 @@ class AwayList
                     }
                     break;
                 case 'deleteAwlItem':
-                    add_breadcrumb(
-                        "{$mybb->settings["awayListTitle"]}", THIS_SCRIPT
-                    );
                     if ($mybb->input['step2'] == 'true'
                         && self::deleteItem($mybb->input['id']) == true
                     ) {
@@ -881,9 +875,6 @@ class AwayList
                     }
                     break;
                 case 'addAwlItem':
-                    add_breadcrumb(
-                        "{$mybb->settings["awayListTitle"]}", THIS_SCRIPT
-                    );
                     $message = '';
                     if ($mybb->input['step2'] == 'true'
                         && self::insertNewItem($message, $validateErrors) == true
@@ -898,7 +889,6 @@ class AwayList
                     }
                     break;
                 case 'setAwlTimestamp':
-                    add_breadcrumb("{$mybb->settings["awayListTitle"]}");
                     $timestamp = mktime(
                         0, 0, 0, $mybb->input['time_monat'],
                         $mybb->input['time_tag'], $mybb->input['time_jahr']
@@ -906,7 +896,6 @@ class AwayList
                     $content = self::showFullTable($timestamp, $limit);
                     break;
                 default:
-                    add_breadcrumb("{$mybb->settings["awayListTitle"]}");
                     $content = self::showFullTable(null, $limit);
                     break;
             }
@@ -1344,13 +1333,13 @@ class AwayList
 
         $lang->load("awaylist", false, true);
 
-        if ($mybb->input['airline'] == "") {
+        if (empty($mybb->input['airline'])) {
             $errors['airline'] = $lang->errorAirlineMissing;
         }
-        if ($mybb->input['place'] == "") {
+        if (empty($mybb->input['place'])) {
             $errors['place'] = $lang->errorMissingPlace;
         }
-        if ($mybb->input['hotel'] == "") {
+        if (empty($mybb->input['hotel'])) {
             $errors['hotel'] = $lang->errorMissingHotel;
         }
         if (!preg_match("/^[0-9[:space:]]*$/", $mybb->input['phone'])) {
@@ -1365,16 +1354,12 @@ class AwayList
             $mybb->input['departure_tag'], $mybb->input['departure_jahr']
         );
 
-        $check = true;
-        $editItem = false;
         $userId = $mybb->user['uid'];
         if ($editItemId != null) {
             $query = $db->simple_select(
                 "awaylist", '*', "id = '" . $editItemId . "'"
             );
             $editItem = $db->fetch_array($query);
-        }
-        if ($editItem && $userId != $editItem['uid']) {
             $userId = $editItem['uid'];
         }
         $whereCondition = 'uid = ' . $userId
@@ -1385,12 +1370,13 @@ class AwayList
             . ' OR ( arrival >= ' . $arrival 
             . ' AND departure <= ' . $departure . ' ) )';
         $query = $db->simple_select("awaylist", "*", $whereCondition);
+        $countTrips = null;
         while ($result = $db->fetch_array($query)) {
-            if (($editItemId == null) OR ($result['id'] != $editItemId)) {
-                $check = false;
+            if ($result['id'] != $editItemId) {
                 $existingJourney = ' (' . date('d.m.Y', $result['arrival'])
                     . ' bis ' . date('d.m.Y', $result['departure']) . ')';
-                $errors['arrival'] = $lang->errorAlreadyAway . $existingJourney;
+                $errors['arrival'.$countTrips] = $lang->errorAlreadyAway . $existingJourney;
+                $countTrips++;
             }
         }
 
@@ -1402,7 +1388,7 @@ class AwayList
         if ($departure < time()) {
             $errors['depature'] = $lang->errorDepartureNotInFuture;
         }
-        if ($departure < $arrival) {
+        if ($departure <= $arrival) {
             $errors['depature'] = $lang->errorArrivalNotBeforeDeparture;
         }
 
