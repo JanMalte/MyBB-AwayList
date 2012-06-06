@@ -40,24 +40,14 @@ if (!$pluginsCache) {
 
 // is the plugin active
 if (isset($pluginsCache['active']['awaylist'])) {
+    // only show list if set in plugin settings
+    if ($mybb->settings['showAwayList'] == '1') {
 
-    // show no permission error if the list should only be displayed to members
-    if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
-        && $mybb->user['uid'] == 0
-    ) {
-        // show error page
-        error_no_permission();
-    } else {
+        // add breadcrumb item
+        add_breadcrumb($lang->liste, THIS_SCRIPT);
 
-        // only show list if set in plugin settings
-        if ($mybb->settings['showAwayList'] == '1') {
-
-            // add breadcrumb item
-            add_breadcrumb($lang->liste, THIS_SCRIPT);
-
-            // run hook for displaying the awaylist
-            $plugins->run_hooks('awaylist_showList');
-        }
+        // run hook for displaying the awaylist
+        $plugins->run_hooks('awaylist_showList');
     }
 } else {
     // add breadcrumb item
@@ -74,7 +64,7 @@ if (isset($pluginsCache['active']['awaylist'])) {
 
     // get the template and replace all placeholders
     eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
-    
+
     // output the page
     output_page($showList);
 }
