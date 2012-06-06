@@ -53,7 +53,7 @@ if (isset($pluginsCache['active']['awaylist'])) {
         if ($mybb->settings['showAwayList'] == '1') {
 
             // add breadcrumb item
-            add_breadcrumb($lang->liste);
+            add_breadcrumb($lang->liste, THIS_SCRIPT);
 
             // run hook for displaying the awaylist
             $plugins->run_hooks('awaylist_showList');
@@ -61,7 +61,7 @@ if (isset($pluginsCache['active']['awaylist'])) {
     }
 } else {
     // add breadcrumb item
-    add_breadcrumb($lang->liste);
+    add_breadcrumb($lang->liste, THIS_SCRIPT);
 
     // generate content
     $content .= '<div class="error low_warning">
