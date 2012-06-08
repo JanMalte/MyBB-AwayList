@@ -3,7 +3,7 @@
 <phpunit 
         bootstrap="../tests/bootstrap.php"
         backupGlobals="true"
-        backupStaticAttributes="false"
+        backupStaticAttributes="true"
         colors="true"
         convertErrorsToExceptions="true"
         convertNoticesToExceptions="true"
@@ -34,7 +34,7 @@
             <directory>../tests-selenium</directory>
         </blacklist>
         <whitelist>
-            <directory suffix=".php">../source</directory>
+            <directory suffix=".php">../source/inc/plugins/</directory>
         </whitelist>
     </filter>
     

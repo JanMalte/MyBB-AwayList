@@ -10,10 +10,6 @@
  * @license     GNU General Public License version 3 or later; see LICENSE.txt
  * @filesource
  */
-if (defined('UNITTESTING')) {
-    exit();
-}
-
 // allow mybb access
 defined('IN_MYBB') || define('IN_MYBB', 1);
 

@@ -67,7 +67,7 @@ class IsUserInGroupTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(AwayList::isUserInGroup('10,20,30'));
         $this->assertFalse(AwayList::isUserInGroup(PHP_INT_MAX));
     }
-    
+
     /**
      * @covers AwayList::isUserInGroup
      * @expectedException PHPUnit_Framework_Error
@@ -89,7 +89,7 @@ class IsUserInGroupTest extends PHPUnit_Framework_TestCase
         $this->assertFalse(AwayList::isUserInGroup($array));
         $array = array('test' => 'testing', 'testTest' => 'testingTesting');
         $this->assertFalse(AwayList::isUserInGroup($array));
-        
+
         // perform tests with error
         AwayList::isUserInGroup(10, 20, 30);
         AwayList::isUserInGroup(array(10));
@@ -117,25 +117,25 @@ class IsUserInGroupTest extends PHPUnit_Framework_TestCase
         $this->assertTrue(AwayList::isUserInGroup('1'));
         $this->assertTrue(AwayList::isUserInGroup('1,2'));
         $this->assertTrue(AwayList::isUserInGroup('2,1'));
-        
+
         // perform tests usergroup
         $this->assertTrue(AwayList::isUserInGroup(4));
         $this->assertTrue(AwayList::isUserInGroup('4'));
         $this->assertTrue(AwayList::isUserInGroup('1,4'));
         $this->assertTrue(AwayList::isUserInGroup('4,1'));
-        
+
         // perform tests additional usergroups with one fail
         $this->assertTrue(AwayList::isUserInGroup('100,2'));
         $this->assertTrue(AwayList::isUserInGroup('2,100'));
-        
+
         // perform tests usergroup with one fail
         $this->assertTrue(AwayList::isUserInGroup('100,4'));
         $this->assertTrue(AwayList::isUserInGroup('4,100'));
-        
+
         // perform tests additional usergroups with one fail not numeric
         $this->assertTrue(AwayList::isUserInGroup('testing,2'));
         $this->assertTrue(AwayList::isUserInGroup('2,testing'));
-        
+
         // perform tests usergroup with one fail not numeric
         $this->assertTrue(AwayList::isUserInGroup('testing,4'));
         $this->assertTrue(AwayList::isUserInGroup('4,testing'));

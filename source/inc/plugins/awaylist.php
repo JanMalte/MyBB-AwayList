@@ -84,8 +84,7 @@ if (!class_exists('ShowDates')) {
          * month which should be selected
          * @return string HTML code of the SELECT element
          */
-        public static function showMonthSelect($fieldName,
-            $selectedMonth = null)
+        public static function showMonthSelect($fieldName, $selectedMonth = null)
         {
             // if the selected month isn't given set it to the actual month
             if ($selectedMonth == null) $selectedMonth = date("m");
@@ -177,15 +176,15 @@ if (!class_exists('ShowDates')) {
 function awaylist_info()
 {
     return array(
-        "name" => "Awaylist",
-        "description" => "It provides a list where members can subscribe"
-        . " when they are at a special place",
-        "website" => "http://www.malte-gerth.de/mybb.html",
-        "author" => "Jan Malte Gerth",
-        "authorsite" => "http://www.malte-gerth.de/",
-        "version" => "1.6.8",
-        "compatibility" => "16*",
-        "gid" => '6a8fbbc82f4aa01fd9ba4a599e80c5c7'
+        'name' => 'Awaylist',
+        'description' => 'It provides a list where members can subscribe'
+        . ' when they are at a special place',
+        'website' => 'http://www.malte-gerth.de/mybb.html',
+        'author' => 'Jan Malte Gerth',
+        'authorsite' => 'http://www.malte-gerth.de/',
+        'version' => '1.6.8',
+        'compatibility' => '16*',
+        'gid' => '6a8fbbc82f4aa01fd9ba4a599e80c5c7'
     );
 }
 
@@ -205,7 +204,7 @@ function awaylist_is_installed()
 
     if (array_key_exists('keep_list', $mybb->settings)) {
         if ($mybb->settings['keep_list'] == 'no') {
-            if ($db->field_exists('id', "awaylist")) {
+            if ($db->field_exists('id', 'awaylist')) {
                 return true;
             }
         } else {
@@ -233,7 +232,7 @@ function awaylist_is_installed()
 function awaylist_install()
 {
     global $db;
-    require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
+    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
 
     AwayList::installTemplates();
 
@@ -243,8 +242,8 @@ function awaylist_install()
     // create our database table
     $dbversion = $db->get_version();
     if ($dbversion > 5) {
-        $createTableQuery = "CREATE TABLE IF NOT EXISTS "
-            . "`" . $db->table_prefix . "awaylist` (
+        $createTableQuery = 'CREATE TABLE IF NOT EXISTS '
+            . '`' . $db->table_prefix . 'awaylist` (
             `id` bigint(20) NOT NULL auto_increment,
             `sort_id` bigint(20) default NULL,
             `uid` int(10) unsigned default NULL,
@@ -256,10 +255,10 @@ function awaylist_install()
             `hotel` varchar(255) NOT NULL,
             `phone` varchar(255) default NULL,
             PRIMARY KEY  (`id`)
-            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;";
+            ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 COLLATE=utf8_bin;';
     } else {
-        $createTableQuery = "CREATE TABLE IF NOT EXISTS "
-            . "`" . $db->table_prefix . "awaylist` (
+        $createTableQuery = 'CREATE TABLE IF NOT EXISTS '
+            . '`' . $db->table_prefix . 'awaylist` (
             `id` bigint(20) NOT NULL auto_increment,
             `sort_id` bigint(20) default NULL,
             `uid` int(10) unsigned default NULL,
@@ -271,7 +270,7 @@ function awaylist_install()
             `hotel` varchar(255) NOT NULL,
             `phone` varchar(255) default NULL,
             PRIMARY KEY  (`id`)
-            ) TYPE=MyISAM ;";
+            ) TYPE=MyISAM ;';
     }
     $db->write_query($createTableQuery);
 
@@ -290,7 +289,7 @@ function awaylist_install()
 function awaylist_uninstall()
 {
     global $db, $mybb;
-    require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
+    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
 
     if ($mybb->settings['keep_list'] == 'no') {
         $db->drop_table('liste');
@@ -301,10 +300,11 @@ function awaylist_uninstall()
      * remove plugin settings
      */
     $db->delete_query(
-        "settings",
+        'settings',
         "name IN(
-        'awayListTitle','awayListCountry','showAwayListOnIndex','keep_list',
-        'showAwayListOnlyForMembers','showAwayList')"
+            'awayListTitle','awayListCountry','showAwayListOnIndex','keep_list',
+            'showAwayListOnlyForMembers','showAwayList'
+        )"
     );
 
     $db->delete_query("settinggroups", "name='awaylist'");
@@ -315,9 +315,10 @@ function awaylist_uninstall()
      * remove plugin templates
      */
     $db->delete_query(
-        "templates",
+        'templates',
         "title IN(
-        'show_awaylist','show_awaylist_table_bit','show_awaylist_table')"
+            'show_awaylist','show_awaylist_table_bit','show_awaylist_table'
+        )"
     );
 }
 
@@ -330,14 +331,14 @@ function awaylist_uninstall()
  */
 function awaylist_activate()
 {
-    require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
+    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
 
     find_replace_templatesets(
-        "index", '#{\$header}(\r?)(\n?)#', "{\$header}\r\n{\$awaylist}\r\n"
+        'index', '#{\$header}(\r?)(\n?)#', "{\$header}\r\n{\$awaylist}\r\n"
     );
 
     find_replace_templatesets(
-        "header", '#toplinks_help}</a></li>#',
+        'header', '#toplinks_help}</a></li>#',
         "$0\n<li class=\"awaylist_link\">"
         . "<a href=\"{\$mybb->settings['bburl']}/awaylist.php\">"
         . "<img src=\"{\$mybb->settings['bburl']}/images/awaylist/list.png\""
@@ -358,14 +359,14 @@ function awaylist_activate()
  */
 function awaylist_deactivate()
 {
-    require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
+    require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
 
     find_replace_templatesets(
-        "index", '#(\r?)(\n?){\$awaylist}(\r?)(\n?)#', "\r\n", 0
+        'index', '#(\r?)(\n?){\$awaylist}(\r?)(\n?)#', "\r\n", 0
     );
 
     find_replace_templatesets(
-        "header", '#(\n?)<li class="awaylist_link">(.*)</li>#', '', 0
+        'header', '#(\n?)<li class="awaylist_link">(.*)</li>#', '', 0
     );
 
     rebuild_settings();
@@ -377,10 +378,10 @@ function awaylist_deactivate()
  * 
  * ******************************************************************** */
 // add plugin hooks
-$plugins->add_hook("index_start", "awaylistShowListOnIndexHook");
-$plugins->add_hook("global_start", "awaylistLoadLanguageHook");
-$plugins->add_hook("awaylist_showList", "awaylistShowListHook");
-$plugins->add_hook("admin_users_do_delete", "awaylistDeleteUserHook");
+$plugins->add_hook('index_start', 'awaylistShowListOnIndexHook');
+$plugins->add_hook('global_start', 'awaylistLoadLanguageHook');
+$plugins->add_hook('awaylist_showList', 'awaylistShowListHook');
+$plugins->add_hook('admin_users_do_delete', 'awaylistDeleteUserHook');
 
 /**
  * load the plugin translations on global context
@@ -390,9 +391,9 @@ $plugins->add_hook("admin_users_do_delete", "awaylistDeleteUserHook");
 function awaylistLoadLanguageHook()
 {
     global $lang;
-    
+
     // load the translation
-    $lang->load("awaylist");
+    $lang->load('awaylist');
 }
 
 /**
@@ -407,7 +408,7 @@ function awaylistShowListOnIndexHook()
     global $mybb, $lang, $awaylist;
 
     // load the language
-    $lang->load("awaylist", false, true);
+    $lang->load('awaylist', false, true);
 
     $awaylist = '';
     if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
@@ -438,7 +439,7 @@ function awaylistShowListHook()
     global $headerinclude, $header, $footer;
 
     // load language
-    $lang->load("awaylist", false, true);
+    $lang->load('awaylist', false, true);
 
     // check if the user has the permission to view the list
     if ($mybb->settings['showAwayListOnlyForMembers'] == '1'
@@ -465,7 +466,7 @@ function awaylistDeleteUserHook()
     global $db, $mybb;
 
     $uid = intval($mybb->input['uid']);
-    $db->delete_query("awaylist", "uid='$uid'");
+    $db->delete_query('awaylist', 'uid=\''.$uid.'\'');
 }
 
 /**
@@ -528,8 +529,8 @@ class AwayList
 
         // rename table of previous versions
         if ($db->table_exists('liste') && !$db->table_exists('awaylist')) {
-            $renameTableQuery = "RENAME TABLE " . $db->table_prefix . "liste "
-                . " TO " . $db->table_prefix . "awaylist ;";
+            $renameTableQuery = 'RENAME TABLE ' . $db->table_prefix . 'liste '
+                . ' TO ' . $db->table_prefix . 'awaylist ;';
             $db->write_query($renameTableQuery);
         }
 
@@ -574,18 +575,18 @@ class AwayList
     public static function installTemplates()
     {
         global $db;
-        require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
+        require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
 
         /*
          * add plugin templates
          */
         $tplShowAwayListe = array(
-            "tid" => "NULL",
-            "title" => "show_awaylist",
-            "template" => "<html>
+            'tid' => 'NULL',
+            'title' => 'show_awaylist',
+            'template' => '<html>
 	<head>
 		<title>{\$mybb->settings[awayListTitle]}</title>
-		<base href=\"{\$mybb->settings[bburl]}/\">
+		<base href=\'{\$mybb->settings[bburl]}/\'>
 		{\$headerinclude}
 	</head>
 	<body>
@@ -593,15 +594,15 @@ class AwayList
 		{\$content}
 		{\$footer}
 	</body>
-</html>",
-            "sid" => "-1",
+</html>',
+            'sid' => '-1',
         );
-        $db->insert_query("templates", $tplShowAwayListe);
+        $db->insert_query('templates', $tplShowAwayListe);
 
         $tplShowAwayListTable = array(
-            "tid" => "NULL",
-            "title" => "show_awaylist_table",
-            "template" => $db->escape_string(
+            'tid' => 'NULL',
+            'title' => 'show_awaylist_table',
+            'template' => $db->escape_string(
                 '<table border="0" cellspacing="1" cellpadding="4" class="tborder">
     <thead>
         <tr>
@@ -684,14 +685,14 @@ class AwayList
 </tbody>
 </table>'
             ),
-            "sid" => "-1",
+            'sid' => '-1',
         );
-        $db->insert_query("templates", $tplShowAwayListTable);
+        $db->insert_query('templates', $tplShowAwayListTable);
 
         $tplTableBit = array(
-            "tid" => "NULL",
-            "title" => "show_awaylist_table_bit",
-            "template" => $db->escape_string(
+            'tid' => 'NULL',
+            'title' => 'show_awaylist_table_bit',
+            'template' => $db->escape_string(
                 '<tr>
     <td class="trow1">{$userlink}</td>
     <td class="trow1">{$status}</td>
@@ -704,9 +705,9 @@ class AwayList
     <td class="trow1">{$actions}</td>
 </tr>'
             ),
-            "sid" => "-1",
+            'sid' => '-1',
         );
-        $db->insert_query("templates", $tplTableBit);
+        $db->insert_query('templates', $tplTableBit);
     }
 
     /**
@@ -719,94 +720,94 @@ class AwayList
     public static function installSettings()
     {
         global $db, $mybb;
-        require_once MYBB_ROOT . "/inc/adminfunctions_templates.php";
-        
+        require_once MYBB_ROOT . '/inc/adminfunctions_templates.php';
+
         /*
          * add plugin settings
          */
         $settingsGroup = array(
-            "gid" => "NULL",
-            "name" => "awaylist",
-            "title" => "Awaylist",
-            "description" => "Settings for the Awaylist Plugin",
-            "disporder" => "1",
-            "isdefault" => "no"
+            'gid' => 'NULL',
+            'name' => 'awaylist',
+            'title' => 'Awaylist',
+            'description' => 'Settings for the Awaylist Plugin',
+            'disporder' => '1',
+            'isdefault' => 'no'
         );
-        $db->insert_query("settinggroups", $settingsGroup);
+        $db->insert_query('settinggroups', $settingsGroup);
         $gid = $db->insert_id();
 
         $settingsData = array(
-            "sid" => "NULL",
-            "name" => "showAwayList",
-            "title" => "Anzeige der Liste",
-            "description" => "Soll die Liste angezeigt werden?",
-            "optionscode" => "yesno",
-            "value" => "1",
-            "disporder" => "10",
-            "gid" => intval($gid)
+            'sid' => 'NULL',
+            'name' => 'showAwayList',
+            'title' => 'Anzeige der Liste',
+            'description' => 'Soll die Liste angezeigt werden?',
+            'optionscode' => 'yesno',
+            'value' => '1',
+            'disporder' => '10',
+            'gid' => intval($gid)
         );
-        $db->insert_query("settings", $settingsData);
+        $db->insert_query('settings', $settingsData);
 
         $settingsData = array(
-            "sid" => "NULL",
-            "name" => "keep_list",
-            "title" => "Informationen behalten",
-            "description" => "Sollen die gespeicherten Informationen der "
-                ."Aufenthalte beim Deaktivieren des Plugins erhalten bleiben?",
-            "optionscode" => "yesno",
-            "value" => "1",
-            "disporder" => "20",
-            "gid" => intval($gid)
+            'sid' => 'NULL',
+            'name' => 'keep_list',
+            'title' => 'Informationen behalten',
+            'description' => 'Sollen die gespeicherten Informationen der '
+            . 'Aufenthalte beim Deaktivieren des Plugins erhalten bleiben?',
+            'optionscode' => 'yesno',
+            'value' => '1',
+            'disporder' => '20',
+            'gid' => intval($gid)
         );
-        $db->insert_query("settings", $settingsData);
+        $db->insert_query('settings', $settingsData);
 
         $settingVisible = array(
-            "sid" => "NULL",
-            "name" => "showAwayListOnlyForMembers",
-            "title" => "Liste nur für Mitglieder anzeigen",
-            "description" => "Soll die Liste nur für Mitglieder sichtbar sein?",
-            "optionscode" => "yesno",
-            "value" => "1",
-            "disporder" => "30",
-            "gid" => intval($gid)
+            'sid' => 'NULL',
+            'name' => 'showAwayListOnlyForMembers',
+            'title' => 'Liste nur für Mitglieder anzeigen',
+            'description' => 'Soll die Liste nur für Mitglieder sichtbar sein?',
+            'optionscode' => 'yesno',
+            'value' => '1',
+            'disporder' => '30',
+            'gid' => intval($gid)
         );
-        $db->insert_query("settings", $settingVisible);
+        $db->insert_query('settings', $settingVisible);
 
         $settingsData = array(
-            "sid" => "NULL",
-            "name" => "showAwayListOnIndex",
-            "title" => "Auf der Startseite anzeigen",
-            "description" => "Soll die Liste auf der Startseite angezeigt werden?",
-            "optionscode" => "yesno",
-            "value" => "0",
-            "disporder" => "40",
-            "gid" => intval($gid)
+            'sid' => 'NULL',
+            'name' => 'showAwayListOnIndex',
+            'title' => 'Auf der Startseite anzeigen',
+            'description' => 'Soll die Liste auf der Startseite angezeigt werden?',
+            'optionscode' => 'yesno',
+            'value' => '0',
+            'disporder' => '40',
+            'gid' => intval($gid)
         );
-        $db->insert_query("settings", $settingsData);
+        $db->insert_query('settings', $settingsData);
 
         $settingsData = array(
-            "sid" => "NULL",
-            "name" => "awayListCountry",
-            "title" => "Name des Landes",
-            "description" => "Für welches Land gilt die Tabelle?",
-            "optionscode" => "text",
-            "value" => "Thailand",
-            "disporder" => "50",
-            "gid" => intval($gid)
+            'sid' => 'NULL',
+            'name' => 'awayListCountry',
+            'title' => 'Name des Landes',
+            'description' => 'Für welches Land gilt die Tabelle?',
+            'optionscode' => 'text',
+            'value' => 'Thailand',
+            'disporder' => '50',
+            'gid' => intval($gid)
         );
-        $db->insert_query("settings", $settingsData);
+        $db->insert_query('settings', $settingsData);
 
         $settingsData = array(
-            "sid" => "NULL",
-            "name" => "awayListTitle",
-            "title" => "Titel des Plugins",
-            "description" => "Welcher Titel soll angezeigt werden?",
-            "optionscode" => "text",
-            "value" => "Wer ist wann in Thailand",
-            "disporder" => "60",
-            "gid" => intval($gid)
+            'sid' => 'NULL',
+            'name' => 'awayListTitle',
+            'title' => 'Titel des Plugins',
+            'description' => 'Welcher Titel soll angezeigt werden?',
+            'optionscode' => 'text',
+            'value' => 'Wer ist wann in Thailand',
+            'disporder' => '60',
+            'gid' => intval($gid)
         );
-        $db->insert_query("settings", $settingsData);
+        $db->insert_query('settings', $settingsData);
 
         rebuild_settings();
     }
@@ -899,7 +900,6 @@ class AwayList
                     $content = self::showFullTable(null, $limit);
                     break;
             }
-            
         }
 
         return $message . $content . '<br />';
@@ -918,16 +918,16 @@ class AwayList
      * @param integer $startLimit
      * @return string 
      */
-    public static function showFullTable($timestamp = null,
-        $limit = 20, $startLimit = 0)
+    public static function showFullTable($timestamp = null, $limit = 20,
+        $startLimit = 0)
     {
         global $db, $mybb, $lang, $templates, $theme;
-        
+
         // load the translation
         $lang->load("awaylist", false, true);
 
         // limit of displayed items
-        $limit = max(array(1,$limit));
+        $limit = max(array(1, $limit));
 
         // build the select query; add timestamp if given
         $timeStampNotice = '';
@@ -955,13 +955,13 @@ class AwayList
 
         $currentUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT;
         $selectDateForm = ShowDates::showDaySelect(
-            'time_tag', date("d", $timestamp)
+                'time_tag', date("d", $timestamp)
         );
         $selectDateForm .= ShowDates::showMonthSelect(
-            'time_monat', date("m", $timestamp)
+                'time_monat', date("m", $timestamp)
         );
         $selectDateForm .= ShowDates::showYearSelect(
-            'time_jahr', date("Y", $timestamp)
+                'time_jahr', date("Y", $timestamp)
         );
         $addItemUrl = $mybb->settings['bburl'] . '/'
             . THIS_SCRIPT . '?action=addAwlItem';
@@ -1231,8 +1231,7 @@ class AwayList
      * @param array $validateErrors 
      * @return boolean if successful 
      */
-    public static function insertNewItem(&$message = '',
-        &$validateErrors = null)
+    public static function insertNewItem(&$message = '', &$validateErrors = null)
     {
         global $db, $mybb;
 
@@ -1362,11 +1361,11 @@ class AwayList
             $userId = $editItem['uid'];
         }
         $whereCondition = 'uid = ' . $userId
-            . ' AND ( ( arrival BETWEEN ' . $arrival 
+            . ' AND ( ( arrival BETWEEN ' . $arrival
             . ' AND ' . $departure . ' ) '
-            . ' OR ( departure  BETWEEN ' . $arrival 
+            . ' OR ( departure  BETWEEN ' . $arrival
             . ' AND ' . $departure . ' ) '
-            . ' OR ( arrival >= ' . $arrival 
+            . ' OR ( arrival >= ' . $arrival
             . ' AND departure <= ' . $departure . ' ) )';
         $query = $db->simple_select("awaylist", "*", $whereCondition);
         $countTrips = null;
@@ -1374,7 +1373,7 @@ class AwayList
             if ($result['id'] != $editItemId) {
                 $existingJourney = ' (' . date('d.m.Y', $result['arrival'])
                     . ' bis ' . date('d.m.Y', $result['departure']) . ')';
-                $errors['arrival'.$countTrips] = $lang->errorAlreadyAway . $existingJourney;
+                $errors['arrival' . $countTrips] = $lang->errorAlreadyAway . $existingJourney;
                 $countTrips++;
             }
         }
@@ -1539,10 +1538,10 @@ class AwayList
         }
         $content .= ShowDates::showDaySelect("arrival_tag", $arrivalDay);
         $content .= ShowDates::showMonthSelect(
-            "arrival_monat", $item['arrival_monat']
+                "arrival_monat", $item['arrival_monat']
         );
         $content .= ShowDates::showYearSelect(
-            "arrival_jahr", $item['arrival_jahr']
+                "arrival_jahr", $item['arrival_jahr']
         );
         $content .= '</td></tr>';
         if (isset($validateErrors['depature'])) {
@@ -1553,17 +1552,17 @@ class AwayList
         $content .= '<td class="trow2"><b>' . $lang->departure . ':</b>*</td>'
             . '<td class="trow2">';
         $content .= ShowDates::showDaySelect(
-            "departure_tag", $mybb->input['departure_tag']
+                "departure_tag", $mybb->input['departure_tag']
         );
         $depatureMonth = $item['departure_monat'];
         if (empty($depatureMonth)) {
             $depatureMonth = str_pad((date('m') + 1), 2, 0, STR_PAD_LEFT);
         }
         $content .= ShowDates::showMonthSelect(
-            "departure_monat", $depatureMonth
+                "departure_monat", $depatureMonth
         );
         $content .= ShowDates::showYearSelect(
-            "departure_jahr", $item['departure_jahr']
+                "departure_jahr", $item['departure_jahr']
         );
         $content .= '</td></tr>';
         if (isset($validateErrors['airline'])) {
@@ -1603,7 +1602,7 @@ class AwayList
             . '<td class="trow2"><input placeholder="' . $lang->phoneAt . ' '
             . $mybb->settings["awayListCountry"] . '" value="' . $item['phone']
             . '" type="text" name="phone" size="25" maxlength="15" /></td>'
-            . '</tr><tr><td class="trow1">* = ' . $lang->requiredFields 
+            . '</tr><tr><td class="trow1">* = ' . $lang->requiredFields
             . '</td><td class="trow1"><input type="submit" name="addAwlItem" '
             . 'value="' . $lang->addToList . '"></td></tr></tbody></table>'
             . '</form>';
