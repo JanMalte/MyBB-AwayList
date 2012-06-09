@@ -1,4 +1,4 @@
-INSTALL
+Install
 ====================
 
 To install the plugin do the following steps:
@@ -10,7 +10,7 @@ To install the plugin do the following steps:
     6. you're done
     
     
-UNINSTALL
+Uninstall
 ====================
 
 To uninstall the plugin do the following steps:

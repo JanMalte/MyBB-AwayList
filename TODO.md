@@ -1,4 +1,4 @@
-TODO
+Todo
 ====================
 
 Tasks which should be done

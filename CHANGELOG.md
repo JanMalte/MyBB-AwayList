@@ -1,4 +1,4 @@
-CHANGELOG
+Changelog
 ====================
 
 This changelog starts with version 1.4.5
