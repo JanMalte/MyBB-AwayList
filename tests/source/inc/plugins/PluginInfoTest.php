@@ -27,11 +27,18 @@ include_once 'inc/plugins/awaylist.php';
 class PluginInfoTest extends PHPUnit_Framework_TestCase
 {
 
+    /**
+     * Sets up the fixture, for example, open a network connection.
+     * This method is called before a test is executed.
+     */
     public function setUp()
     {
         parent::setUp();
     }
 
+    /**
+     * test the structure of the info array returned by awaylist_info()
+     */
     public function testInfoArrayStructure()
     {
         $infoArray = awaylist_info();
@@ -46,25 +53,20 @@ class PluginInfoTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('gid', $infoArray);
     }
 
+    /**
+     * test if the GID returned by awaylist_info() is correct
+     */
     public function testGid()
     {
         $infoArray = awaylist_info();
         $gid = '6a8fbbc82f4aa01fd9ba4a599e80c5c7';
         $this->assertArrayHasKey('gid', $infoArray);
         $this->assertEquals($gid, $infoArray['gid']);
-        $compareArray = array(
-            "name" => "Awaylist",
-            "description" => "It provides a list where members can subscribe"
-            . " when they are at a special place",
-            "website" => "http://www.malte-gerth.de/mybb.html",
-            "author" => "Jan Malte Gerth",
-            "authorsite" => "http://www.malte-gerth.de/",
-            "version" => "1.6.8",
-            "compatibility" => "16*",
-            "gid" => '6a8fbbc82f4aa01fd9ba4a599e80c5c7'
-        );
     }
-    
+
+    /**
+     * test if the website returned by awaylist_info() is correct
+     */
     public function testWebsite()
     {
         $infoArray = awaylist_info();
@@ -72,7 +74,10 @@ class PluginInfoTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('website', $infoArray);
         $this->assertEquals($expectedValue, $infoArray['website']);
     }
-    
+
+    /**
+     * test if the author returned by awaylist_info() contains 'Malte Gerth'
+     */
     public function testAuthor()
     {
         $infoArray = awaylist_info();
@@ -80,13 +85,30 @@ class PluginInfoTest extends PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('author', $infoArray);
         $this->assertRegExp($expectedValue, $infoArray['author']);
     }
-    
+
+    /**
+     * test if the author site returned by awaylist_info() is correct
+     */
     public function testAuthorSite()
     {
         $infoArray = awaylist_info();
         $expectedValue = 'http://www.malte-gerth.de/';
         $this->assertArrayHasKey('authorsite', $infoArray);
         $this->assertEquals($expectedValue, $infoArray['authorsite']);
+    }
+
+    /**
+     * test the values of the info array returned by awaylist_info() are correct
+     */
+    public function testInfoArrayBasicValues()
+    {
+        $infoArray = awaylist_info();
+        $this->assertNotEmpty($infoArray, 'Plugin Info array is empty');
+        $this->assertNotEmpty($infoArray['name']);
+        $this->assertNotEmpty($infoArray['version']);
+        $this->assertRegExp('/[0-9]+\.[0-9]+.[0-9]+/i', $infoArray['version']);
+        $this->assertNotEmpty($infoArray['compatibility']);
+        $this->assertRegExp('/(14([0-9]+|\*)|16([0-9]+|\*)|\*)/i', $infoArray['compatibility']);
     }
 
 }

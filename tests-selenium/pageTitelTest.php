@@ -28,7 +28,7 @@ class pageTitelTest extends PHPUnit_Extensions_SeleniumTestCase
     /**
      * browser configuration for selenium tests
      * 
-     * @var Array
+     * @var array
      */
     public static $browsers = array(
         array(

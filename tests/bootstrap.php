@@ -13,10 +13,10 @@
 defined('APPLICATION_PATH')
     || define('APPLICATION_PATH', '/srv/www/mybb/mybb16');
 
-// allow mybb access
+// Allow mybb access
 defined('IN_MYBB') || define('IN_MYBB', 1);
 
-// set application enviroment to testing
+// Set application enviroment to testing
 defined('UNITTESTING') || define('UNITTESTING', true);
 
 // Ensure the include_path is correct
@@ -30,22 +30,47 @@ set_include_path(
     )
 );
 
-// set up global fake enviroment
+/**
+ * set up global fake enviroment
+ * 
+ * @category    MyBB.Plugins
+ * @package     AwayList
+ * @subpackage  Tests
+ * @author      Malte Gerth <http://www.malte-gerth.de>
+ * @copyright   Copyright (C) Malte Gerth. All rights reserved.
+ * @license     GNU General Public License version 3 or later 
+ */
 class FakePluginClass
 {
 
+    /**
+     * do nothing
+     * 
+     * @param mixed $name
+     * @param mixed $function 
+     * @return void 
+     */
     public function add_hook($name, $function)
     {
         
     }
-    
-    public function load($name, $mixed, $throwError) {
+
+    /**
+     * do nothing
+     * 
+     * @param mixed $name
+     * @param mixed $mixed
+     * @param mixed $throwError 
+     * @return void
+     */
+    public function load($name, $mixed, $throwError)
+    {
         
     }
 
 }
 
-global $plugins,$lang;
+global $plugins, $lang;
 
 // set up global fake enviroment
 $plugins = new FakePluginClass();
