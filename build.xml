@@ -144,6 +144,8 @@
             description="Find duplicate code using PHPCPD">
         <exec executable="phpcpd">
             <arg value="--verbose" />
+            <arg value="--exclude" />
+            <arg value="${basedir}/source/inc/languages" />
             <arg value="--log-pmd" />
             <arg value="${basedir}/build/logs/pmd-cpd.xml" />
             <arg path="${basedir}/source" />
