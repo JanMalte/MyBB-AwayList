@@ -21,6 +21,17 @@
         </paths>
     </logging>
     <transformations>
-        <template name="responsive" />
+        <template name="MyBB-phpDoc-Template" />
     </transformations>
+    <transformer>
+        <external-class-documentation>
+            <prefix>Zend</prefix>
+            <uri>http://framework.zend.com/</uri>
+        </external-class-documentation>
+    </transformer>
+    <files>
+        <directory>source</directory>
+        <directory>tests</directory>
+        <directory>tests-selenium</directory>
+    </files>
 </phpdoc>

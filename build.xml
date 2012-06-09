@@ -174,8 +174,6 @@
     <target name="phpdoc"
             description="Generate API documentation using PHPDocumentor">
         <exec executable="phpdoc" failonerror="true">
-            <arg value="--directory" />
-            <arg path="${basedir}" />
             <arg value="--sourcecode" />
             <arg value="--title" />
             <arg value="${ant.project.name}" />
@@ -183,6 +181,7 @@
             <arg path="${basedir}/build/api" />
             <arg value="--config" />
             <arg value="${basedir}/build-tools/phpdoc.xml" />
+            <arg value="--force" />
         </exec>
     </target>
         
