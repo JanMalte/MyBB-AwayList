@@ -497,7 +497,7 @@ class AwayList
      * @global MyLanguage $lang
      * @return MyLanguage 
      */
-    protected static function loadLanguage()
+    public static function loadLanguage()
     {
         global $lang;
 
