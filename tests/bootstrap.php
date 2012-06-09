@@ -10,25 +10,17 @@
  * @license     GNU General Public License version 3 or later
  */
 // Define path to application directory
+// Define path to application directory
 defined('APPLICATION_PATH')
-    || define('APPLICATION_PATH', '/srv/www/mybb/mybb16');
+    || define(
+        'APPLICATION_PATH', realpath(dirname(__FILE__) . '/../source/')
+);
 
 // Allow mybb access
-defined('IN_MYBB') || define('IN_MYBB', 1);
+defined('IN_MYBB') || define('IN_MYBB', true);
 
 // Set application enviroment to testing
 defined('UNITTESTING') || define('UNITTESTING', true);
-
-// Ensure the include_path is correct
-set_include_path(
-    implode(
-        PATH_SEPARATOR,
-        array(
-        realpath(APPLICATION_PATH),
-        get_include_path(),
-        )
-    )
-);
 
 /**
  * set up global fake enviroment
@@ -52,7 +44,7 @@ class FakePluginClass
      */
     public function add_hook($name, $function)
     {
-        
+        return;
     }
 
     /**
@@ -65,12 +57,10 @@ class FakePluginClass
      */
     public function load($name, $mixed, $throwError)
     {
-        
+        return;
     }
 
 }
-
-global $plugins, $lang;
 
 // set up global fake enviroment
 $plugins = new FakePluginClass();
