@@ -1532,9 +1532,10 @@ class AwayList
     /**
      * get the html for the item form
      * 
-     * @global MyBB $mybb
-     * @param array $item
-     * @param array $validateErrors
+     * @global MyBB $mybb 
+     * @param array $item 
+     * @param string $action 
+     * @param array $validateErrors 
      * @return string 
      */
     public static function getItemForm($item, $action = 'addAwlItem',

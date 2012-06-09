@@ -45,13 +45,12 @@ class IsUserInGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * check AwayList::isUserInGroup() method
+     * 
      * @covers AwayList::isUserInGroup
-     * @global type $mybb 
      */
     public function testEmpty()
     {
-        global $mybb;
-
         // perform tests
         $this->assertFalse(
             AwayList::isUserInGroup(),
@@ -60,13 +59,12 @@ class IsUserInGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * check AwayList::isUserInGroup() method
+     * 
      * @covers AwayList::isUserInGroup
-     * @global type $mybb 
      */
     public function testFalse()
     {
-        global $mybb;
-
         // perform tests
         $this->assertFalse(AwayList::isUserInGroup(10));
         $this->assertFalse(AwayList::isUserInGroup('10'));
@@ -75,27 +73,13 @@ class IsUserInGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * check AwayList::isUserInGroup() method
+     * 
      * @covers AwayList::isUserInGroup
      * @expectedException PHPUnit_Framework_Error
-     * @global type $mybb 
      */
     public function testError()
     {
-        global $mybb;
-
-        // perform tests
-        $this->assertFalse(AwayList::isUserInGroup(10, 20, 30));
-        $this->assertFalse(AwayList::isUserInGroup(array(10)));
-        $this->assertFalse(AwayList::isUserInGroup(array(10, 20)));
-        $array = array('10' => 10, '20' => 20);
-        $this->assertFalse(AwayList::isUserInGroup($array));
-        $array = array('test' => 10, 'testTest' => 20);
-        $this->assertFalse(AwayList::isUserInGroup($array));
-        $array = array('test' => '10', 'testTest' => '20');
-        $this->assertFalse(AwayList::isUserInGroup($array));
-        $array = array('test' => 'testing', 'testTest' => 'testingTesting');
-        $this->assertFalse(AwayList::isUserInGroup($array));
-
         // perform tests with error
         AwayList::isUserInGroup(10, 20, 30);
         AwayList::isUserInGroup(array(10));
@@ -111,13 +95,12 @@ class IsUserInGroupTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * check AwayList::isUserInGroup() method
+     * 
      * @covers AwayList::isUserInGroup
-     * @global type $mybb 
      */
     public function testTrue()
     {
-        global $mybb;
-
         // perform tests additional usergroups
         $this->assertTrue(AwayList::isUserInGroup(1));
         $this->assertTrue(AwayList::isUserInGroup('1'));
