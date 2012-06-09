@@ -503,7 +503,10 @@ class AwayList
 
         // get the translation object
         if (empty($lang) || !$lang instanceof MyLanguage) {
-            self::$_TRANSLATION = new MyLanguage();
+            // Language initialisation
+            require_once MYBB_ROOT . "inc/class_language.php";
+            $lang = new MyLanguage;
+            $lang->set_path(MYBB_ROOT . "inc/languages");
         }
 
         // load the translation
@@ -1542,7 +1545,7 @@ class AwayList
         $validateErrors = null)
     {
         global $mybb;
-        
+
         // load translation
         $lang = self::loadLanguage();
 
