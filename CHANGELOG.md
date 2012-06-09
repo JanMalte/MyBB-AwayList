@@ -4,70 +4,70 @@ Changelog
 This changelog starts with version 1.4.5
 
 Version 1.6.8 (June 5, 2012)
-    * fixed SQL error on install
+* fixed SQL error on install
 
 Version 1.6.7 (January 14, 2012)
-    * fixed edit and delete bug
+* fixed edit and delete bug
 
 Version 1.6.6 (January 14, 2012)
-    * removed unnecessary else statements
+* removed unnecessary else statements
 
 Version 1.6.5 (January 8, 2012)
-    * changed the filenames
-    * changed the database structure, provide an upgrade function
-    * changed setting names, make sure to set the correct settings again
-    * added GID for automatic update process
-    * changed description to english
-    * renamed files
+* changed the filenames
+* changed the database structure, provide an upgrade function
+* changed setting names, make sure to set the correct settings again
+* added GID for automatic update process
+* changed description to english
+* renamed files
 
 Version 1.6.4 (January 8, 2012)
-    * added compatibility with other plugins (using plugin specific action names)
-    * changed show of errors as message
-    * improved validation of item values
+* added compatibility with other plugins (using plugin specific action names)
+* changed show of errors as message
+* improved validation of item values
 
 Version 1.6.3 (January 6, 2012)
-    * added full language support
-    * removed unnecessary images
-    * moved HTML code to templates
-    * cleaned up the code
-    * renamed some functions
+* added full language support
+* removed unnecessary images
+* moved HTML code to templates
+* cleaned up the code
+* renamed some functions
 
 Version 1.6.2 (January 6, 2012)
-    * fixed display on index
-    * added informal german translation
-    * added english translation
+* fixed display on index
+* added informal german translation
+* added english translation
 
 Version 1.6.1 (January 6, 2012)
-    * added language support
-    * added install/uninstall function
-    * improved the plugin
+* added language support
+* added install/uninstall function
+* improved the plugin
 
 Version 1.6.0 (January 5, 2012)
-    * Moved to MyBB 1.6
+* Moved to MyBB 1.6
 
 Version 1.0.0 (March 14, 2008)
-	* Changed the version system. Now this is the 1.x.y series.
+* Changed the version system. Now this is the 1.x.y series.
 	  Final release will be named 1.x.y, 2.x.y
 	  Bugfixes will increase the y
 	  Some bigger changes will increase the x
-	* Add the possibility to show which members are at the place at a special date
-	* Removed the page split
-	* User can set how many inserts should be shown, limit is saved in a cookie
-	* Added some images whichs shows the staus of the user
-	* Some HTML changes
-	* changed the place of the toplink image to the lists image folder
-	* Complete the README and INSTALL file
-	* Added some more explaining comments to the source code
-	* Cleaned the source code
-	* Added some more user checks to avoid disallowed editing of inserts
+* Add the possibility to show which members are at the place at a special date
+* Removed the page split
+* User can set how many inserts should be shown, limit is saved in a cookie
+* Added some images whichs shows the staus of the user
+* Some HTML changes
+* changed the place of the toplink image to the lists image folder
+* Complete the README and INSTALL file
+* Added some more explaining comments to the source code
+* Cleaned the source code
+* Added some more user checks to avoid disallowed editing of inserts
 
 Version 1.4.7 (February 24, 2008):
-	* Fixed a bug with edit and delete permissions
+* Fixed a bug with edit and delete permissions
 
 Version 1.4.6 (February 24, 2008):
-	* Fixed a bug with previous and next page displaying
-	* Fixed a bug $id and $data_id; $data_id replaces $id everywhere
+* Fixed a bug with previous and next page displaying
+* Fixed a bug $id and $data_id; $data_id replaces $id everywhere
 	
 Version 1.4.5 (February 23, 2008):
-	* Fixed a bug with previous and next page displaying
-	* Added the changelog file
+* Fixed a bug with previous and next page displaying
+* Added the changelog file

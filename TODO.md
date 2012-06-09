@@ -2,6 +2,6 @@ Todo
 ====================
 
 Tasks which should be done
-    * Add the possibility to sort the list by the fields itself
-    * Add some informations into the user profil
-    * Add support for dynamic fields
+* Add the possibility to sort the list by the fields itself
+* Add some informations into the user profil
+* Add support for dynamic fields
