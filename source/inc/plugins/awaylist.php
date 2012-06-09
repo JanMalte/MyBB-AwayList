@@ -450,9 +450,11 @@ function awaylistShowListHook()
     // get the main content to display
     $content = AwayList::getContent();
 
-    // load the template and fill the placeholders
-    eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
-    output_page($showList);
+    if ($content !== false) {
+        // load the template and fill the placeholders
+        eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
+        output_page($showList);
+    }
 }
 
 /**
@@ -466,7 +468,7 @@ function awaylistDeleteUserHook()
     global $db, $mybb;
 
     $uid = intval($mybb->input['uid']);
-    $db->delete_query('awaylist', 'uid=\''.$uid.'\'');
+    $db->delete_query('awaylist', 'uid=\'' . $uid . '\'');
 }
 
 /**
@@ -481,6 +483,38 @@ function awaylistDeleteUserHook()
  */
 class AwayList
 {
+
+    /**
+     * translation object
+     * 
+     * @var MyLanguage 
+     */
+    protected static $_TRANSLATION;
+
+    /**
+     * load the translation
+     * 
+     * @global MyLanguage $lang
+     * @return MyLanguage 
+     */
+    protected static function loadLanguage()
+    {
+        global $lang;
+
+        // get the translation object
+        if (empty($lang) || !$lang instanceof MyLanguage) {
+            self::$_TRANSLATION = new MyLanguage();
+        }
+
+        // load the translation
+        $lang->load("awaylist", false, true);
+
+        // register the object in the class
+        self::$_TRANSLATION = $lang;
+
+        // return the object for method chaining
+        return self::$_TRANSLATION;
+    }
 
     /**
      * checks if the user is in one of the allowed usergroups
@@ -815,15 +849,15 @@ class AwayList
     /**
      * get the html code to display
      * 
-     * @global DB_MySQL $db
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @return string the html content 
      */
     public static function getContent()
     {
-        global $db, $mybb, $lang;
-        $lang->load("awaylist", false, true);
+        global $mybb;
+
+        // load translation
+        $lang = self::loadLanguage();
 
         $message = null;
         $content = null;
@@ -902,7 +936,10 @@ class AwayList
             }
         }
 
-        return $message . $content . '<br />';
+        if ($content !== false) {
+            $content = $message . $content . '<br />';
+        }
+        return $content;
     }
 
     /**
@@ -910,7 +947,6 @@ class AwayList
      * 
      * @global DB_MySQL $db
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @global mixed $templates
      * @global mixed $theme
      * @param integer $timestamp
@@ -921,10 +957,10 @@ class AwayList
     public static function showFullTable($timestamp = null, $limit = 20,
         $startLimit = 0)
     {
-        global $db, $mybb, $lang, $templates, $theme;
+        global $db, $mybb, $templates, $theme;
 
-        // load the translation
-        $lang->load("awaylist", false, true);
+        // load translation
+        $lang = self::loadLanguage();
 
         // limit of displayed items
         $limit = max(array(1, $limit));
@@ -1032,14 +1068,12 @@ class AwayList
      * shows the insert form for a new item
      * 
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @param array $validateErrors
      * @return string the html content 
      */
     public static function showNewItemForm($validateErrors = null)
     {
-        global $mybb, $lang;
-        $lang->load("awaylist", false, true);
+        global $mybb;
 
         $item = array(
             'arrival_tag' => $mybb->input['arrival_tag'],
@@ -1063,15 +1097,16 @@ class AwayList
      * 
      * @global DB_MySQL $db
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @global mixed $templates
      * @param array $validateErrors
      * @return string the html content 
      */
     public static function showEditItemForm($validateErrors = null)
     {
-        global $db, $mybb, $lang, $templates;
-        $lang->load("awaylist", false, true);
+        global $db, $mybb, $templates;
+
+        // load translation
+        $lang = self::loadLanguage();
 
         $query = $db->simple_select(
             "awaylist", '*', "id = '" . $mybb->input['id'] . "'"
@@ -1085,6 +1120,8 @@ class AwayList
         if ($mybb->input['id'] == '') {
             $errors[] = $lang->errorNoItemSelected;
         }
+
+        $content = '';
 
         // if any error occurred
         if (!empty($errors)) {
@@ -1103,20 +1140,21 @@ class AwayList
                 . '</a></div>';
             eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
             output_page($showList);
-            exit;
-        }
-        $item['arrival_tag'] = date('d', $item['arrival']);
-        $item['arrival_monat'] = date('m', $item['arrival']);
-        $item['arrival_jahr'] = date('Y', $item['arrival']);
-        $item['departure_tag'] = date('d', $item['departure']);
-        $item['departure_monat'] = date('m', $item['departure']);
-        $item['departure_jahr'] = date('Y', $item['departure']);
-        foreach ($mybb->input as $key => $value) {
-            if (array_key_exists($key, $item)) {
-                $item[$key] = $value;
+            $content = false;
+        } else {
+            $item['arrival_tag'] = date('d', $item['arrival']);
+            $item['arrival_monat'] = date('m', $item['arrival']);
+            $item['arrival_jahr'] = date('Y', $item['arrival']);
+            $item['departure_tag'] = date('d', $item['departure']);
+            $item['departure_monat'] = date('m', $item['departure']);
+            $item['departure_jahr'] = date('Y', $item['departure']);
+            foreach ($mybb->input as $key => $value) {
+                if (array_key_exists($key, $item)) {
+                    $item[$key] = $value;
+                }
             }
+            $content = self::getItemForm($item, 'editAwlItem', $validateErrors);
         }
-        $content = self::getItemForm($item, 'editAwlItem', $validateErrors);
         return $content;
     }
 
@@ -1125,14 +1163,15 @@ class AwayList
      * 
      * @global DB_MySQL $db
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @global mixed $templates
      * @return string the html message 
      */
     public static function showDeleteConfirmDialog()
     {
-        global $db, $mybb, $lang, $templates;
-        $lang->load("awaylist", false, true);
+        global $db, $mybb, $templates;
+
+        // load translation
+        $lang = self::loadLanguage();
 
         $query = $db->simple_select(
             "awaylist", '*', "id = '" . $mybb->input['id'] . "'"
@@ -1164,34 +1203,34 @@ class AwayList
                 . '</a></div>';
             eval("\$showList .= \"" . $templates->get("show_awaylist") . "\";");
             output_page($showList);
-            exit;
-        }
-        $content = '<form action="' . $mybb->settings["bburl"] . '/'
-            . THIS_SCRIPT . '" method="post">'
-            . '<input type="hidden" name="action" value="deleteAwlItem" />'
-            . '<input type="hidden" name="step2" value="true" />'
-            . ' <input type="hidden" name="id" value="' . $item['id'] . '" />'
-            . '<table border="0" cellspacing="1" cellpadding="4" class="tborder">'
-            . ' <thead>'
-            . '   <tr>'
-            . '     <td class="thead" colspan="2">'
-            . '       <div>'
-            . '         <strong>' . $lang->deleteItem . '</strong><br />'
-            . '         <div class="smalltext"></div>'
-            . '       </div>'
-            . '     </td>'
-            . '   </tr>'
-            . ' </thead>'
-            . ' <tbody style="" id="cat_1_e">'
-            . '   <tr>'
-            . '     <td class="trow1"><b>' . $lang->arrival . ':</b></td>'
-            . '     <td class="trow1">';
-        $content .= date('d.m.Y', $item['arrival']);
-        $content .= '</td></tr><tr>';
-        $content .= '<td class="trow2"><b>' . $lang->departure . ':</b></td>
+            $content = false;
+        } else {
+            $content = '<form action="' . $mybb->settings["bburl"] . '/'
+                . THIS_SCRIPT . '" method="post">'
+                . '<input type="hidden" name="action" value="deleteAwlItem" />'
+                . '<input type="hidden" name="step2" value="true" />'
+                . ' <input type="hidden" name="id" value="' . $item['id'] . '" />'
+                . '<table border="0" cellspacing="1" cellpadding="4" class="tborder">'
+                . ' <thead>'
+                . '   <tr>'
+                . '     <td class="thead" colspan="2">'
+                . '       <div>'
+                . '         <strong>' . $lang->deleteItem . '</strong><br />'
+                . '         <div class="smalltext"></div>'
+                . '       </div>'
+                . '     </td>'
+                . '   </tr>'
+                . ' </thead>'
+                . ' <tbody style="" id="cat_1_e">'
+                . '   <tr>'
+                . '     <td class="trow1"><b>' . $lang->arrival . ':</b></td>'
+                . '     <td class="trow1">';
+            $content .= date('d.m.Y', $item['arrival']);
+            $content .= '</td></tr><tr>';
+            $content .= '<td class="trow2"><b>' . $lang->departure . ':</b></td>
 		  <td class="trow2">';
-        $content .= date('d.m.Y', $item['departure']);
-        $content .= '
+            $content .= date('d.m.Y', $item['departure']);
+            $content .= '
 		  </td>
 		</tr>
 		<tr>
@@ -1208,17 +1247,18 @@ class AwayList
 		</tr>
 		<tr>
 		  <td class="trow2"><b>' . $lang->phoneAt . ' '
-            . $mybb->settings["awayListCountry"] . ':</b></td>
+                . $mybb->settings["awayListCountry"] . ':</b></td>
 		  <td class="trow2">' . $item['phone'] . '</td>
 		</tr>
 		<tr>
 		  <td class="trow1"></td>
 		  <td class="trow1"><input type="submit" name="deleteAwlItem"'
-            . ' value="' . $lang->deleteItem . '"></td>
+                . ' value="' . $lang->deleteItem . '"></td>
 		</tr>
             </tbody>
 	  </table>
 	</form>';
+        }
         return $content;
     }
 
@@ -1315,7 +1355,6 @@ class AwayList
      * validate an item
      * 
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @global DB_MySQL $db
      * @param array $errors array which will contain all errors
      * @param integer $editItemId
@@ -1323,13 +1362,14 @@ class AwayList
      */
     public static function validateItem(&$errors, $editItemId = null)
     {
-        global $mybb, $lang, $db;
+        global $mybb, $db;
 
         if (!is_array($errors)) {
             $errors = array();
         }
 
-        $lang->load("awaylist", false, true);
+        // load translation
+        $lang = self::loadLanguage();
 
         if (empty($mybb->input['airline'])) {
             $errors['airline'] = $lang->errorAirlineMissing;
@@ -1402,7 +1442,6 @@ class AwayList
      * 
      * @global DB_MySQL $db
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @global mixed $templates
      * @global mixed $header
      * @global mixed $headerinclude
@@ -1412,13 +1451,13 @@ class AwayList
      */
     public static function deleteItem($itemId)
     {
-        global $db, $mybb, $lang, $templates;
+        global $db, $mybb, $templates;
 
         // variables used in the template
         global $header, $headerinclude, $footer;
 
-        // load language
-        $lang->load("awaylist", false, true);
+        // load translation
+        $lang = self::loadLanguage();
 
         $itemId = (int) $itemId;
 
@@ -1465,16 +1504,13 @@ class AwayList
     /**
      * get the HTML code for the error messages
      * 
-     * @global MyLanguage $lang
      * @param array $errors
      * @return string 
      */
     public static function getHtmlErrorMessage($errors)
     {
-        global $lang;
-
-        // load language
-        $lang->load("awaylist", false, true);
+        // load translation
+        $lang = self::loadLanguage();
 
         // add error container
         $content = '<div class="error low_warning"><p><em>'
@@ -1497,7 +1533,6 @@ class AwayList
      * get the html for the item form
      * 
      * @global MyBB $mybb
-     * @global MyLanguage $lang
      * @param array $item
      * @param array $validateErrors
      * @return string 
@@ -1505,8 +1540,10 @@ class AwayList
     public static function getItemForm($item, $action = 'addAwlItem',
         $validateErrors = null)
     {
-        global $mybb, $lang;
-        $lang->load("awaylist", false, true);
+        global $mybb;
+        
+        // load translation
+        $lang = self::loadLanguage();
 
         $content = '<style>.error input {border-color: #B94A48;color: #B94A48;}'
             . '.error td {background-color: #F2DEDE!important;}</style>'
