@@ -47,9 +47,9 @@ Version 1.6.0 (January 5, 2012)
 
 Version 1.0.0 (March 14, 2008)
 * Changed the version system. Now this is the 1.x.y series.
-	  Final release will be named 1.x.y, 2.x.y
-	  Bugfixes will increase the y
-	  Some bigger changes will increase the x
+    Final release will be named 1.x.y, 2.x.y
+    Bugfixes will increase the y
+    Some bigger changes will increase the x
 * Add the possibility to show which members are at the place at a special date
 * Removed the page split
 * User can set how many inserts should be shown, limit is saved in a cookie
