@@ -1,4 +1,5 @@
 INSTALL
+====================
 
 To install the plugin do the following steps:
     1. uninstall previous versions of the plugin, database table must not be deleted
@@ -10,6 +11,7 @@ To install the plugin do the following steps:
     
     
 UNINSTALL
+====================
 
 To uninstall the plugin do the following steps:
     1. uninstall the plugin, that should be all
