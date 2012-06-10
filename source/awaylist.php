@@ -30,6 +30,9 @@ require_once 'global.php';
 // load language for the plugin
 $lang->load('awaylist', false, true);
 
+// add breadcrumb item
+add_breadcrumb($lang->liste, THIS_SCRIPT);
+
 // get the plugin information
 if (!$pluginsCache) {
     $pluginsCache = $cache->read('plugins');
@@ -37,9 +40,6 @@ if (!$pluginsCache) {
 
 // is the plugin active
 if (isset($pluginsCache['active']['awaylist'])) {
-    // add breadcrumb item
-    add_breadcrumb($lang->liste, THIS_SCRIPT);
-
     // run hook for displaying the awaylist
     $plugins->run_hooks('awaylist_showList');
 } else {
