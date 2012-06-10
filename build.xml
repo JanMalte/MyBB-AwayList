@@ -71,9 +71,14 @@
             depends="prepare">
         <exec executable="phploc" failonerror="true">
             <arg value="--verbose" />
+            <arg value="--count-tests" />
             <arg value="--log-csv" />
             <arg value="${basedir}/build/logs/phploc.csv" />
-            <arg path="${basedir}/source" />
+            <arg value="--exclude"/>
+            <arg value="${basedir}/build"/>
+            <arg value="--exclude"/>
+            <arg value="${basedir}/build-tools"/>
+            <arg path="${basedir}" />
         </exec>
     </target>
         
