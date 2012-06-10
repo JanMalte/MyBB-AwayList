@@ -11,7 +11,7 @@
  */
 // set up global fake enviroment
 $plugins = new FakePluginClass();
-include_once APPLICATION_PATH.'/inc/plugins/awaylist.php';
+require_once APPLICATION_PATH.'/inc/plugins/awaylist.php';
 
 /**
  * test some static plugin functions
