@@ -24,8 +24,6 @@ $lang = null;
 $pluginsCache = null;
 $mybb = null;
 $plugins = null;
-$templates = null;
-$showList = null;
 
 // include the global MyBB context
 require_once 'global.php';
@@ -50,21 +48,5 @@ if (isset($pluginsCache['active']['awaylist'])) {
         $plugins->run_hooks('awaylist_showList');
     }
 } else {
-    // add breadcrumb item
-    add_breadcrumb($lang->liste, THIS_SCRIPT);
-
-    // generate content
-    $content .= '<div class="error low_warning">
-        <p><em>' . $lang->followingErrors . '</em></p>';
-    $content .= '<p><ul>';
-    $content .= '<li>' . $lang->errorNotActive . '</li>';
-    $content .= '</ul></p>';
-    $content .= '<a href="javascript:history.back()">' . $lang->back . '</a>
-        </div>';
-
-    // get the template and replace all placeholders
-    eval("\$showList = \"" . $templates->get("show_awaylist") . "\";");
-
-    // output the page
-    output_page($showList);
+    error($lang->errorNotActive, $lang->error);
 }
