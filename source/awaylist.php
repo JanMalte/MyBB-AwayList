@@ -22,7 +22,6 @@ defined('NO_ONLINE') || define('NO_ONLINE', 0);
 // define variables before global.php
 $lang = null;
 $pluginsCache = null;
-$mybb = null;
 $plugins = null;
 
 // include the global MyBB context
@@ -38,15 +37,11 @@ if (!$pluginsCache) {
 
 // is the plugin active
 if (isset($pluginsCache['active']['awaylist'])) {
-    // only show list if set in plugin settings
-    if ($mybb->settings['showAwayList'] == '1') {
+    // add breadcrumb item
+    add_breadcrumb($lang->liste, THIS_SCRIPT);
 
-        // add breadcrumb item
-        add_breadcrumb($lang->liste, THIS_SCRIPT);
-
-        // run hook for displaying the awaylist
-        $plugins->run_hooks('awaylist_showList');
-    }
+    // run hook for displaying the awaylist
+    $plugins->run_hooks('awaylist_showList');
 } else {
     error($lang->errorNotActive, $lang->error);
 }
