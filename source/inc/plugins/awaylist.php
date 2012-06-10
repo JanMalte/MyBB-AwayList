@@ -23,7 +23,7 @@ if (!defined('IN_MYBB')) {
  * ******************************************************************** */
 // as this is a often used class in plugins
 // check if it isn't already defined
-if (!class_exists('ShowDates')) {
+if (!class_exists('FormDateElement')) {
 
     /**
      * Collection of usefull functions for using dates and timestamps
@@ -34,7 +34,7 @@ if (!class_exists('ShowDates')) {
      * @copyright   Copyright (C) Malte Gerth. All rights reserved.
      * @license     GNU General Public License version 3 or later
      */
-    class ShowDates
+    class FormDateElement
     {
 
         /**
@@ -131,12 +131,20 @@ if (!class_exists('ShowDates')) {
             $offset = -1, $countItems = 10)
         {
             // if the selected year isn't given set it to the actual year
-            if ($selectedYear == null) $selectedYear = date("Y");
+            if ($selectedYear == null) {
+                $selectedYear = date("Y");
+            }
+            
+            // if $countItems is less then one, set it to one as we need at least
+            // one option in our select element
+            if ($countItems < 1) {
+                $countItems = 1;
+            }
 
             // add the offset to the current year
             $startYear = date("Y") + $offset;
             // set the end year to $countItems later then the current year
-            $endYear = date("Y") + $countItems;
+            $endYear = $startYear + $countItems;
 
             // set the start HTML of the select form
             $htmlSelectForm = '<select name="' . $fieldName . '">';
@@ -167,7 +175,7 @@ if (!class_exists('ShowDates')) {
  * PLUGIN INSTALL/UNINSTALL ROUTINES
  * 
  * ******************************************************************** */
-
+// @codeCoverageIgnoreStart
 /**
  * return the information about the plugin as an array
  * 
@@ -372,11 +380,13 @@ function awaylist_deactivate()
     rebuild_settings();
 }
 
+// @codeCoverageIgnoreEnd
 /** * *******************************************************************
  * 
  * PLUGIN CODE
  * 
  * ******************************************************************** */
+// @codeCoverageIgnoreStart
 // add plugin hooks
 $plugins->add_hook('index_start', 'awaylistShowListOnIndexHook');
 $plugins->add_hook('global_start', 'awaylistLoadLanguageHook');
@@ -470,6 +480,8 @@ function awaylistDeleteUserHook()
     $uid = intval($mybb->input['uid']);
     $db->delete_query('awaylist', 'uid=\'' . $uid . '\'');
 }
+
+// @codeCoverageIgnoreEnd
 
 /**
  * all needed functions for awaylist
@@ -993,13 +1005,13 @@ class AwayList
         $countUsers = $db->num_rows($queryItems);
 
         $currentUrl = $mybb->settings['bburl'] . '/' . THIS_SCRIPT;
-        $selectDateForm = ShowDates::showDaySelect(
+        $selectDateForm = FormDateElement::showDaySelect(
                 'time_tag', date("d", $timestamp)
         );
-        $selectDateForm .= ShowDates::showMonthSelect(
+        $selectDateForm .= FormDateElement::showMonthSelect(
                 'time_monat', date("m", $timestamp)
         );
-        $selectDateForm .= ShowDates::showYearSelect(
+        $selectDateForm .= FormDateElement::showYearSelect(
                 'time_jahr', date("Y", $timestamp)
         );
         $addItemUrl = $mybb->settings['bburl'] . '/'
@@ -1577,11 +1589,11 @@ class AwayList
         if (empty($arrivalDay)) {
             $arrivalDay = str_pad((date('d') + 1), 2, 0, STR_PAD_LEFT);
         }
-        $content .= ShowDates::showDaySelect("arrival_tag", $arrivalDay);
-        $content .= ShowDates::showMonthSelect(
+        $content .= FormDateElement::showDaySelect("arrival_tag", $arrivalDay);
+        $content .= FormDateElement::showMonthSelect(
                 "arrival_monat", $item['arrival_monat']
         );
-        $content .= ShowDates::showYearSelect(
+        $content .= FormDateElement::showYearSelect(
                 "arrival_jahr", $item['arrival_jahr']
         );
         $content .= '</td></tr>';
@@ -1592,17 +1604,17 @@ class AwayList
         }
         $content .= '<td class="trow2"><b>' . $lang->departure . ':</b>*</td>'
             . '<td class="trow2">';
-        $content .= ShowDates::showDaySelect(
+        $content .= FormDateElement::showDaySelect(
                 "departure_tag", $mybb->input['departure_tag']
         );
         $depatureMonth = $item['departure_monat'];
         if (empty($depatureMonth)) {
             $depatureMonth = str_pad((date('m') + 1), 2, 0, STR_PAD_LEFT);
         }
-        $content .= ShowDates::showMonthSelect(
+        $content .= FormDateElement::showMonthSelect(
                 "departure_monat", $depatureMonth
         );
-        $content .= ShowDates::showYearSelect(
+        $content .= FormDateElement::showYearSelect(
                 "departure_jahr", $item['departure_jahr']
         );
         $content .= '</td></tr>';
