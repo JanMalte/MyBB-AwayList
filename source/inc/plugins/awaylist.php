@@ -1601,8 +1601,11 @@ class AwayList_Item_Repository
             "awaylist", '*', "id = '" . (int) $id . "'"
         );
         $itemRow = $this->_database->fetch_array($query);
-        $item = new AwayList_Item();
-        $item->setData($itemRow, $id);
+        $item = false;
+        if (!empty($itemRow)) {
+            $item = new AwayList_Item();
+            $item->setData($itemRow, $id);
+        }
         return $item;
     }
 
@@ -1655,7 +1658,7 @@ class AwayList_Item_Repository
 
     public function fetchAll($whereCondition = null, $options = array())
     {
-        $items = array();
+        $items = false;
 
         // general query options
         if (!isset($options['order_by'])) {
@@ -1676,7 +1679,7 @@ class AwayList_Item_Repository
             $item->setData($itemData, $itemData['id']);
             $items[] = $item;
         }
-
+        
         return $items;
     }
 
@@ -2139,6 +2142,14 @@ class AwayList_Item
 
     public function setData($data, $id = null)
     {
+        if (!empty($id) && is_int($id)) {
+            $this->_id = (int) $id;
+        }
+
+        if (!is_array($data)) {
+            return $this;
+        }
+
         // calculate timestamo from seperated fields
         $arrival = null;
         if (array_key_exists('arrival_monat', $data)
@@ -2169,10 +2180,6 @@ class AwayList_Item
 
         foreach ($data as $field => $value) {
             $this->$field = $value;
-        }
-
-        if (!empty($id)) {
-            $this->_id = $id;
         }
 
         return $this;
