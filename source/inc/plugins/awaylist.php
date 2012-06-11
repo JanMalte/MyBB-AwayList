@@ -1279,7 +1279,7 @@ class AwayList
 
         // show error page or return true on success
         if ($errors != true) {
-            $awayListRepository->delete($itemId);
+            $awayListRepository->deleteById($itemId);
             return true;
         }
     }
@@ -1545,22 +1545,34 @@ class AwayList_Item_Repository
     /**
      * delete a single row by id
      * 
-     * @param integer $id id of the row to delete
+     * @param string $whereCondition where condition for delete query
      * @return integer count of affected rows
      */
-    public function delete($id)
+    public function delete($whereCondition)
     {
-        // build condition
-        $whereCondition = 'id=\'' . (int) $id . '\'';
         // get affected rows
         $queryItems = $this->_database->simple_select(
-            'awaylist', '*', $whereCondition
+            'awaylist', '*', (string) $whereCondition
         );
         $affectedRows = $this->_database->num_rows($queryItems);
         // perform delete query
-        $this->_database->delete_query('awaylist', $whereCondition);
+        $this->_database->delete_query('awaylist', (string) $whereCondition);
         // return count of affected rows
         return $affectedRows;
+    }
+
+    /**
+     * delete a single row by id
+     * 
+     * @param integer $id id of the row to delete
+     * @return integer count of affected rows
+     */
+    public function deleteById($id)
+    {
+        // build condition
+        $whereCondition = 'id=\'' . (int) $id . '\'';
+
+        return $this->delete($whereCondition);
     }
 
     /**
@@ -1573,15 +1585,8 @@ class AwayList_Item_Repository
     {
         // build condition
         $whereCondition = 'uid=\'' . (int) $userId . '\'';
-        // get affected rows
-        $queryItems = $this->_database->simple_select(
-            'awaylist', '*', $whereCondition
-        );
-        $affectedRows = $this->_database->num_rows($queryItems);
-        // perform delete query
-        $this->_database->delete_query('awaylist', $whereCondition);
-        // return count of affected rows
-        return $affectedRows;
+
+        return $this->delete($whereCondition);
     }
 
     /**
