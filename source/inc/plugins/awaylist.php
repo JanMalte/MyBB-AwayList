@@ -1546,24 +1546,42 @@ class AwayList_Item_Repository
      * delete a single row by id
      * 
      * @param integer $id id of the row to delete
-     * @return void 
+     * @return integer count of affected rows
      */
     public function delete($id)
     {
-        $this->_database->delete_query('awaylist', 'id=\'' . (int) $id . '\'');
+        // build condition
+        $whereCondition = 'id=\'' . (int) $id . '\'';
+        // get affected rows
+        $queryItems = $this->_database->simple_select(
+            'awaylist', '*', $whereCondition
+        );
+        $affectedRows = $this->_database->num_rows($queryItems);
+        // perform delete query
+        $this->_database->delete_query('awaylist', $whereCondition);
+        // return count of affected rows
+        return $affectedRows;
     }
 
     /**
      * delete all rows of a user
      * 
      * @param integer $userId id of the user
-     * @return void 
+     * @return integer count of affected rows
      */
     public function deleteByUserId($userId)
     {
-        $this->_database->delete_query(
-            'awaylist', 'uid=\'' . (int) $userId . '\''
+        // build condition
+        $whereCondition = 'uid=\'' . (int) $userId . '\'';
+        // get affected rows
+        $queryItems = $this->_database->simple_select(
+            'awaylist', '*', $whereCondition
         );
+        $affectedRows = $this->_database->num_rows($queryItems);
+        // perform delete query
+        $this->_database->delete_query('awaylist', $whereCondition);
+        // return count of affected rows
+        return $affectedRows;
     }
 
     /**
