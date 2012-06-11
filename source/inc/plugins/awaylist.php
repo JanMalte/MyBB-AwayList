@@ -1894,7 +1894,7 @@ class AwayList_Item
             $field = $matches[1];
             $field{0} = strtolower($field{0});
             if (isset($this->$field)) {
-                return $field;
+                return $this->$field;
             }
         } elseif (preg_match('/^set(\w+)$/', $method, $matches)) {
             $field = $matches[1];
@@ -2140,18 +2140,30 @@ class AwayList_Item
     public function setData($data, $id = null)
     {
         // calculate timestamo from seperated fields
-        $arrival = mktime(
-            0, 0, 0, $data['arrival_monat'], $data['arrival_tag'],
-            $data['arrival_jahr']
-        );
-        $departure = mktime(
-            0, 0, 0, $data['departure_monat'], $data['departure_tag'],
-            $data['departure_jahr']
-        );
-        if (empty($data['arrival'])) {
+        $arrival = null;
+        if (array_key_exists('arrival_monat', $data)
+            && array_key_exists('arrival_tag', $data)
+            && array_key_exists('arrival_jahr', $data)
+        ) {
+            $arrival = mktime(
+                0, 0, 0, $data['arrival_monat'], $data['arrival_tag'],
+                $data['arrival_jahr']
+            );
+        }
+        $departure = null;
+        if (array_key_exists('departure_monat', $data)
+            && array_key_exists('departure_tag', $data)
+            && array_key_exists('departure_jahr', $data)
+        ) {
+            $departure = mktime(
+                0, 0, 0, $data['departure_monat'], $data['departure_tag'],
+                $data['departure_jahr']
+            );
+        }
+        if (empty($data['arrival']) && !empty($arrival)) {
             $data['arrival'] = $arrival;
         }
-        if (empty($data['departure'])) {
+        if (empty($data['departure']) && !empty($departure)) {
             $data['departure'] = $departure;
         }
 
