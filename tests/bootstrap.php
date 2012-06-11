@@ -64,6 +64,27 @@ class FakePluginClass
 
 }
 
+// set up database
+require_once MYBB_ROOT . "inc/config.php";
+require_once MYBB_ROOT . "inc/db_" . $config['database']['type'] . ".php";
+switch ($config['database']['type']) {
+    case "sqlite":
+        $db = new DB_SQLite;
+        break;
+    case "pgsql":
+        $db = new DB_PgSQL;
+        break;
+    case "mysqli":
+        $db = new DB_MySQLi;
+        break;
+    default:
+        $db = new DB_MySQL;
+}
+// Connect to Database
+$db->connect($config['database']);
+$db->set_table_prefix($config['database']['table_prefix']);
+$db->type = $config['database']['type'];
+
 // set up global fake enviroment
 $plugins = new FakePluginClass();
-$lang = $plugins;
+require_once APPLICATION_PATH . '/inc/plugins/awaylist.php';
