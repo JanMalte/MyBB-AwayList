@@ -1428,36 +1428,13 @@ class AwayList_Item_Repository
      * @var DB_MySQL|DB_MySQLi|DB_PgSQL|DB_SQLite
      */
     protected $_database;
-
-    /**
-     * access to the global $mybb
-     * 
-     * @var MyBB 
-     */
-    protected $_mybb;
-
+    
     /**
      * get the repository
      */
     public function __construct()
     {
-        $this->_initMybb();
         $this->_initDatabase();
-    }
-
-    /**
-     * get the global MyBB object
-     * 
-     * @global MyBB
-     * @return void 
-     */
-    protected function _initMybb()
-    {
-        global $mybb;
-
-        if (!empty($mybb)) {
-            $this->_mybb = &$mybb;
-        }
     }
 
     /**
