@@ -1543,12 +1543,12 @@ class AwayList_Item_Repository
     }
 
     /**
-     * delete a single row by id
+     * perform the delete query
      * 
      * @param string $whereCondition where condition for delete query
      * @return integer count of affected rows
      */
-    public function delete($whereCondition)
+    protected function _delete($whereCondition)
     {
         // get affected rows
         $queryItems = $this->_database->simple_select(
@@ -1572,7 +1572,7 @@ class AwayList_Item_Repository
         // build condition
         $whereCondition = 'id=\'' . (int) $id . '\'';
 
-        return $this->delete($whereCondition);
+        return $this->_delete($whereCondition);
     }
 
     /**
@@ -1586,7 +1586,7 @@ class AwayList_Item_Repository
         // build condition
         $whereCondition = 'uid=\'' . (int) $userId . '\'';
 
-        return $this->delete($whereCondition);
+        return $this->_delete($whereCondition);
     }
 
     /**
