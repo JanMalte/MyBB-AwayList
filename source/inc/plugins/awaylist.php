@@ -1596,8 +1596,12 @@ class AwayList_Item_Repository
         // select items of the given user
         $whereCondition = ' ( uid = ' . (int) $userId . ' ) ';
 
-        // skip items from the past
-        if (isset($options['includePast']) && $options['includePast'] == false) {
+        // add timestamp condition
+        $timestamp = time();
+        if (isset($options['timestamp'])) {
+            $timestamp = $options['timestamp'];
+        }
+        if (!isset($options['includePast']) || $options['includePast'] == false) {
             $whereCondition .= ' AND ( departure >= ' . (int) $timestamp . ' ) ';
         }
 
