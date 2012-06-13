@@ -1753,13 +1753,6 @@ class AwayList_Item
     protected $_database;
 
     /**
-     * access to the global $mybb
-     * 
-     * @var MyBB 
-     */
-    protected $_mybb;
-
-    /**
      * translation object
      * 
      * @var MyLanguage 
@@ -1825,14 +1818,11 @@ class AwayList_Item
     }
 
     /**
-     * create a new AwayList item.<br />
-     * if $id is given the object from the database is loaded
+     * create a new AwayList item.
      * 
-     * @param integer $id 
      */
-    public function __construct($id = null)
+    public function __construct()
     {
-        $this->_initMybb();
         $this->_initDatabase();
 
         // load translation
@@ -1865,11 +1855,6 @@ class AwayList_Item
                 'tableField' => 'phone'
             ),
         );
-
-        // load the object from the database if $id is given
-        if ($id != null) {
-            $this->loadItem($id);
-        }
     }
 
     /**
@@ -1884,21 +1869,22 @@ class AwayList_Item
     public function __call($method, array $arguments)
     {
         $matches = array();
-        if (preg_match('/^get(\w+)$/', $method, $matches)) {
+        if ((boolean) preg_match('/^get(\w+)$/', $method, $matches)) {
             $field = $matches[1];
             $field{0} = strtolower($field{0});
             if (isset($this->$field)) {
                 return $this->$field;
             }
-        } elseif (preg_match('/^set(\w+)$/', $method, $matches)) {
+        } elseif ((boolean) preg_match('/^set(\w+)$/', $method, $matches)) {
             $field = $matches[1];
             $field{0} = strtolower($field{0});
             if (isset($this->$field)) {
-                return $field = $arguments[0];
+                return $this->$field = $arguments[0];
             }
         } else {
-            throw new Exception("Unrecognized method '$method()'");
+            throw new AwayList_Item_Exception("Unrecognized method '$method()'");
         }
+        throw new AwayList_Item_Exception("Unrecognized method '$method()'");
     }
 
     public function __get($name)
@@ -1926,7 +1912,7 @@ class AwayList_Item
                 }
             }
         }
-        throw new Exception("Unrecognized property '$name'");
+        throw new AwayList_Item_Exception("Unrecognized property '$name'");
     }
 
     public function __set($name, $value)
@@ -1955,7 +1941,7 @@ class AwayList_Item
             }
         }
         return false;
-        throw new Exception("Can't set value! Unrecognized property '$name'");
+        throw new AwayList_Item_Exception("Can't set value! Unrecognized property '$name'");
     }
 
     public function __isset($name)
@@ -1997,21 +1983,6 @@ class AwayList_Item
         $data['departure_monat'] = date('m', $data['departure']);
         $data['departure_jahr'] = date('Y', $data['departure']);
         return $data;
-    }
-
-    /**
-     * get the global MyBB object
-     * 
-     * @global MyBB
-     * @return void 
-     */
-    protected function _initMybb()
-    {
-        global $mybb;
-
-        if (!empty($mybb)) {
-            $this->_mybb = &$mybb;
-        }
     }
 
     /**
@@ -2180,9 +2151,7 @@ class AwayList_Item
     {
         $valid = true;
 
-        if (!is_array($errors)) {
-            $errors = (array) $errors;
-        }
+        $errors = array();
 
         // shortcuts
         $lang = $this->_translation;
@@ -2196,21 +2165,42 @@ class AwayList_Item
         if (empty($data['hotel'])) {
             $errors['hotel'] = $lang->errorMissingHotel;
         }
-        if (!preg_match("/^[0-9[:space:]]*$/", $data['phone'])) {
+        if (!empty($data['phone'])
+            && !preg_match("/^[0-9[:space:]]*$/", $data['phone'])
+        ) {
             $errors['phone'] = $lang->errorInvalidPhoneNumber;
         }
-        $arrival = mktime(
-            0, 0, 0, $data['arrival_monat'], $data['arrival_tag'],
-            $data['arrival_jahr']
-        );
-        $departure = mktime(
-            0, 0, 0, $data['departure_monat'], $data['departure_tag'],
-            $data['departure_jahr']
-        );
+        if (!empty($data['arrival_monat'])
+            && !empty($data['arrival_tag'])
+            && !empty($data['arrival_jahr'])
+        ) {
+            $arrival = mktime(
+                0, 0, 0, $data['arrival_monat'], $data['arrival_tag'],
+                $data['arrival_jahr']
+            );
+        } else {
+            $errors['arrival'] = 'Arrival not set';
+            $arrival = '0';
+        }
+        if (!empty($data['departure_monat'])
+            && !empty($data['departure_tag'])
+            && !empty($data['departure_jahr'])
+        ) {
+            $departure = mktime(
+                0, 0, 0, $data['departure_monat'], $data['departure_tag'],
+                $data['departure_jahr']
+            );
+        } else {
+            $errors['departure'] = 'Departure not set';
+            $departure = '0';
+        }
 
         // check for overlapping journeys
         $countTrips = null;
-        $uid = $data['uid'];
+        $uid = 0;
+        if (!empty($data['uid'])) {
+            $uid = $data['uid'];
+        }
         if (!empty($this->_uid)) {
             $uid = $this->_uid;
         }
@@ -2256,4 +2246,19 @@ class AwayList_Item
         return $valid;
     }
 
+}
+
+/**
+ * Exception for the AwayList_Item
+ * 
+ * @category    MyBB.Plugins
+ * @package     AwayList
+ * @subpackage  Plugin_Model
+ * @author      Malte Gerth <http://www.malte-gerth.de>
+ * @copyright   Copyright (C) Malte Gerth. All rights reserved.
+ * @license     GNU General Public License version 3 or later
+ */
+class AwayList_Item_Exception extends Exception
+{
+    
 }
