@@ -597,14 +597,14 @@ class AwayList
             'title' => 'show_awaylist',
             'template' => '<html>
 	<head>
-		<title>{\$mybb->settings[awayListTitle]}</title>
-		<base href=\'{\$mybb->settings[bburl]}/\'>
-		{\$headerinclude}
+		<title>{$mybb->settings[awayListTitle]}</title>
+		<base href="{$mybb->settings[bburl]}">
+		{$headerinclude}
 	</head>
 	<body>
-		{\$header}
-		{\$content}
-		{\$footer}
+		{$header}
+		{$content}
+		{$footer}
 	</body>
 </html>',
             'sid' => '-1',
