@@ -25,6 +25,7 @@ $l['errorDepartureNotInFuture'] = 'Das Abflugsdatum liegt nicht in der Zukunft.'
 $l['errorArrivalNotBeforeDeparture'] = 'Das Abflugsdatum liegt vor dem Ankunftsdatum.';
 $l['errorNoPermission'] = 'Sie haben nicht die nötigen Rechte diesen Eintrag zu bearbeiten';
 $l['errorNoItemSelected'] = 'Es wurde kein Eintrag ausgewählt';
+$l['noEntriesFound'] = 'Es wurde kein Eintrag gefunden';
 
 $l['addItemSuccessful'] = 'Eintrag erfolgreich hinzugefügt';
 $l['editItemSuccessful'] = 'Eintrag erfolgreich geändert';

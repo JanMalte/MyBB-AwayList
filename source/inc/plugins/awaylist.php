@@ -1105,59 +1105,64 @@ class AwayList
 
         // add all items
         $currentDate = mktime(0, 0, 0, date("m"), date("d"), date("Y"));
-        foreach ($awayListItems as $awayListItem) {
-            $item = $awayListItem->toArray();
-            $count++;
-            $userlink = '<a href="' . get_profile_link($item['uid']) . '">'
-                . $item['username']
-                . '</a>';
-
-            if (($item['arrival'] < $currentDate)
-                && ($item['departure'] > $currentDate)
-            ) {
-                $status = '<img src="' . $mybb->settings['bburl']
-                    . '/images/awaylist/vor_ort.png" border="0">';
-            } elseif ($item['departure'] == $currentDate) {
-                $status = '<img src="' . $mybb->settings['bburl']
-                    . '/images/awaylist/rueckflug.png" border="0">';
-            } elseif ($item['arrival'] == $currentDate) {
-                $status = '<img src="' . $mybb->settings['bburl']
-                    . '/images/awaylist/hinflug.png" border="0">';
-            } else {
-                $status = '<img src="' . $mybb->settings['bburl']
-                    . '/images/awaylist/daheim.png" border="0">';
-            }
-
-            $arrival = date("d.m.Y", $item['arrival']);
-            $departure = date("d.m.Y", $item['departure']);
-            $airline = $item['airline'];
-            $place = $item['place'];
-            $hotel = $item['hotel'];
-            $phone = $item['phone'];
-            $actions = '';
-            if (self::isUserInGroup(4)
-                OR ($item['uid'] == $mybb->user['uid'])
-            ) {
-                $actions = '<a class="icon"'
-                    . 'href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT
-                    . '?action=editAwlItem&awlItemId=' . $item['id'] . '">'
-                    . '<img src="' . $mybb->settings['bburl']
-                    . '/images/awaylist/pencil.png" border="0">'
-                    . '</a>' . PHP_EOL
-                    . '<a class="icon" href="' . $mybb->settings["bburl"]
-                    . '/' . THIS_SCRIPT . '?action=deleteAwlItem&awlItemId='
-                    . $item['id'] . '">'
-                    . '<img src="' . $mybb->settings['bburl']
-                    . '/images/awaylist/no.png" border="0">'
+        $tableItems = '<tr><td class="tcat" colspan="9"><strong>'
+            . $lang->noEntriesFound
+            . '</strong></td></tr>';
+        if (!empty($awayListItems) && is_array($awayListItems)) {
+            $tableItems = '';
+            foreach ($awayListItems as $awayListItem) {
+                $item = $awayListItem->toArray();
+                $count++;
+                $userlink = '<a href="' . get_profile_link($item['uid']) . '">'
+                    . $item['username']
                     . '</a>';
+
+                if (($item['arrival'] < $currentDate)
+                    && ($item['departure'] > $currentDate)
+                ) {
+                    $status = '<img src="' . $mybb->settings['bburl']
+                        . '/images/awaylist/vor_ort.png" border="0">';
+                } elseif ($item['departure'] == $currentDate) {
+                    $status = '<img src="' . $mybb->settings['bburl']
+                        . '/images/awaylist/rueckflug.png" border="0">';
+                } elseif ($item['arrival'] == $currentDate) {
+                    $status = '<img src="' . $mybb->settings['bburl']
+                        . '/images/awaylist/hinflug.png" border="0">';
+                } else {
+                    $status = '<img src="' . $mybb->settings['bburl']
+                        . '/images/awaylist/daheim.png" border="0">';
+                }
+
+                $arrival = date("d.m.Y", $item['arrival']);
+                $departure = date("d.m.Y", $item['departure']);
+                $airline = $item['airline'];
+                $place = $item['place'];
+                $hotel = $item['hotel'];
+                $phone = $item['phone'];
+                $actions = '';
+                if (self::isUserInGroup(4)
+                    OR ($item['uid'] == $mybb->user['uid'])
+                ) {
+                    $actions = '<a class="icon"'
+                        . 'href="' . $mybb->settings["bburl"] . '/' . THIS_SCRIPT
+                        . '?action=editAwlItem&awlItemId=' . $item['id'] . '">'
+                        . '<img src="' . $mybb->settings['bburl']
+                        . '/images/awaylist/pencil.png" border="0">'
+                        . '</a>' . PHP_EOL
+                        . '<a class="icon" href="' . $mybb->settings["bburl"]
+                        . '/' . THIS_SCRIPT . '?action=deleteAwlItem&awlItemId='
+                        . $item['id'] . '">'
+                        . '<img src="' . $mybb->settings['bburl']
+                        . '/images/awaylist/no.png" border="0">'
+                        . '</a>';
+                }
+
+                eval(
+                    "\$tableItems .= \"" .
+                    $templates->get("show_awaylist_table_bit") . "\";"
+                );
             }
-
-            eval(
-                "\$tableItems .= \"" .
-                $templates->get("show_awaylist_table_bit") . "\";"
-            );
         }
-
         $content = null;
         eval(
             "\$content .= \"" . $templates->get("show_awaylist_table") . "\";"
@@ -1428,7 +1433,7 @@ class AwayList_Item_Repository
      * @var DB_MySQL|DB_MySQLi|DB_PgSQL|DB_SQLite
      */
     protected $_database;
-    
+
     /**
      * get the repository
      */
@@ -1656,7 +1661,7 @@ class AwayList_Item_Repository
             $item->setData($itemData, $itemData['id']);
             $items[] = $item;
         }
-        
+
         return $items;
     }
 
