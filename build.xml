@@ -125,8 +125,7 @@
     <target name="phpcs"
             description="Find coding standard violations using PHP_CodeSniffer and print human readable output. Intended for usage on the command line before committing.">
         <exec executable="phpcs">
-            <arg value="--standard=Zend" />
-            <!--<arg value="standard=${basedir}/build-tools/phpcs.xml" />-->
+            <arg value="--standard=${basedir}/build-tools/phpcs.xml" />
             <arg value="-p" />
             <arg line="${basedir}/source" />
         </exec>
@@ -138,8 +137,7 @@
         <exec executable="phpcs">
             <arg value="--report=checkstyle" />
             <arg value="--report-file=${basedir}/build/logs/checkstyle.xml" />
-            <arg value="--standard=Zend" />
-            <!--<arg value="standard=${basedir}/build-tools/phpcs.xml" />-->
+            <arg value="--standard=${basedir}/build-tools/phpcs.xml" />
             <arg line="${basedir}/source" />
         </exec>
     </target>

@@ -1,5 +1,5 @@
 <?xml version="1.0"?>
-<ruleset name="METEOS">
+<ruleset name="MyBB">
  <description>A coding standard based on an early Zend Framework coding standard.</description>
 
  <!-- Include some sniffs from all around the place -->
@@ -12,7 +12,6 @@
  <rule ref="PEAR.Functions.FunctionCallSignature"/>
  <rule ref="PEAR.Functions.ValidDefaultValue"/>
  <rule ref="PEAR.WhiteSpace.ScopeClosingBrace"/>
- <rule ref="Squiz.Functions.GlobalFunction"/>
 
  <!-- Lines can be 80 chars long, show errors at 120 chars -->
  <rule ref="Generic.Files.LineLength">
