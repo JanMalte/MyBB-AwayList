@@ -1457,6 +1457,9 @@ class AwayList_Item_Repository
         }
     }
 
+    // Skip the following line for code coverage, as this is deprecated and
+    // will be removed someday
+    // @codeCoverageIgnoreStart
     /**
      * Upgrade an old database table
      * 
@@ -1508,6 +1511,8 @@ class AwayList_Item_Repository
             }
         }
     }
+
+    // @codeCoverageIgnoreEnd
 
     /**
      * Fetches a new blank row (not from the database).
