@@ -85,14 +85,6 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     /**
      * @covers AwayList_Item_Repository
      */
-    public function testUpgradeTo165()
-    {
-        $this->assertEmpty($this->object->upgradeTo165());
-    }
-
-    /**
-     * @covers AwayList_Item_Repository
-     */
     public function testCreateRow()
     {
         $rowObjectOne = $this->object->createRow();
@@ -158,9 +150,10 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testFetchAllByUserId()
     {
-        $userId = 4;
+        $userId = 1;
         $rowObjects = $this->object->fetchAllByUserId($userId);
         $this->assertNotEmpty($rowObjects, 'No row was selected');
+        $this->assertEquals(1, count($rowObjects));
         foreach ($rowObjects as $row) {
             $this->assertEquals(
                 $userId, $row->getUid(), 'Uid of row doesn\'t match expected'
@@ -171,6 +164,42 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
         $this->assertEmpty(
             $rowObjectsEmpty, 'A row was selected, but shouldn\'t'
         );
+    }
+
+    /**
+     * @covers AwayList_Item_Repository
+     */
+    public function testFetchAllByUserIdIncludePast()
+    {
+        $userId = 1;
+        $rowObjects = $this->object->fetchAllByUserId(
+            $userId, array('includePast' => true)
+        );
+        $this->assertNotEmpty($rowObjects, 'No row was selected');
+        $this->assertEquals(2, count($rowObjects));
+        foreach ($rowObjects as $row) {
+            $this->assertEquals(
+                $userId, $row->getUid(), 'Uid of row doesn\'t match expected'
+            );
+        }
+    }
+
+    /**
+     * @covers AwayList_Item_Repository
+     */
+    public function testFetchAllByUserIdIncludePastWithTimestamp()
+    {
+        $userId = 1;
+        $rowObjects = $this->object->fetchAllByUserId(
+            $userId, array('includePast' => true, 'timestamp' => (time() - 7257600))
+        );
+        $this->assertNotEmpty($rowObjects, 'No row was selected');
+        $this->assertEquals(2, count($rowObjects));
+        foreach ($rowObjects as $row) {
+            $this->assertEquals(
+                $userId, $row->getUid(), 'Uid of row doesn\'t match expected'
+            );
+        }
     }
 
     /**
