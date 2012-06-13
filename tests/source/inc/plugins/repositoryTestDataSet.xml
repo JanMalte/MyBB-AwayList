@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<dataset>
+    <mybb_awaylist id="1" uid="1" username="Administrator" arrival="14563492" departure="19563492" airline="Lufthansa" place="Berlin" hotel="City Hotel" phone="123456789" sort_id="22" />
+    <mybb_awaylist id="2" uid="1" username="Administrator" arrival="2047483647" departure="2140483647" airline="Lufthansa" place="Berlin" hotel="City Hotel" phone="123456789" sort_id="22" />
+    <mybb_awaylist id="3" uid="4" username="Moderator1" arrival="2047483647" departure="2140483647" airline="Air India" place="Dehli" hotel="Luxor Hotel Dehli" phone="987987987" />
+</dataset>

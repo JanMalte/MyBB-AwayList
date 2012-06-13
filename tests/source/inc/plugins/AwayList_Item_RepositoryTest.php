@@ -20,13 +20,38 @@
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 3 or later
  */
-class AwayList_Item_RepositoryTest extends PHPUnit_Framework_TestCase
+class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
 {
 
     /**
      * @var AwayList_Item_Repository
      */
     protected $object;
+
+    /**
+     * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
+     */
+    public function getConnection()
+    {
+        global $config;
+        $pdo = new PDO(
+                'mysql:host=' . $config['database']['hostname'] . ';'
+                . 'dbname=' . $config['database']['database'],
+                $config['database']['username'],
+                $config['database']['password'],
+                array(PDO::MYSQL_ATTR_INIT_COMMAND => "SET NAMES utf8")
+        );
+        return $this->createDefaultDBConnection($pdo);
+    }
+
+    /**
+     * @return PHPUnit_Extensions_Database_DataSet_IDataSet
+     */
+    public function getDataSet()
+    {
+        //return $this->createFlatXMLDataSet(dirname(__FILE__) . '/repositoryTestDataSet.xml');
+        return $this->createMySQLXMLDataSet(dirname(__FILE__) . '/repositoryTestMySQLDataSet.xml');
+    }
 
     /**
      * This method is called before the first test of this test class is run.
@@ -45,6 +70,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Framework_TestCase
     protected function setUp()
     {
         $this->object = new AwayList_Item_Repository();
+        parent::setUp();
     }
 
     /**
@@ -69,18 +95,18 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testCreateRow()
     {
-        $rowObject = $this->object->createRow();
-        $this->assertInstanceOf('AwayList_Item', $rowObject);
-        unset($rowObject);
+        $rowObjectOne = $this->object->createRow();
+        $this->assertInstanceOf('AwayList_Item', $rowObjectOne);
+
         $uid = '123456789';
-        $rowObject = $this->object->createRow(array('uid' => $uid));
-        $this->assertInstanceOf('AwayList_Item', $rowObject);
-        $this->assertEquals($uid, $rowObject->getUid());
-        unset($rowObject);
+        $rowObjectTwo = $this->object->createRow(array('uid' => $uid));
+        $this->assertInstanceOf('AwayList_Item', $rowObjectTwo);
+        $this->assertEquals($uid, $rowObjectTwo->getUid());
+
         $hotel = '213 Test TestString #';
-        $rowObject = $this->object->createRow(array('hotel' => $hotel));
-        $this->assertInstanceOf('AwayList_Item', $rowObject);
-        $this->assertEquals($hotel, $rowObject->getHotel());
+        $rowObjectThree = $this->object->createRow(array('hotel' => $hotel));
+        $this->assertInstanceOf('AwayList_Item', $rowObjectThree);
+        $this->assertEquals($hotel, $rowObjectThree->getHotel());
     }
 
     /**
@@ -88,10 +114,13 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteById()
     {
-        // TODO import test data
-        // $this->assertNotEmpty($this->object->deleteById(13),'No row was deleted');
-        $this->assertEmpty($this->object->deleteById(9999),
-            'A row was deleted, but shouldn\'t');
+        $this->assertEquals(
+            1, $this->object->deleteById(2), 'No row was deleted'
+        );
+
+        $this->assertEmpty(
+            $this->object->deleteById(9999), 'A row was deleted, but shouldn\'t'
+        );
     }
 
     /**
@@ -99,10 +128,14 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testDeleteByUserId()
     {
-        // TODO import test data
-        // $this->assertNotEmpty($this->object->deleteById(13),'No row was deleted');
-        $this->assertEmpty($this->object->deleteByUserId(9999999),
-            'A row was deleted, but shouldn\'t');
+        $this->assertEquals(
+            1, $this->object->deleteByUserId(4), 'No row was deleted'
+        );
+
+        $this->assertEmpty(
+            $this->object->deleteByUserId(9999999),
+            'A row was deleted, but shouldn\'t'
+        );
     }
 
     /**
@@ -110,11 +143,14 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testFetchRowById()
     {
-        // TODO import test data
-        // $rowObject = $this->object->fetchRowById(13);
-        // $this->assertNotEmpty($rowObject,'No row was selected');
-        $rowObject = $this->object->fetchRowById(9999999);
-        $this->assertEmpty($rowObject, 'A row was selected, but shouldn\'t');
+        $rowObjectOne = $this->object->fetchRowById(1);
+        $this->assertNotEmpty($rowObjectOne, 'No row was selected');
+
+        $rowObjectTwo = $this->object->fetchRowById(2);
+        $this->assertNotEmpty($rowObjectTwo, 'No row was selected');
+
+        $rowObjectEmpty = $this->object->fetchRowById(9999999);
+        $this->assertEmpty($rowObjectEmpty, 'A row was selected, but shouldn\'t');
     }
 
     /**
@@ -122,61 +158,69 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Framework_TestCase
      */
     public function testFetchAllByUserId()
     {
-        // TODO import test data
-        // $userId = 5;
-        // $rowObjects = $this->object->fetchAllByUserId($userId);
-        // $this->assertEquals($userId, $rowObjects[1]->getUid());
-        // $this->assertNotEmpty($rowObjects,'No row was selected');
-        $rowObjects = $this->object->fetchAllByUserId(9999999);
-        $this->assertEmpty($rowObjects, 'A row was selected, but shouldn\'t');
+        $userId = 4;
+        $rowObjects = $this->object->fetchAllByUserId($userId);
+        $this->assertNotEmpty($rowObjects, 'No row was selected');
+        foreach ($rowObjects as $row) {
+            $this->assertEquals(
+                $userId, $row->getUid(), 'Uid of row doesn\'t match expected'
+            );
+        }
+
+        $rowObjectsEmpty = $this->object->fetchAllByUserId(9999999);
+        $this->assertEmpty(
+            $rowObjectsEmpty, 'A row was selected, but shouldn\'t'
+        );
     }
 
     /**
      * @covers AwayList_Item_Repository::fetchAllByDate
-     * @todo   Implement testFetchAllByDate().
      */
     public function testFetchAllByDate()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $timestamp = '16563492';
+        $dateRows = $this->object->fetchAllByDate($timestamp);
+        $this->assertEquals(1, count($dateRows));
+        foreach ($dateRows as $row) {
+            $this->assertTrue(
+                $row->getStart() < $row->getEnd()
+            );
+            $this->assertTrue(
+                $row->getStart() < $timestamp
+            );
+            $this->assertTrue(
+                $timestamp < $row->getEnd()
+            );
+        }
     }
 
     /**
      * @covers AwayList_Item_Repository::fetchAllUpcomming
-     * @todo   Implement testFetchAllUpcomming().
      */
     public function testFetchAllUpcomming()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $upcommingRows = $this->object->fetchAllUpcomming();
+        $this->assertEquals(2, count($upcommingRows));
     }
 
     /**
      * @covers AwayList_Item_Repository::countAllUpcomming
-     * @todo   Implement testCountAllUpcomming().
      */
     public function testCountAllUpcomming()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $upcommingRowObjects = $this->object->fetchAllUpcomming();
+        $this->assertEquals(2, count($upcommingRowObjects));
+        $upcommingRows = $this->object->countAllUpcomming();
+        $this->assertEquals(2, $upcommingRows);
     }
 
     /**
      * @covers AwayList_Item_Repository::fetchAll
-     * @todo   Implement testFetchAll().
      */
     public function testFetchAll()
     {
-        // Remove the following lines when you implement this test.
-        $this->markTestIncomplete(
-            'This test has not been implemented yet.'
-        );
+        $allRowObjects = $this->object->fetchAll();
+        $this->assertEquals(3, count($allRowObjects));
     }
 
 }

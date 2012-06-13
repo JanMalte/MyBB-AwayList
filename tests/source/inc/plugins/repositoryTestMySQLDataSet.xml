@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<mysqldump xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<database name="mybbdev_16">
+	<table_data name="mybb_awaylist">
+	<row>
+		<field name="uid">1</field>
+		<field name="username">Administrator</field>
+		<field name="arrival">14563492</field>
+		<field name="departure">19563492</field>
+		<field name="airline">Lufthansa</field>
+		<field name="place">Berlin</field>
+		<field name="hotel">City Hotel</field>
+		<field name="phone">123456789</field>
+		<field name="id">1</field>
+		<field name="sort_id">22</field>
+	</row>
+	<row>
+		<field name="uid">1</field>
+		<field name="username">Administrator</field>
+		<field name="arrival">2047483647</field>
+		<field name="departure">2140483647</field>
+		<field name="airline">Lufthansa</field>
+		<field name="place">Berlin</field>
+		<field name="hotel">City Hotel</field>
+		<field name="phone">123456789</field>
+		<field name="id">2</field>
+		<field name="sort_id">22</field>
+	</row>
+	<row>
+		<field name="uid">4</field>
+		<field name="username">Moderator1</field>
+		<field name="arrival">2047483647</field>
+		<field name="departure">2140483647</field>
+		<field name="airline">Air India</field>
+		<field name="place">Dehli</field>
+		<field name="hotel">Luxor Hotel Dehli</field>
+		<field name="phone">987987987</field>
+		<field name="id">3</field>
+		<field name="sort_id" xsi:nil="true" />
+	</row>
+	</table_data>
+</database>
+</mysqldump>
