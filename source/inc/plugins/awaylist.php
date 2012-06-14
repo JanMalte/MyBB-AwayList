@@ -1761,47 +1761,56 @@ class AwayList_Item
 
     public function getId()
     {
-        return $this->_id;
+        return (int) $this->_id;
     }
 
     public function getUid()
     {
-        return $this->_uid;
+        return (int) $this->_uid;
     }
 
     public function setUid($uid)
     {
-        $this->_uid = $uid;
+        if (!is_numeric($uid)) {
+            throw new AwayList_Item_Exception('$uid must be an integer');
+        }
+        $this->_uid = (int) $uid;
     }
 
     public function getUsername()
     {
-        return $this->_username;
+        return (string) $this->_username;
     }
 
     public function setUsername($username)
     {
-        $this->_username = $username;
+        if (!is_string($username)) {
+            throw new AwayList_Item_Exception('$username must be a string');
+        }
+        $this->_username = (string) $username;
     }
 
     public function getStart()
     {
-        return $this->_start;
+        return (int) $this->_start;
     }
 
     public function setStart($start)
     {
-        $this->_start = $start;
+        if (!is_numeric($start)) {
+            throw new AwayList_Item_Exception('$start must be an integer');
+        }
+        $this->_start = (int) $start;
     }
 
     public function getEnd()
     {
-        return $this->_end;
+        return (int) $this->_end;
     }
 
     public function setEnd($end)
     {
-        $this->_end = $end;
+        $this->_end = (int) $end;
     }
 
     public function getErrors()
@@ -1864,25 +1873,29 @@ class AwayList_Item
      * @param string $method
      * @param array $args
      * @return mixed
-     * @throws Zend_Db_Table_Row_Exception 
+     * @throws AwayList_Item_Exception 
      */
     public function __call($method, array $arguments)
     {
         $matches = array();
-        if ((boolean) preg_match('/^get(\w+)$/', $method, $matches)) {
-            $field = $matches[1];
-            $field{0} = strtolower($field{0});
-            if (isset($this->$field)) {
-                return $this->$field;
+        if ((boolean) preg_match('/^get(\w+)$/', $method, $matches)
+            && empty($arguments)
+        ) {
+            $fieldName = $matches[1];
+            $fieldName{0} = strtolower($fieldName{0});
+            if (isset($this->$fieldName)) {
+                return (string) $this->$fieldName;
             }
         } elseif ((boolean) preg_match('/^set(\w+)$/', $method, $matches)) {
-            $field = $matches[1];
-            $field{0} = strtolower($field{0});
-            if (isset($this->$field)) {
-                return $this->$field = $arguments[0];
+            $fieldName = $matches[1];
+            $fieldName{0} = strtolower($fieldName{0});
+            $value = (string) $arguments[0];
+            foreach ($this->_customFieldsConfig as $customField) {
+                if ($customField['name'] == $fieldName) {
+                    $fieldId = $customField['id'];
+                    return $this->_customFieldsData[$fieldId] = $value;
+                }
             }
-        } else {
-            throw new AwayList_Item_Exception("Unrecognized method '$method()'");
         }
         throw new AwayList_Item_Exception("Unrecognized method '$method()'");
     }
@@ -1908,7 +1921,7 @@ class AwayList_Item
             foreach ($this->_customFieldsConfig as $customField) {
                 if ($customField['name'] == $name) {
                     $fieldId = $customField['id'];
-                    return $this->_customFieldsData[$fieldId];
+                    return (string) $this->_customFieldsData[$fieldId];
                 }
             }
         }
@@ -1936,7 +1949,7 @@ class AwayList_Item
             foreach ($this->_customFieldsConfig as $customField) {
                 if ($customField['name'] == $name) {
                     $fieldId = $customField['id'];
-                    return $this->_customFieldsData[$fieldId] = $value;
+                    return $this->_customFieldsData[$fieldId] = (string) $value;
                 }
             }
         }
@@ -2063,10 +2076,10 @@ class AwayList_Item
             'username' => $this->_username,
             'arrival' => $this->_start,
             'departure' => $this->_end,
-            'airline' => $this->airline,
-            'place' => $this->place,
-            'hotel' => $this->hotel,
-            'phone' => $this->phone,
+            'airline' => (string) $this->airline,
+            'place' => (string) $this->place,
+            'hotel' => (string) $this->hotel,
+            'phone' => (string) $this->phone,
         );
 
         return $data;
@@ -2180,7 +2193,7 @@ class AwayList_Item
             );
         } else {
             $errors['arrival'] = 'Arrival not set';
-            $arrival = '0';
+            $arrival = '1';
         }
         if (!empty($data['departure_monat'])
             && !empty($data['departure_tag'])

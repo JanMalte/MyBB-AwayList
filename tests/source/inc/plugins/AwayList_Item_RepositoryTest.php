@@ -24,11 +24,15 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
 {
 
     /**
+     * Repository for AwayList_Item
+     * 
      * @var AwayList_Item_Repository
      */
-    protected $object;
+    protected $_repository;
 
     /**
+     * Returns the test database connection.
+     *
      * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
      */
     public function getConnection()
@@ -45,6 +49,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Returns the test dataset.
+     *
      * @return PHPUnit_Extensions_Database_DataSet_IDataSet
      */
     public function getDataSet()
@@ -69,7 +75,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     protected function setUp()
     {
-        $this->object = new AwayList_Item_Repository();
+        $this->_repository = new AwayList_Item_Repository();
         parent::setUp();
     }
 
@@ -87,16 +93,16 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testCreateRow()
     {
-        $rowObjectOne = $this->object->createRow();
+        $rowObjectOne = $this->_repository->createRow();
         $this->assertInstanceOf('AwayList_Item', $rowObjectOne);
 
         $uid = '123456789';
-        $rowObjectTwo = $this->object->createRow(array('uid' => $uid));
+        $rowObjectTwo = $this->_repository->createRow(array('uid' => $uid));
         $this->assertInstanceOf('AwayList_Item', $rowObjectTwo);
         $this->assertEquals($uid, $rowObjectTwo->getUid());
 
         $hotel = '213 Test TestString #';
-        $rowObjectThree = $this->object->createRow(array('hotel' => $hotel));
+        $rowObjectThree = $this->_repository->createRow(array('hotel' => $hotel));
         $this->assertInstanceOf('AwayList_Item', $rowObjectThree);
         $this->assertEquals($hotel, $rowObjectThree->getHotel());
     }
@@ -107,11 +113,11 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     public function testDeleteById()
     {
         $this->assertEquals(
-            1, $this->object->deleteById(2), 'No row was deleted'
+            1, $this->_repository->deleteById(2), 'No row was deleted'
         );
 
         $this->assertEmpty(
-            $this->object->deleteById(9999), 'A row was deleted, but shouldn\'t'
+            $this->_repository->deleteById(9999), 'A row was deleted, but shouldn\'t'
         );
     }
 
@@ -121,11 +127,11 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     public function testDeleteByUserId()
     {
         $this->assertEquals(
-            1, $this->object->deleteByUserId(4), 'No row was deleted'
+            1, $this->_repository->deleteByUserId(4), 'No row was deleted'
         );
 
         $this->assertEmpty(
-            $this->object->deleteByUserId(9999999),
+            $this->_repository->deleteByUserId(9999999),
             'A row was deleted, but shouldn\'t'
         );
     }
@@ -135,13 +141,13 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testFetchRowById()
     {
-        $rowObjectOne = $this->object->fetchRowById(1);
+        $rowObjectOne = $this->_repository->fetchRowById(1);
         $this->assertNotEmpty($rowObjectOne, 'No row was selected');
 
-        $rowObjectTwo = $this->object->fetchRowById(2);
+        $rowObjectTwo = $this->_repository->fetchRowById(2);
         $this->assertNotEmpty($rowObjectTwo, 'No row was selected');
 
-        $rowObjectEmpty = $this->object->fetchRowById(9999999);
+        $rowObjectEmpty = $this->_repository->fetchRowById(9999999);
         $this->assertEmpty($rowObjectEmpty, 'A row was selected, but shouldn\'t');
     }
 
@@ -151,7 +157,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     public function testFetchAllByUserId()
     {
         $userId = 1;
-        $rowObjects = $this->object->fetchAllByUserId($userId);
+        $rowObjects = $this->_repository->fetchAllByUserId($userId);
         $this->assertNotEmpty($rowObjects, 'No row was selected');
         $this->assertEquals(1, count($rowObjects));
         foreach ($rowObjects as $row) {
@@ -160,7 +166,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
             );
         }
 
-        $rowObjectsEmpty = $this->object->fetchAllByUserId(9999999);
+        $rowObjectsEmpty = $this->_repository->fetchAllByUserId(9999999);
         $this->assertEmpty(
             $rowObjectsEmpty, 'A row was selected, but shouldn\'t'
         );
@@ -172,7 +178,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     public function testFetchAllByUserIdIncludePast()
     {
         $userId = 1;
-        $rowObjects = $this->object->fetchAllByUserId(
+        $rowObjects = $this->_repository->fetchAllByUserId(
             $userId, array('includePast' => true)
         );
         $this->assertNotEmpty($rowObjects, 'No row was selected');
@@ -190,7 +196,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     public function testFetchAllByUserIdIncludePastWithTimestamp()
     {
         $userId = 1;
-        $rowObjects = $this->object->fetchAllByUserId(
+        $rowObjects = $this->_repository->fetchAllByUserId(
             $userId, array('includePast' => true, 'timestamp' => (time() - 7257600))
         );
         $this->assertNotEmpty($rowObjects, 'No row was selected');
@@ -208,7 +214,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     public function testFetchAllByDate()
     {
         $timestamp = '16563492';
-        $dateRows = $this->object->fetchAllByDate($timestamp);
+        $dateRows = $this->_repository->fetchAllByDate($timestamp);
         $this->assertEquals(1, count($dateRows));
         foreach ($dateRows as $row) {
             $this->assertTrue(
@@ -228,7 +234,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testFetchAllUpcomming()
     {
-        $upcommingRows = $this->object->fetchAllUpcomming();
+        $upcommingRows = $this->_repository->fetchAllUpcomming();
         $this->assertEquals(2, count($upcommingRows));
     }
 
@@ -237,9 +243,9 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testCountAllUpcomming()
     {
-        $upcommingRowObjects = $this->object->fetchAllUpcomming();
+        $upcommingRowObjects = $this->_repository->fetchAllUpcomming();
         $this->assertEquals(2, count($upcommingRowObjects));
-        $upcommingRows = $this->object->countAllUpcomming();
+        $upcommingRows = $this->_repository->countAllUpcomming();
         $this->assertEquals(2, $upcommingRows);
     }
 
@@ -248,7 +254,7 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testFetchAll()
     {
-        $allRowObjects = $this->object->fetchAll();
+        $allRowObjects = $this->_repository->fetchAll();
         $this->assertEquals(3, count($allRowObjects));
     }
 

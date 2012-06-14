@@ -24,16 +24,22 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
 {
 
     /**
+     * AwayList_Item object
+     * 
      * @var AwayList_Item
      */
-    protected $object;
+    protected $_object;
 
     /**
+     * Repository for AwayList_Item
+     * 
      * @var AwayList_Item_Repository
      */
-    protected $repository;
+    protected $_repository;
 
     /**
+     * Returns the test database connection.
+     *
      * @return PHPUnit_Extensions_Database_DB_IDatabaseConnection
      */
     public function getConnection()
@@ -50,6 +56,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Returns the test dataset.
+     *
      * @return PHPUnit_Extensions_Database_DataSet_IDataSet
      */
     public function getDataSet()
@@ -65,10 +73,14 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     protected function setUp()
     {
         parent::setUp();
-        $this->repository = new AwayList_Item_Repository();
-        $rowObject = $this->repository->fetchRowById(2);
-        $this->assertNotEmpty($rowObject, 'No row was selected');
-        $this->object = $rowObject;
+
+        // create the repository
+        $this->_repository = new AwayList_Item_Repository();
+
+        // fetch row with id 2 as default object
+        $awayListObject = $this->_repository->fetchRowById(2);
+        $this->assertNotEmpty($awayListObject, 'No row was selected');
+        $this->_object = $awayListObject;
     }
 
     /**
@@ -81,62 +93,186 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Basic test for getId()
+     * 
      * @covers AwayList_Item
      */
     public function testGetId()
     {
-        $this->assertEquals(2, $this->object->getId());
+        $this->assertEquals(2, $this->_object->getId());
     }
 
     /**
+     * Basic test for getUid()
+     * 
      * @covers AwayList_Item
      */
     public function testGetUid()
     {
-        $this->assertEquals(1, $this->object->getUid());
+        $this->assertEquals(1, $this->_object->getUid());
     }
 
     /**
+     * Basic test for setUid()
+     * 
      * @covers AwayList_Item
      */
     public function testSetUid()
     {
-        $this->object->setUid(25);
-        $this->assertEquals(25, $this->object->getUid());
+        $this->_object->setUid(25);
+        $this->assertEquals(25, $this->_object->getUid());
+
+        // strings should be converted to integer
+        $this->_object->setUid('35');
+        $this->assertEquals(35, $this->_object->getUid());
     }
 
     /**
+     * Basic fail test for setUid()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetUidException()
+    {
+        $this->_object->setUid('StringsAreNotAllowed');
+        $this->assertEquals(1, $this->_object->getUid());
+    }
+
+    /**
+     * Basic fail test for setUid()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetUidExceptionTwo()
+    {
+        $this->_object->setUid('String are not allowed');
+        $this->assertEquals(1, $this->_object->getUid());
+    }
+
+    /**
+     * Basic fail test for setUid()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetUidExceptionThree()
+    {
+        $this->_object->setUid(
+            array('ArraysAreNotAllowed', 'arrayKey' => 'Arrays are not allowed')
+        );
+        $this->assertEquals(1, $this->_object->getUid());
+    }
+
+    /**
+     * Basic test for getUsername()
+     * 
      * @covers AwayList_Item
      */
     public function testGetUsername()
     {
-        $this->assertEquals('Administrator', $this->object->getUsername());
+        $this->assertEquals('Administrator', $this->_object->getUsername());
     }
 
     /**
+     * Basic test for setUsername()
+     * 
      * @covers AwayList_Item
      */
     public function testSetUsername()
     {
-        $this->object->setUsername('TestUser');
-        $this->assertEquals('TestUser', $this->object->getUsername());
+        $this->_object->setUsername('TestUser');
+        $this->assertEquals('TestUser', $this->_object->getUsername());
     }
 
     /**
+     * Basic fail test for setUsername()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetUsernameException()
+    {
+        $this->_object->setUsername(
+            array('ArraysAreNotAllowed', 'arrayKey' => 'Arrays are not allowed')
+        );
+        $this->assertEquals('Administrator', $this->_object->getUsername());
+    }
+
+    /**
+     * Basic fail test for setUsername()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetUsernameExceptionTwo()
+    {
+        $this->_object->setUsername(123);
+        $this->assertEquals('Administrator', $this->_object->getUsername());
+    }
+
+    /**
+     * Basic test for getStart()
+     * 
      * @covers AwayList_Item
      */
     public function testGetStart()
     {
-        $this->assertEquals('2047483647', $this->object->getStart());
+        $this->assertEquals('2047483647', $this->_object->getStart());
+        $this->assertEquals(2047483647, $this->_object->getStart());
     }
 
     /**
+     * Basic test for setStart()
+     * 
      * @covers AwayList_Item
      */
     public function testSetStart()
     {
-        $this->object->setStart('123456789');
-        $this->assertEquals('123456789', $this->object->getStart());
+        $this->_object->setStart('123456789');
+        $this->assertEquals('123456789', $this->_object->getStart());
+        $this->assertEquals(123456789, $this->_object->getStart());
+        $this->_object->setStart(456456456);
+        $this->assertEquals(456456456, $this->_object->getStart());
+    }
+
+    /**
+     * Basic fail test for setStart()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetStartException()
+    {
+        $this->_object->setStart('StringsAreNotAllowed');
+        $this->assertEquals(2047483647, $this->_object->getStart());
+    }
+
+    /**
+     * Basic fail test for setStart()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetStartExceptionTwo()
+    {
+        $this->_object->setStart('String are not allowed');
+        $this->assertEquals(2047483647, $this->_object->getStart());
+    }
+
+    /**
+     * Basic fail test for setStart()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetStartExceptionThree()
+    {
+        $this->_object->setStart(
+            array('ArraysAreNotAllowed', 'arrayKey' => 'Arrays are not allowed')
+        );
+        $this->assertEquals(2047483647, $this->_object->getStart());
     }
 
     /**
@@ -144,7 +280,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testGetEnd()
     {
-        $this->assertEquals('2140483647', $this->object->getEnd());
+        $this->assertEquals('2140483647', $this->_object->getEnd());
     }
 
     /**
@@ -153,8 +289,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     public function testSetEnd()
     {
 
-        $this->object->setStart('456789123');
-        $this->assertEquals('456789123', $this->object->getStart());
+        $this->_object->setStart('456789123');
+        $this->assertEquals('456789123', $this->_object->getStart());
     }
 
     /**
@@ -162,7 +298,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testGetErrors()
     {
-        $this->assertEmpty($this->object->getErrors());
+        $this->assertEmpty($this->_object->getErrors());
     }
 
     /**
@@ -170,7 +306,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testHasErrors()
     {
-        $this->assertFalse($this->object->hasErrors());
+        $this->assertFalse($this->_object->hasErrors());
     }
 
     /**
@@ -178,22 +314,55 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function test__call()
     {
-        $this->assertEquals('Lufthansa', $this->object->getAirline());
-        $this->object->setAirline('TUI LastMinute');
-        $this->assertEquals('TUI LastMinute', $this->object->getAirline());
-        $this->assertEquals('City Hotel', $this->object->getHotel());
+        $this->assertEquals('Lufthansa', $this->_object->getAirline());
+        $this->_object->setAirline('TUI LastMinute');
+        $this->assertEquals('TUI LastMinute', $this->_object->getAirline());
+        $this->assertEquals('City Hotel', $this->_object->getHotel());
     }
 
     /**
      * @covers AwayList_Item
      * @expectedException AwayList_Item_Exception 
      */
-    public function test__callException()
+    public function test__callExceptionNonExisting()
     {
-        $this->object->nonExisting();
-        $this->object->getNonExisting();
-        $this->object->setNonExisting('value');
-        $this->object->nonExistingWithValue('TUI LastMinute');
+        $this->_object->nonExisting();
+    }
+
+    /**
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function test__callExceptionNonExistingTwo()
+    {
+        $this->_object->nonExisting('TUI LastMinute');
+    }
+
+    /**
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function test__callExceptionGet()
+    {
+        $this->_object->getNonExisting();
+    }
+
+    /**
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function test__callExceptionGetTwo()
+    {
+        $this->_object->getAirline('Value not allowed');
+    }
+
+    /**
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function test__callExceptionSet()
+    {
+        $this->_object->setNonExisting('TUI LastMinute');
     }
 
     /**
@@ -201,9 +370,9 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function test__get()
     {
-        $this->assertEquals('2047483647', $this->object->arrival);
-        $this->assertEquals('2140483647', $this->object->departure);
-        $this->assertEmpty($this->object->sort_id);
+        $this->assertEquals('2047483647', $this->_object->arrival);
+        $this->assertEquals('2140483647', $this->_object->departure);
+        $this->assertEmpty($this->_object->sort_id);
     }
 
     /**
@@ -212,7 +381,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function test__getException()
     {
-        $this->object->nonExisting;
+        $this->_object->nonExisting;
     }
 
     /**
@@ -220,8 +389,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function test__set()
     {
-        $this->object->airline = 'American Airlines';
-        $this->assertEquals('American Airlines', $this->object->airline);
+        $this->_object->airline = 'American Airlines';
+        $this->assertEquals('American Airlines', $this->_object->airline);
     }
 
     /**
@@ -229,8 +398,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function test__isset()
     {
-        $this->assertTrue(isset($this->object->airline));
-        $this->assertFalse(isset($this->object->nonExisting));
+        $this->assertTrue(isset($this->_object->airline));
+        $this->assertFalse(isset($this->_object->nonExisting));
     }
 
     /**
@@ -238,10 +407,10 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function test__unset()
     {
-        unset($this->object->airline);
-        $this->assertFalse(isset($this->object->airline));
-        unset($this->object->nonExisting);
-        $this->assertTrue(isset($this->object->hotel));
+        unset($this->_object->airline);
+        $this->assertFalse(isset($this->_object->airline));
+        unset($this->_object->nonExisting);
+        $this->assertTrue(isset($this->_object->hotel));
     }
 
     /**
@@ -257,7 +426,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'airline' => 'Lufthansa',
             'place' => 'Berlin',
             'hotel' => 'City Hotel',
-            'phone' => 123456789,
+            'phone' => '123456789',
             'id' => 2,
             'arrival_tag' => 18,
             'arrival_monat' => 11,
@@ -266,7 +435,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'departure_monat' => 10,
             'departure_jahr' => 2037,
         );
-        $dataArray = $this->object->toArray();
+        $dataArray = $this->_object->toArray();
         $this->assertInternalType('array', $dataArray);
         $this->assertNotEmpty($dataArray);
         $this->assertEquals($expectedDataArray, $dataArray);
@@ -285,7 +454,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'airline' => 'Lufthansa',
             'place' => 'London',
             'hotel' => 'City Hotel',
-            'phone' => 987987,
+            'phone' => '987987',
             'id' => 2,
             'arrival_tag' => 18,
             'arrival_monat' => 11,
@@ -294,10 +463,10 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'departure_monat' => 10,
             'departure_jahr' => 2037,
         );
-        $this->object->setUsername('TestUser');
-        $this->object->setPlace('London');
-        $this->object->phone = 987987;
-        $dataArray = $this->object->toArray();
+        $this->_object->setUsername('TestUser');
+        $this->_object->setPlace('London');
+        $this->_object->phone = 987987;
+        $dataArray = $this->_object->toArray();
         $this->assertInternalType('array', $dataArray);
         $this->assertNotEmpty($dataArray);
         $this->assertEquals($expectedDataArray, $dataArray);
@@ -312,7 +481,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
         $object->setUsername('TestUserNew');
         $itemId = $object->save();
         $this->assertNotEmpty($itemId);
-        $savedObject = $this->repository->fetchRowById($itemId);
+        $savedObject = $this->_repository->fetchRowById($itemId);
         $this->assertNotEmpty($savedObject);
         $this->assertNotEmpty($savedObject->getId());
         $this->assertEquals($itemId, $savedObject->getId());
@@ -325,11 +494,11 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
      */
     public function testSaveUpdate()
     {
-        $object = $this->object;
+        $object = $this->_object;
         $object->setUsername('TestUserNew');
         $itemId = $object->save();
         $this->assertNotEmpty($itemId);
-        $savedObject = $this->repository->fetchRowById($itemId);
+        $savedObject = $this->_repository->fetchRowById($itemId);
         $this->assertNotEmpty($savedObject);
         $this->assertNotEmpty($savedObject->getId());
         $this->assertEquals($itemId, $savedObject->getId());
@@ -349,7 +518,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'airline' => 'Lufthansa',
             'place' => 'London',
             'hotel' => 'City Hotel',
-            'phone' => 987987,
+            'phone' => '987987',
             'arrival_tag' => 18,
             'arrival_monat' => 11,
             'arrival_jahr' => 2034,
@@ -365,7 +534,7 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'departure' => 2140470000,
             'place' => 'London',
             'hotel' => 'City Hotel',
-            'phone' => 987987,
+            'phone' => '987987',
             'arrival_tag' => '18',
             'arrival_monat' => '11',
             'arrival_jahr' => '2034',
@@ -374,33 +543,41 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'departure_jahr' => '2037',
             'id' => 2
         );
-        $this->object->setData($data);
-        $dataArray = $this->object->toArray();
+        $this->_object->setData($data);
+        $dataArray = $this->_object->toArray();
         $this->assertEquals($expectedDataArray, $dataArray);
-        $this->object->setData(
+        $this->_object->setData(
             'Strings are not allowed and shouldn\'t change anything'
         );
-        $dataArray = $this->object->toArray();
+        $dataArray = $this->_object->toArray();
         $this->assertEquals($expectedDataArray, $dataArray);
     }
 
     /**
+     * Extended test for isValid()
+     * 
      * @covers AwayList_Item
      */
     public function testIsValid()
     {
+        // update an existing object with invalid data
         $failData = array('phone' => 'Strings are not allowed');
-        $this->assertFalse($this->object->isValid($failData));
+        $this->assertFalse($this->_object->isValid($failData));
+        $this->assertTrue($this->_object->hasErrors());
+
+        // create a new object with invalid data
         $object = new AwayList_Item();
         $this->assertFalse($object->isValid($failData));
-        $this->assertTrue($this->object->hasErrors());
+        $this->assertTrue($object->hasErrors());
+
+        // update an existing object with valid data
         $successData = array(
             'uid' => 1,
             'username' => 'TestUser',
             'airline' => 'Lufthansa',
             'place' => 'London',
             'hotel' => 'City Hotel',
-            'phone' => 987987,
+            'phone' => '987987',
             'arrival_tag' => 18,
             'arrival_monat' => 11,
             'arrival_jahr' => 2034,
@@ -408,7 +585,82 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
             'departure_monat' => 10,
             'departure_jahr' => 2037,
         );
-        $this->assertTrue($this->object->isValid($successData));
+        $this->assertTrue($this->_object->isValid($successData));
+        $this->assertFalse($this->_object->hasErrors());
+
+        // create a new object with invalid data
+        // data is invalid due to existing journey
+        $failDataNew = array(
+            'uid' => 1,
+            'username' => 'TestUser',
+            'airline' => 'Lufthansa',
+            'place' => 'London',
+            'hotel' => 'City Hotel',
+            'phone' => '987987',
+            'arrival_tag' => 18,
+            'arrival_monat' => 11,
+            'arrival_jahr' => 2034,
+            'departure_tag' => 30,
+            'departure_monat' => 10,
+            'departure_jahr' => 2037,
+        );
+        $object = new AwayList_Item();
+        $this->assertFalse($object->isValid($failDataNew));
+        $this->assertTrue($object->hasErrors());
+
+        // create a new object with invalid data
+        // invalid due to not beeing in the future
+        $successDataNew = array(
+            'uid' => 1,
+            'username' => 'TestUser',
+            'airline' => 'Lufthansa',
+            'place' => 'London',
+            'hotel' => 'City Hotel',
+            'phone' => '987987',
+            'arrival_tag' => 18,
+            'arrival_monat' => 10,
+            'arrival_jahr' => 1980,
+            'departure_tag' => 30,
+            'departure_monat' => 11,
+            'departure_jahr' => 1980,
+        );
+        $object = new AwayList_Item();
+        $this->assertFalse($object->isValid($successDataNew));
+        $this->assertTrue($object->hasErrors());
+        $errors = $object->getErrors();
+        $this->assertNotEmpty($errors);
+
+        // create a new object with valid data
+        $successDataNew = array(
+            'uid' => 1,
+            'username' => 'TestUser',
+            'airline' => 'Lufthansa',
+            'place' => 'London',
+            'hotel' => 'City Hotel',
+            'phone' => '987987',
+            'arrival_tag' => 18,
+            'arrival_monat' => 9,
+            'arrival_jahr' => 2029,
+            'departure_tag' => 30,
+            'departure_monat' => 10,
+            'departure_jahr' => 2029,
+        );
+        $object = new AwayList_Item();
+        $this->assertTrue($object->isValid($successDataNew));
+        $this->assertFalse($object->hasErrors());
+    }
+
+    /**
+     * Basic test for _loadLanguage()
+     * 
+     * @covers AwayList_Item
+     * @global null $lang 
+     */
+    public function test_loadLanguage()
+    {
+        global $lang;
+        $lang = null;
+        new AwayList_Item();
     }
 
 }
