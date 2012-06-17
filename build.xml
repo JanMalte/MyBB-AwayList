@@ -184,8 +184,10 @@
             <arg value="${ant.project.name}" />
             <arg value="--target" />
             <arg path="${basedir}/build/api" />
+            <arg value="--template" />
+            <arg value="mybb-phpdoc" />
             <arg value="--config" />
-            <arg value="${basedir}/build-tools/phpdoc.xml" />
+            <arg path="${basedir}/build-tools/phpdoc.xml" />
             <arg value="--force" />
         </exec>
     </target>

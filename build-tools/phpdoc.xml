@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<phpdoc>
+<phpdocumentor>
     <parser>
         <markers>
             <item>TODO</item>
@@ -13,25 +13,25 @@
         </extensions>
         <visibility></visibility>
     </parser>
-    <logging>
-        <level>notice</level>
-        <paths>
-            <default>{APP_ROOT}phpdoc.log</default>
-            <errors>{APP_ROOT}phpdoc-errors.log</errors>
-        </paths>
-    </logging>
-    <transformations>
-        <template name="MyBB-phpDoc-Template" />
-    </transformations>
+    <files>
+        <directory>source</directory>
+        <directory>tests</directory>
+        <directory>tests-selenium</directory>
+    </files>
     <transformer>
         <external-class-documentation>
             <prefix>Zend</prefix>
             <uri>http://framework.zend.com/</uri>
         </external-class-documentation>
     </transformer>
-    <files>
-        <directory>source</directory>
-        <directory>tests</directory>
-        <directory>tests-selenium</directory>
-    </files>
-</phpdoc>
+    <logging>
+        <level>notice</level>
+        <paths>
+            <default>{APP_ROOT}/data/log/{DATE}.log</default>
+            <errors>{APP_ROOT}/data/log/{DATE}.errors.log</errors>
+        </paths>
+    </logging>
+    <transformations>
+        <template name="mybb-phpdoc" />
+    </transformations>
+</phpdocumentor>
