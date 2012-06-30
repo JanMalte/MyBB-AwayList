@@ -3,3 +3,5 @@ build/
 catalog.xml
 cache.properties
 releases/
+/.sonar/
+sonar-project.properties

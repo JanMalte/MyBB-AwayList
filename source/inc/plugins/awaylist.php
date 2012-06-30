@@ -830,7 +830,7 @@ class AwayList
      * Show the away list
      * 
      * @global MyBB $mybb
-     * @return type 
+     * @return string 
      */
     public static function showAwayList()
     {
@@ -893,6 +893,8 @@ class AwayList
     /**
      * Get the html code to display
      * 
+     * @param integer $limit 
+     * @param integer $offset 
      * @global MyBB $mybb
      * @return string the html content 
      */
@@ -1062,7 +1064,7 @@ class AwayList
      * @param integer $startLimit
      * @return string 
      */
-    public static function showFullTable($timestamp, $limit, $startLimit = 0)
+    public static function showFullTable($timestamp = null, $limit = 1, $startLimit = 0)
     {
         global $mybb, $templates, $theme;
 
@@ -1183,6 +1185,7 @@ class AwayList
     /**
      * Show delete confirm dialog
      * 
+     * @param AwayList_Item $item
      * @global MyBB $mybb
      * @return string the html message 
      */
@@ -1303,7 +1306,6 @@ class AwayList
      * 
      * @global MyBB $mybb 
      * @param array $item 
-     * @param string $action 
      * @param string $actionUrl 
      * @param array $validateErrors 
      * @return string 
@@ -1975,7 +1977,7 @@ class AwayList_Item
      * setter-function does not exist
      *
      * @param string $method
-     * @param array $args
+     * @param array $arguments
      * @return mixed
      * @throws AwayList_Item_Exception 
      */

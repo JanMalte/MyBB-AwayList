@@ -1,6 +1,6 @@
 <?php
 /**
- * default test
+ * Example Test for Selenium Usage
  * 
  * @category    MyBB.Plugins
  * @package     AwayList
@@ -13,7 +13,7 @@
 require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
 
 /**
- * default test
+ * Example Test for Selenium Usage
  * 
  * @category    MyBB.Plugins
  * @package     AwayList
@@ -22,11 +22,11 @@ require_once 'PHPUnit/Extensions/SeleniumTestCase.php';
  * @copyright   Copyright (C) Malte Gerth. All rights reserved.
  * @license     GNU General Public License version 3 or later
  */
-class pageTitelTest extends PHPUnit_Extensions_SeleniumTestCase
+class PageTitelTest extends PHPUnit_Extensions_SeleniumTestCase
 {
 
     /**
-     * browser configuration for selenium tests
+     * Browser configuration for selenium tests
      * 
      * @var array
      */
@@ -41,7 +41,7 @@ class pageTitelTest extends PHPUnit_Extensions_SeleniumTestCase
     );
 
     /**
-     * setup for selenium tests
+     * Setup for selenium tests
      * 
      * @return void 
      */
@@ -51,7 +51,7 @@ class pageTitelTest extends PHPUnit_Extensions_SeleniumTestCase
     }
 
     /**
-     * test the page title
+     * Test the page title
      * 
      * @return void 
      */

@@ -276,6 +276,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the getEnd() function
+     * 
      * @covers AwayList_Item
      */
     public function testGetEnd()
@@ -284,6 +286,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the setEnd() function
+     * 
      * @covers AwayList_Item
      */
     public function testSetEnd()
@@ -332,6 +336,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the getErrors() function
+     * 
      * @covers AwayList_Item
      */
     public function testGetErrors()
@@ -340,6 +346,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the hasErrors() function
+     * 
      * @covers AwayList_Item
      */
     public function testHasErrors()
@@ -348,6 +356,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of functions
+     * 
      * @covers AwayList_Item
      */
     public function test__call()
@@ -359,6 +369,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of functions with thrown Exception
+     * 
      * @covers AwayList_Item
      * @expectedException AwayList_Item_Exception 
      */
@@ -368,6 +380,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of functions with thrown Exception
+     * 
      * @covers AwayList_Item
      * @expectedException AwayList_Item_Exception 
      */
@@ -377,6 +391,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of functions with thrown Exception
+     * 
      * @covers AwayList_Item
      * @expectedException AwayList_Item_Exception 
      */
@@ -386,6 +402,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of functions with thrown Exception
+     * 
      * @covers AwayList_Item
      * @expectedException AwayList_Item_Exception 
      */
@@ -395,6 +413,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of functions with thrown Exception
+     * 
      * @covers AwayList_Item
      * @expectedException AwayList_Item_Exception 
      */
@@ -404,6 +424,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of properties
+     * 
      * @covers AwayList_Item
      */
     public function test__get()
@@ -414,6 +436,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of properties with thrown Exception
+     * 
      * @covers AwayList_Item
      * @expectedException AwayList_Item_Exception 
      */
@@ -423,6 +447,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of properties
+     * 
      * @covers AwayList_Item
      */
     public function test__set()
@@ -432,6 +458,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of properties
+     * 
      * @covers AwayList_Item
      */
     public function test__isset()
@@ -441,6 +469,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the magic call of properties
+     * 
      * @covers AwayList_Item
      */
     public function test__unset()
@@ -452,6 +482,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the toArray() function
+     * 
      * @covers AwayList_Item
      */
     public function testToArray()
@@ -480,6 +512,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the toArray() function with changed values
+     * 
      * @covers AwayList_Item
      */
     public function testToArrayChangedValues()
@@ -511,6 +545,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the save() function for a new row
+     * 
      * @covers AwayList_Item
      */
     public function testSaveNew()
@@ -528,6 +564,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the save() function for an existing row
+     * 
      * @covers AwayList_Item
      */
     public function testSaveUpdate()
@@ -546,6 +584,8 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the setData() function
+     * 
      * @covers AwayList_Item
      */
     public function testSetData()

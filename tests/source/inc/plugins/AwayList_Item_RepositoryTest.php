@@ -89,6 +89,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the creation of a new AwayList_Item_Repository row
+     * 
      * @covers AwayList_Item_Repository
      */
     public function testCreateRow()
@@ -108,6 +110,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the deleteById() function
+     * 
      * @covers AwayList_Item_Repository
      */
     public function testDeleteById()
@@ -122,6 +126,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the deleteByUserId() function
+     * 
      * @covers AwayList_Item_Repository
      */
     public function testDeleteByUserId()
@@ -137,6 +143,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the fetchRowById() function
+     * 
      * @covers AwayList_Item_Repository
      */
     public function testFetchRowById()
@@ -152,6 +160,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the fetchAllByUserId() function
+     * 
      * @covers AwayList_Item_Repository
      */
     public function testFetchAllByUserId()
@@ -173,6 +183,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the fetchAllByUserId() function with past records included
+     * 
      * @covers AwayList_Item_Repository
      */
     public function testFetchAllByUserIdIncludePast()
@@ -191,6 +203,9 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the fetchAllByUserId() function with past records included
+     * and a given timestamp
+     * 
      * @covers AwayList_Item_Repository
      */
     public function testFetchAllByUserIdIncludePastWithTimestamp()
@@ -209,6 +224,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the fetchAllByDate() function
+     * 
      * @covers AwayList_Item_Repository::fetchAllByDate
      */
     public function testFetchAllByDate()
@@ -230,6 +247,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the fetchAllUpcomming() function
+     * 
      * @covers AwayList_Item_Repository::fetchAllUpcomming
      */
     public function testFetchAllUpcomming()
@@ -239,6 +258,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the countAllUpcomming() function
+     * 
      * @covers AwayList_Item_Repository::countAllUpcomming
      */
     public function testCountAllUpcomming()
@@ -250,6 +271,8 @@ class AwayList_Item_RepositoryTest extends PHPUnit_Extensions_Database_TestCase
     }
 
     /**
+     * Test the fetchAll() function
+     * 
      * @covers AwayList_Item_Repository::fetchAll
      */
     public function testFetchAll()
