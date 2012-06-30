@@ -289,8 +289,46 @@ class AwayList_ItemTest extends PHPUnit_Extensions_Database_TestCase
     public function testSetEnd()
     {
 
-        $this->_object->setStart('456789123');
-        $this->assertEquals('456789123', $this->_object->getStart());
+        $this->_object->setEnd('456789123');
+        $this->assertEquals('456789123', $this->_object->getEnd());
+    }
+
+    /**
+     * Basic fail test for setEnd()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetEndException()
+    {
+        $this->_object->setEnd('StringsAreNotAllowed');
+        $this->assertEquals(2047483647, $this->_object->getStart());
+    }
+
+    /**
+     * Basic fail test for setEnd()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetEndExceptionTwo()
+    {
+        $this->_object->setEnd('String are not allowed');
+        $this->assertEquals(2047483647, $this->_object->getStart());
+    }
+
+    /**
+     * Basic fail test for setEnd()
+     * 
+     * @covers AwayList_Item
+     * @expectedException AwayList_Item_Exception 
+     */
+    public function testSetEndExceptionThree()
+    {
+        $this->_object->setEnd(
+            array('ArraysAreNotAllowed', 'arrayKey' => 'Arrays are not allowed')
+        );
+        $this->assertEquals(2047483647, $this->_object->getStart());
     }
 
     /**
