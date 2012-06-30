@@ -12,8 +12,10 @@
  */
 // Disallow direct access to this file for security reasons
 if (!defined('IN_MYBB')) {
-    die('Direct initialization of this file is not allowed.<br />
-        <br />Please make sure IN_MYBB is defined.');
+    die(
+        'Direct initialization of this file is not allowed.<br />'
+        . '<br />Please make sure IN_MYBB is defined.'
+    );
 }
 
 /** * *******************************************************************
@@ -27,6 +29,7 @@ if (!class_exists('FormDateElement')) {
 
     /**
      * Collection of usefull functions for using dates and timestamps
+     * 
      * @category    MyBB.Plugins
      * @package     AwayList
      * @subpackage  Plugin_Helper
@@ -38,7 +41,7 @@ if (!class_exists('FormDateElement')) {
     {
 
         /**
-         * show a SELECT element for days in a HTML form
+         * Show a SELECT element for days in a HTML form
          * 
          * @param string $fieldName Name of the field
          * @param string|integer $selectedDay OPTIONAL Set to the value of the
@@ -77,7 +80,7 @@ if (!class_exists('FormDateElement')) {
         }
 
         /**
-         * show a SELECT element for months in a HTML form
+         * Show a SELECT element for months in a HTML form
          * 
          * @param string $fieldName Name of the field
          * @param string|integer $selectedMonth OPTIONAL Set to the value of the
@@ -116,7 +119,7 @@ if (!class_exists('FormDateElement')) {
         }
 
         /**
-         * show a SELECT element for years in a HTML form
+         * Show a SELECT element for years in a HTML form
          * 
          * @param string $fieldName Name of the field
          * @param string|integer $selectedYear OPTIONAL Set to the value of
@@ -178,7 +181,7 @@ if (!class_exists('FormDateElement')) {
 // Skip the following line for code coverage, as global functions aren't covered
 // @codeCoverageIgnoreStart
 /**
- * return the information about the plugin as an array
+ * Return the information about the plugin as an array
  * 
  * @return array 
  */
@@ -399,7 +402,7 @@ $plugins->add_hook('awaylist_showList', 'awaylistShowListHook');
 $plugins->add_hook('admin_user_users_delete_commit', 'awaylistDeleteUserHook');
 
 /**
- * load the plugin translations on global context
+ * Load the plugin translations on global context
  * 
  * @global MyLanguage $lang 
  */
@@ -412,7 +415,7 @@ function awaylistLoadLanguageHook()
 }
 
 /**
- * show awaylist on index
+ * Show awaylist on index
  * 
  * @global MyBB $mybb
  * @global string $awaylist 
@@ -432,7 +435,7 @@ function awaylistShowListOnIndexHook()
 }
 
 /**
- * show awaylist on own page
+ * Show awaylist on own page
  * 
  * @global MyBB $mybb
  * @global MyLanguage $lang
@@ -480,7 +483,7 @@ function awaylistShowListHook()
 }
 
 /**
- * delete the items of the user which is being deleted
+ * Delete the items of the user which is being deleted
  * 
  * @global array $user 
  */
@@ -497,7 +500,7 @@ function awaylistDeleteUserHook()
 // @codeCoverageIgnoreEnd
 
 /**
- * all needed functions for awaylist
+ * All needed functions for awaylist
  * 
  * @category    MyBB.Plugins
  * @package     AwayList
@@ -510,14 +513,14 @@ class AwayList
 {
 
     /**
-     * translation object
+     * Translation object
      * 
      * @var MyLanguage 
      */
     protected static $_TRANSLATION;
 
     /**
-     * load the translation
+     * Load the translation
      * 
      * @global MyLanguage $lang
      * @return MyLanguage 
@@ -546,7 +549,7 @@ class AwayList
     }
 
     /**
-     * checks if the user is in one of the allowed usergroups
+     * Checks if the user is in one of the allowed usergroups
      * 
      * @global MyBB $mybb
      * @param string $allowedGroups the allowed usergroups;
@@ -579,7 +582,7 @@ class AwayList
     }
 
     /**
-     * install the templates
+     * Install the templates
      * 
      * @global DB_MySQL $db
      * @return void 
@@ -723,7 +726,7 @@ class AwayList
     }
 
     /**
-     * install the plugin settings
+     * Install the plugin settings
      * 
      * @global DB_MySQL $db
      * @return void 
@@ -823,6 +826,12 @@ class AwayList
         rebuild_settings();
     }
 
+    /**
+     * Show the away list
+     * 
+     * @global MyBB $mybb
+     * @return type 
+     */
     public static function showAwayList()
     {
         global $mybb;
@@ -882,7 +891,7 @@ class AwayList
     }
 
     /**
-     * get the html code to display
+     * Get the html code to display
      * 
      * @global MyBB $mybb
      * @return string the html content 
@@ -1042,7 +1051,7 @@ class AwayList
     }
 
     /**
-     * show the table with all items
+     * Show the table with all items
      * 
      * @todo refactor
      * @global MyBB $mybb
@@ -1172,7 +1181,7 @@ class AwayList
     }
 
     /**
-     * show delete confirm dialog
+     * Show delete confirm dialog
      * 
      * @global MyBB $mybb
      * @return string the html message 
@@ -1255,7 +1264,7 @@ class AwayList
     }
 
     /**
-     * delete the item
+     * Delete the item
      * 
      * @param integer $itemId id of item which should be deleted
      * @param integer $userId id of the current user
@@ -1290,7 +1299,7 @@ class AwayList
     }
 
     /**
-     * get the html for the item form
+     * Get the html for the item form
      * 
      * @global MyBB $mybb 
      * @param array $item 
@@ -1428,14 +1437,14 @@ class AwayList_Item_Repository
 {
 
     /**
-     * access to the global $db
+     * Access to the global $db
      * 
      * @var DB_MySQL|DB_MySQLi|DB_PgSQL|DB_SQLite
      */
     protected $_database;
 
     /**
-     * get the repository
+     * Get the repository
      */
     public function __construct()
     {
@@ -1443,7 +1452,7 @@ class AwayList_Item_Repository
     }
 
     /**
-     * get the global database object
+     * Get the global database object
      * 
      * @global DB_MySQL|DB_MySQLi|DB_PgSQL|DB_SQLite $db 
      * @return void 
@@ -1530,7 +1539,7 @@ class AwayList_Item_Repository
     }
 
     /**
-     * perform the delete query
+     * Perform the delete query
      * 
      * @param string $whereCondition where condition for delete query
      * @return integer count of affected rows
@@ -1549,7 +1558,7 @@ class AwayList_Item_Repository
     }
 
     /**
-     * delete a single row by id
+     * Delete a single row by id
      * 
      * @param integer $id id of the row to delete
      * @return integer count of affected rows
@@ -1563,7 +1572,7 @@ class AwayList_Item_Repository
     }
 
     /**
-     * delete all rows of a user
+     * Delete all rows of a user
      * 
      * @param integer $userId id of the user
      * @return integer count of affected rows
@@ -1577,7 +1586,7 @@ class AwayList_Item_Repository
     }
 
     /**
-     * fetch a single row by id
+     * Fetch a single row by id
      * 
      * @param integer $id id of the row to fetch
      * @return AwayList_Item row with the given id
@@ -1596,6 +1605,13 @@ class AwayList_Item_Repository
         return $item;
     }
 
+    /**
+     * Fetch all rows of a user
+     * 
+     * @param integer $userId
+     * @param array $options
+     * @return \AwayList_Item  
+     */
     public function fetchAllByUserId($userId, $options = array())
     {
         // select items of the given user
@@ -1613,6 +1629,13 @@ class AwayList_Item_Repository
         return $this->fetchAll($whereCondition, $options);
     }
 
+    /**
+     * Fetch all rows where the given date is between the start and end date
+     * 
+     * @param integer $timestamp
+     * @param array $options
+     * @return \AwayList_Item  
+     */
     public function fetchAllByDate($timestamp, $options = array())
     {
         // select items where arrival and depature is between the given timestamp
@@ -1626,6 +1649,12 @@ class AwayList_Item_Repository
         return $this->fetchAll($whereCondition, $options);
     }
 
+    /**
+     * Fetch all rows where the departure is in the future
+     * 
+     * @param array $options
+     * @return \AwayList_Item  
+     */
     public function fetchAllUpcomming($options = array())
     {
         // skip items from the past
@@ -1634,6 +1663,12 @@ class AwayList_Item_Repository
         return $this->fetchAll($whereCondition, $options);
     }
 
+    /**
+     * Count all rows where the departure is in the future
+     * 
+     * @param array $options
+     * @return integer 
+     */
     public function countAllUpcomming($options = array())
     {
         // skip items from the past
@@ -1647,6 +1682,13 @@ class AwayList_Item_Repository
         return $this->_database->num_rows($queryItems);
     }
 
+    /**
+     * Fetch all rows which match the given condition
+     * 
+     * @param string $whereCondition OPTIONAL
+     * @param string $options OPTIONAL
+     * @return \AwayList_Item 
+     */
     public function fetchAll($whereCondition = null, $options = array())
     {
         $items = false;
@@ -1690,85 +1732,101 @@ class AwayList_Item
 {
 
     /**
-     * id of the item
+     * Id of the item
      * 
      * @var integer 
      */
     protected $_id = null;
 
     /**
-     * user id of the user who created the item
+     * User id of the user who created the item
      * 
      * @var integer 
      */
     protected $_uid;
 
     /**
-     * username of the user who created the item
+     * Username of the user who created the item
      * 
      * @var string 
      */
     protected $_username;
 
     /**
-     * unix timestamp of the start date
+     * Unix timestamp of the start date
      * 
      * @var integer 
      */
     protected $_start;
 
     /**
-     * unix timestamp of the end date
+     * Unix timestamp of the end date
      * 
      * @var integer 
      */
     protected $_end;
 
     /**
-     * array containing the data for the custom fields
+     * Array containing the data for the custom fields
      * 
      * @var array 
      */
     protected $_customFieldsData;
 
     /**
-     * array containing the configuration of the custom fields
+     * Array containing the configuration of the custom fields
      * 
      * @var array 
      */
     protected $_customFieldsConfig = array();
 
     /**
-     * array containing the errors which occured during processing
+     * Array containing the errors which occured during processing
      * 
      * @var array 
      */
     protected $_errors = array();
 
     /**
-     * access to the global $db
+     * Access to the global $db
      * 
      * @var DB_MySQL|DB_MySQLi|DB_PgSQL|DB_SQLite
      */
     protected $_database;
 
     /**
-     * translation object
+     * Translation object
      * 
      * @var MyLanguage 
      */
     protected $_translation;
 
+    /**
+     * Get the id of the item
+     * 
+     * @return integer  
+     */
     public function getId()
     {
         return (int) $this->_id;
     }
 
+    /**
+     * Get the id of the user
+     * 
+     * @return integer 
+     */
     public function getUid()
     {
         return (int) $this->_uid;
     }
 
+    /**
+     * Set the id of the user
+     * 
+     * @param integer $uid
+     * @throws AwayList_Item_Exception 
+     */
     public function setUid($uid)
     {
         if (!is_numeric($uid)) {
@@ -1777,11 +1835,22 @@ class AwayList_Item
         $this->_uid = (int) $uid;
     }
 
+    /**
+     * Get the username
+     * 
+     * @return string 
+     */
     public function getUsername()
     {
         return (string) $this->_username;
     }
 
+    /**
+     * Set the username
+     * 
+     * @param string $username
+     * @throws AwayList_Item_Exception 
+     */
     public function setUsername($username)
     {
         if (!is_string($username)) {
@@ -1790,11 +1859,22 @@ class AwayList_Item
         $this->_username = (string) $username;
     }
 
+    /**
+     * Get the unix time stamp of the start
+     * 
+     * @return integer 
+     */
     public function getStart()
     {
         return (int) $this->_start;
     }
 
+    /**
+     * Set the unix time stamp of the start
+     * 
+     * @param integer $start
+     * @throws AwayList_Item_Exception 
+     */
     public function setStart($start)
     {
         if (!is_numeric($start)) {
@@ -1803,21 +1883,45 @@ class AwayList_Item
         $this->_start = (int) $start;
     }
 
+    /**
+     * Get the unix time stamp of the end
+     * 
+     * @return integer 
+     */
     public function getEnd()
     {
         return (int) $this->_end;
     }
 
+    /**
+     * Set the unix time stamp of the end
+     * 
+     * @param integer $end 
+     * @throws AwayList_Item_Exception 
+     */
     public function setEnd($end)
     {
+        if (!is_numeric($end)) {
+            throw new AwayList_Item_Exception('$end must be an integer');
+        }
         $this->_end = (int) $end;
     }
 
+    /**
+     * Get the errors
+     * 
+     * @return array 
+     */
     public function getErrors()
     {
         return $this->_errors;
     }
 
+    /**
+     * Get if the item has errors
+     * 
+     * @return boolean 
+     */
     public function hasErrors()
     {
         if (!empty($this->_errors)) {
@@ -1827,11 +1931,11 @@ class AwayList_Item
     }
 
     /**
-     * create a new AwayList item.
-     * 
+     * Create a new AwayList item
      */
     public function __construct()
     {
+        // initialise the database
         $this->_initDatabase();
 
         // load translation
@@ -1900,6 +2004,14 @@ class AwayList_Item
         throw new AwayList_Item_Exception("Unrecognized method '$method()'");
     }
 
+    /**
+     * Magic call
+     * 
+     * @deprecated 
+     * @param string $name
+     * @return mixed
+     * @throws AwayList_Item_Exception 
+     */
     public function __get($name)
     {
         // FIXME remove legacy code as soon as possible
@@ -1928,6 +2040,15 @@ class AwayList_Item
         throw new AwayList_Item_Exception("Unrecognized property '$name'");
     }
 
+    /**
+     * Magic call
+     * 
+     * @deprecated 
+     * @param string $name
+     * @param mixed $value
+     * @return boolean
+     * @throws AwayList_Item_Exception 
+     */
     public function __set($name, $value)
     {
         // FIXME remove legacy code as soon as possible
@@ -1957,6 +2078,12 @@ class AwayList_Item
         throw new AwayList_Item_Exception("Can't set value! Unrecognized property '$name'");
     }
 
+    /**
+     * Magic call
+     * 
+     * @param string $name
+     * @return boolean 
+     */
     public function __isset($name)
     {
         foreach ($this->_customFieldsConfig as $customField) {
@@ -1968,6 +2095,12 @@ class AwayList_Item
         return false;
     }
 
+    /**
+     * Magic call
+     * 
+     * @param string $name
+     * @return boolean 
+     */
     public function __unset($name)
     {
         foreach ($this->_customFieldsConfig as $customField) {
@@ -1981,7 +2114,7 @@ class AwayList_Item
     }
 
     /**
-     * convert the row object to an array
+     * Convert the row object to an array
      * 
      * @return array array containing every property and its values 
      */
@@ -1999,7 +2132,7 @@ class AwayList_Item
     }
 
     /**
-     * get the global database object
+     * Get the global database object
      * 
      * @global DB_MySQL|DB_MySQLi|DB_PgSQL|DB_SQLite $db 
      * @return void 
@@ -2014,7 +2147,7 @@ class AwayList_Item
     }
 
     /**
-     * load the translation
+     * Load the translation
      * 
      * @global MyLanguage $lang
      * @return MyLanguage 
@@ -2065,7 +2198,7 @@ class AwayList_Item
     }
 
     /**
-     * associative array of the object properties
+     * Associative array of the object properties
      * 
      * @return array 
      */
@@ -2086,8 +2219,8 @@ class AwayList_Item
     }
 
     /**
-     * perform the actual insert query.<br />
-     * return the id of the inserted row
+     * Perform the actual insert query.<br />
+     * Return the id of the inserted row
      * 
      * @return integer 
      */
@@ -2101,8 +2234,8 @@ class AwayList_Item
     }
 
     /**
-     * perform the actual update query.<br />
-     * return the id of the updated row
+     * Perform the actual update query.<br />
+     * Return the id of the updated row
      * 
      * @return integer 
      */
@@ -2115,6 +2248,13 @@ class AwayList_Item
         return $this->_id;
     }
 
+    /**
+     * Set the data for the item
+     * 
+     * @param array $data
+     * @param integer $id
+     * @return AwayList_Item 
+     */
     public function setData($data, $id = null)
     {
         if (!empty($id) && is_int($id)) {
@@ -2160,6 +2300,12 @@ class AwayList_Item
         return $this;
     }
 
+    /**
+     * Check if the data is valid for the item
+     * 
+     * @param array $data
+     * @return boolean 
+     */
     public function isValid($data)
     {
         $valid = true;
